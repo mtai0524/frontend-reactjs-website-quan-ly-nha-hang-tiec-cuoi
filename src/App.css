@@ -36,3 +36,36 @@
     transform: rotate(360deg);
   }
 }
+
+
+/* my css */
+.custom-checkbox {
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.custom-checkbox input[type="checkbox"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.custom-checkbox label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #000;
+  background-color: #fff;
+}
+
+.custom-checkbox input[type="checkbox"]:checked + label {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #fff;
+}

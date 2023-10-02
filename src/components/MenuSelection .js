@@ -1,13 +1,26 @@
-// React Component
-
 import React, { Component } from 'react';
+import { Card, Container, Row, Col } from 'react-bootstrap';
 
 class MenuSelection extends Component {
     constructor(props) {
         super(props);
         this.state = {
             selectedItems: [], // Danh sách các món ăn đã chọn
+            menuItems: [], // Danh sách các món ăn từ API
         };
+    }
+
+    componentDidMount() {
+        // Gửi yêu cầu GET đến API để lấy danh sách các món ăn
+        fetch('https://localhost:7296/api/menu')
+            .then((response) => response.json())
+            .then((data) => {
+                // Cập nhật trạng thái menuItems với dữ liệu từ API
+                this.setState({ menuItems: data });
+            })
+            .catch((error) => {
+                console.error('Lỗi khi lấy danh sách món ăn:', error);
+            });
     }
 
     handleItemSelection = (itemId) => {
@@ -24,6 +37,15 @@ class MenuSelection extends Component {
     };
 
     handleOrderSubmit = () => {
+        const { selectedItems, menuItems } = this.state;
+
+        // Lọc ra các món ăn đã chọn từ danh sách món ăn
+        const selectedMenuItems = menuItems.filter((menuItem) => selectedItems.includes(menuItem.menuId));
+
+        // Lấy danh sách tên của các món ăn đã chọn
+        const selectedMenuNames = selectedMenuItems.map((menuItem) => menuItem.name);
+
+    console.log('Danh sách món ăn đã chọn:', selectedMenuNames);
         // Gửi danh sách món ăn đã chọn đến API ASP.NET Core
         fetch('/api/order', {
             method: 'POST',
@@ -43,26 +65,39 @@ class MenuSelection extends Component {
     };
 
     render() {
-        // Hiển thị danh sách món ăn và checkbox
+        const { menuItems } = this.state;
+    
+        // Lớp CSS tùy chỉnh để định kích thước cho hình ảnh
+        const customImageStyle = {
+            width: '100%', // Đặt chiều rộng 100%
+            height: '20rem', // Để tỷ lệ khung hình ảnh tự điều chỉnh
+        };
+    
+        // Hiển thị danh sách món ăn và checkbox dưới dạng thẻ Card View
         return (
-            <div>
-                <ul>
+            <Container>
+                <Row>
                     {menuItems.map((menuItem) => (
-                        <li key={menuItem.id}>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    value={menuItem.id}
-                                    checked={this.state.selectedItems.includes(menuItem.id)}
-                                    onChange={() => this.handleItemSelection(menuItem.id)}
-                                />
-                                {menuItem.name}
-                            </label>
-                        </li>
+                        <Col key={menuItem.menuId} md={3}>
+                            <Card>
+                                <Card.Img variant="top" src={menuItem.image} style={customImageStyle} />
+                                <Card.Body>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            value={menuItem.menuId}
+                                            checked={this.state.selectedItems.includes(menuItem.menuId)}
+                                            onChange={() => this.handleItemSelection(menuItem.menuId)}
+                                        />
+                                        {menuItem.name}
+                                    </label>
+                                </Card.Body>
+                            </Card>
+                        </Col>
                     ))}
-                </ul>
+                </Row>
                 <button onClick={this.handleOrderSubmit}>Xác nhận đặt hàng</button>
-            </div>
+            </Container>
         );
     }
 }
