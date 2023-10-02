@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Card, Container, Row, Col } from 'react-bootstrap';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 class MenuSelection extends Component {
     constructor(props) {
@@ -29,9 +31,27 @@ class MenuSelection extends Component {
             this.setState({
                 selectedItems: selectedItems.filter((id) => id !== itemId),
             });
+            toast.error('Bạn đã bỏ chọn món ăn!', {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                theme:'colored'
+            });
         } else {
             this.setState({
                 selectedItems: [...selectedItems, itemId],
+            });
+            toast.success('Bạn đã chọn món ăn!', {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                theme:'colored'
             });
         }
     };
@@ -44,6 +64,15 @@ class MenuSelection extends Component {
 
         // Lấy danh sách tên của các món ăn đã chọn
         const selectedMenuNames = selectedMenuItems.map((menuItem) => menuItem.name);
+
+        toast.success('Đặt nhà hàng thành công gòi!', {
+            position: 'top-right',
+            autoClose: 3000, // Thời gian hiển thị toast (3 giây)
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
 
     console.log('Danh sách món ăn đã chọn:', selectedMenuNames);
         // Gửi danh sách món ăn đã chọn đến API ASP.NET Core
@@ -71,6 +100,7 @@ class MenuSelection extends Component {
         const customImageStyle = {
             width: '100%', // Đặt chiều rộng 100%
             height: '20rem', // Để tỷ lệ khung hình ảnh tự điều chỉnh
+            
         };
     
         // Hiển thị danh sách món ăn và checkbox dưới dạng thẻ Card View
@@ -79,18 +109,18 @@ class MenuSelection extends Component {
                 <Row>
                     {menuItems.map((menuItem) => (
                         <Col key={menuItem.menuId} md={3}>
-                            <Card>
+                            <Card className="custom-card">
                                 <Card.Img variant="top" src={menuItem.image} style={customImageStyle} />
+                                <label className="custom-checkbox">
+                                    <input
+                                    type="checkbox"
+                                    value={menuItem.menuId}
+                                    checked={this.state.selectedItems.includes(menuItem.menuId)}
+                                    onChange={() => this.handleItemSelection(menuItem.menuId)}
+                                    />
+                                </label>
                                 <Card.Body>
-                                    <label>
-                                        <input
-                                            type="checkbox"
-                                            value={menuItem.menuId}
-                                            checked={this.state.selectedItems.includes(menuItem.menuId)}
-                                            onChange={() => this.handleItemSelection(menuItem.menuId)}
-                                        />
-                                        {menuItem.name}
-                                    </label>
+                                    {menuItem.name}
                                 </Card.Body>
                             </Card>
                         </Col>

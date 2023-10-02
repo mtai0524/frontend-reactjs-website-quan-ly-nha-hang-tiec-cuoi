@@ -65,8 +65,22 @@ function LoginForm() {
     } catch (error) {
       console.error('Lỗi khi đăng nhập:', error);
     }
-
   };
+  function handleLogout() {
+    // Xóa token khỏi cookie khi đăng xuất
+    Cookies.remove('token_user');
+    toast('Đã đăng xuất gòi á!', {
+      position: 'top-right',
+      autoClose: 3000, // Thời gian hiển thị toast (3 giây)
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+    // Cập nhật trạng thái ứng dụng hoặc chuyển hướng đến trang đăng nhập
+    // Ví dụ: bạn có thể sử dụng React Router để chuyển hướng đến trang đăng nhập
+    // hoặc làm cho trạng thái của ứng dụng để hiển thị một giao diện người dùng chưa đăng nhập.
+  }
 
   return (
     <div>
@@ -82,6 +96,11 @@ function LoginForm() {
         </div>
         <button type="submit">Đăng nhập</button>
       </form>
+      {Cookies.get('token_user') && (
+        <div>
+          <button onClick={handleLogout}>Đăng xuất</button>
+        </div>
+      )}
     </div>
   );
 }

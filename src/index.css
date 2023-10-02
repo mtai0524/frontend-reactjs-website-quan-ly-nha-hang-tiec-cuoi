@@ -12,33 +12,27 @@ code {
     monospace;
 }
 
-.custom-checkbox {
+/* Trong tệp CSS của bạn hoặc inline CSS */
+.custom-card {
   position: relative;
-  padding-left: 25px;
-  margin-bottom: 10px;
-  cursor: pointer;
 }
 
-.custom-checkbox input[type="checkbox"] {
+.custom-card .custom-checkbox {
   position: absolute;
-  left: 0;
-  top: 0;
-  opacity: 0;
-  cursor: pointer;
+  top: 10px; /* Điều chỉnh vị trí theo y để đưa nó lên trên */
+  left: 10px; /* Điều chỉnh vị trí theo x để đưa nó sang trái */
 }
 
-.custom-checkbox label {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 18px;
-  height: 18px;
-  border: 1px solid #000;
-  background-color: #fff;
+.custom-card .custom-checkbox input[type="checkbox"] {
+  width: 20px; /* Điều chỉnh chiều rộng của checkbox */
+  height: 20px; /* Điều chỉnh chiều cao của checkbox */
+  margin-right: 5px; /* Khoảng cách giữa checkbox và văn bản */
+  border: 2px solid #e01c1c; /* Thêm đường viền cho checkbox */
+  border-radius: 10px; /* Điều chỉnh độ cong của đường viền */
 }
 
-.custom-checkbox input[type="checkbox"]:checked + label {
-  background-color: #007bff;
-  border-color: #007bff;
-  color: #fff;
+.custom-card .custom-checkbox label {
+  background: white; /* Để checkbox không bị che khuất bởi hình ảnh */
+  padding: 5px; /* Điều chỉnh khoảng cách từ checkbox đến viền thẻ */
+  border-radius: 4px; /* Để làm cho checkbox trông tốt hơn */
 }
