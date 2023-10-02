@@ -1,5 +1,7 @@
 # Getting Started with Create React App
 
+## tai react boostrap roi nha
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

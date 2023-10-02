@@ -1,6 +1,8 @@
 import Cookies from 'js-cookie';
 import React, { useState } from 'react';
 import jwt_decode from 'jwt-decode';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function LoginForm() {
   const [formData, setFormData] = useState({
@@ -39,7 +41,25 @@ function LoginForm() {
         const email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'];
         console.log('Tên người dùng:', username);
         console.log('Email:', email);
+
+        toast.success('Đăng nhập thành công!', {
+          position: 'top-right',
+          autoClose: 3000, // Thời gian hiển thị toast (3 giây)
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+
       } else {
+        toast.error('Đăng nhập không thành công á!', {
+          position: 'top-right',
+          autoClose: 3000, // Thời gian hiển thị toast (3 giây)
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
         console.error('Đăng nhập không thành công.');
       }
     } catch (error) {

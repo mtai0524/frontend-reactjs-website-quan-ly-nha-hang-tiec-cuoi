@@ -21,7 +21,7 @@ function MenuForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await fetch('https://localhost:7296/api/menu', {
         method: 'POST',
@@ -30,10 +30,10 @@ function MenuForm() {
         },
         body: JSON.stringify(menuData),
       });
-
+  
       if (response.ok) {
         console.log('Dữ liệu đã được gửi thành công.');
-
+  
         // Hiển thị toast thông báo thành công
         toast.success('Thêm món ăn thành công!', {
           position: 'top-right',
@@ -43,14 +43,14 @@ function MenuForm() {
           pauseOnHover: true,
           draggable: true,
         });
-
+  
         // Lấy danh sách món ăn từ API sau khi thêm mới
         const updatedMenusResponse = await fetch('https://localhost:7296/api/menu');
         if (updatedMenusResponse.ok) {
           const updatedMenusData = await updatedMenusResponse.json();
           setMenus(updatedMenusData);
         }
-        
+  
         // Xóa dữ liệu trong form sau khi thêm
         setMenuData({
           name: '',
@@ -59,6 +59,14 @@ function MenuForm() {
           categoryId: '',
         });
       } else {
+        toast.error('Thêm món ăn thất bại gòi chời!', {
+          position: 'top-right',
+          autoClose: 3000, // Thời gian hiển thị toast (3 giây)
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
         console.error('Lỗi khi gửi dữ liệu.');
         // Xử lý khi gửi dữ liệu thất bại
       }
@@ -67,6 +75,7 @@ function MenuForm() {
       // Xử lý khi xảy ra lỗi
     }
   };
+  
 
   useEffect(() => {
     // Lấy danh sách món ăn ban đầu khi trang được tải
