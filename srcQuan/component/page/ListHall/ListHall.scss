@@ -1,0 +1,79 @@
+.listhall {
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 2px 6px 6px rgba(0, 0, 0, 0.25);
+    padding: 50px 0px;
+    margin-top: 40px;
+    // background-image: url(../../../assets/assets/background-trang-xam.jpg);
+    background-size: cover;
+
+    &__container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+    }
+
+    &__list {
+        display: flex;
+        flex-wrap: wrap; // Cho phép các mục chuyển hàng khi không còn chỗ
+        justify-content: space-between; // Các mục nằm cách đều nhau
+        margin-top: 20px;
+        list-style: none; // Xóa dấu chấm mục
+        padding: 0; // Xóa padding mặc định của danh sách
+
+    }
+
+    .listhall__item {
+        margin-top: 10px;
+        margin-left: 3px;
+        border-radius: 8px;
+        flex-basis: calc(50% - 10px); // Sử dụng 50% chiều rộng và trừ đi khoảng cách
+        display: flex; // Sử dụng Flexbox
+        align-items: center; // Canh giữa theo chiều dọc
+        box-shadow: 2px 6px 6px rgba(0, 0, 0, 0.25);
+        height: 200px;
+
+
+        // Các phần tử con sẽ sử dụng Flexbox để sắp xếp
+        .listhall__item--img {
+            flex: 1; // Phần tử hình ảnh chiếm 1 phần
+            padding-right: 20px; // Khoảng cách giữa hình ảnh và văn bản
+
+            img {
+                width: 100%; // Kích thước hình ảnh tỷ lệ với phần tử cha
+                height: auto; // Giữ tỷ lệ khung hình
+            }
+        }
+
+        .listhall__item--content {
+            flex: 2; // Phần tử văn bản chiếm 2 phần
+            overflow: hidden; // không tràn text
+        }
+    }
+
+
+    &__right {
+        span {
+            font-weight: 18px;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 40px;
+            font-weight: 900;
+            color: rgba(0, 0, 0, 0.6);
+            margin: 14px 0px;
+
+        }
+
+        p {
+            max-width: 542px;
+            color: rgba(0, 0, 0, 0.6);
+            margin-bottom: 50px;
+        }
+    }
+
+
+
+
+}

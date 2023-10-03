@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Card, Container, Row, Col } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Cookies from 'js-cookie';
+import jwt_decode from 'jwt-decode';
 
 class MenuSelection extends Component {
     constructor(props) {
@@ -58,13 +60,27 @@ class MenuSelection extends Component {
 
     handleOrderSubmit = () => {
         const { selectedItems, menuItems } = this.state;
-
+    
+        // Lấy thông tin người dùng từ cookie
+        const token = Cookies.get('token_user');
+        if (token) {
+            const decodedToken = jwt_decode(token);
+            const username = decodedToken.name;
+            const email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'];
+    
+            console.log('Thông tin người dùng đăng nhập:');
+            console.log('Tên người dùng:', username);
+            console.log('Email người dùng:', email);
+        } else {
+            console.log('Người dùng chưa đăng nhập.');
+        }
+    
         // Lọc ra các món ăn đã chọn từ danh sách món ăn
         const selectedMenuItems = menuItems.filter((menuItem) => selectedItems.includes(menuItem.menuId));
-
+    
         // Lấy danh sách tên của các món ăn đã chọn
         const selectedMenuNames = selectedMenuItems.map((menuItem) => menuItem.name);
-
+    
         toast.success('Đặt nhà hàng thành công gòi!', {
             position: 'top-right',
             autoClose: 3000, // Thời gian hiển thị toast (3 giây)
@@ -72,9 +88,10 @@ class MenuSelection extends Component {
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
-          });
-
-    console.log('Danh sách món ăn đã chọn:', selectedMenuNames);
+        });
+    
+        console.log('Danh sách món ăn đã chọn:', selectedMenuNames);
+        
         // Gửi danh sách món ăn đã chọn đến API ASP.NET Core
         fetch('/api/order', {
             method: 'POST',
@@ -92,6 +109,7 @@ class MenuSelection extends Component {
                 console.error('Error:', error);
             });
     };
+    
 
     render() {
         const { menuItems } = this.state;
@@ -120,6 +138,8 @@ class MenuSelection extends Component {
                                     />
                                 </label>
                                 <Card.Body>
+                                    {menuItem.categoryName}
+                                    <br/>
                                     {menuItem.name}
                                 </Card.Body>
                             </Card>
