@@ -65,39 +65,62 @@ class MenuSelection extends Component {
         const token = Cookies.get('token_user');
         if (token) {
             const decodedToken = jwt_decode(token);
-            const username = decodedToken.name;
             const email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'];
     
             console.log('Thông tin người dùng đăng nhập:');
-            console.log('Tên người dùng:', username);
             console.log('Email người dùng:', email);
-        } else {
-            console.log('Người dùng chưa đăng nhập.');
-        }
     
-        // Tạo một đối tượng request để gửi lên API
-        const request = {
-            UserId: 1, // Thay thế bằng UserId thực tế
-            OrderMenus: selectedItems.map(menuId => ({ MenuID: menuId }))
-        };
-    
-        // Gửi yêu cầu POST đến API ASP.NET Core
-        fetch('https://localhost:7296/api/invoice', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(request), // Gửi dữ liệu theo đúng định dạng của API
-        })
+            // Gửi yêu cầu GET để lấy thông tin người dùng từ API
+            fetch(`https://localhost:7296/api/account/GetUserInfo`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(email), // Gửi email trong body
+            })
             .then((response) => response.json())
-            .then((data) => {
-                // Xử lý phản hồi từ API (nếu cần)
-                console.log(data);
+            .then((userData) => {
+                // Kiểm tra xem userData có thông tin người dùng nào không
+                if (userData && userData.id) {
+                    // Tạo một đối tượng request để gửi lên API
+                    const request = {
+                        UserId: userData.id, // Sử dụng id từ API để thay thế UserId
+                        OrderMenus: selectedItems.map(menuId => ({ MenuID: menuId }))
+                    };
+                    console.log(userData.id);
+                    console.log(userData.email);
+                    // Xuất request ra console để kiểm tra
+                     console.log('Request:', request);
+
+                    // Gửi yêu cầu POST đến API ASP.NET Core
+                    fetch('https://localhost:7296/api/invoice', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(request), // Gửi dữ liệu theo đúng định dạng của API
+                    })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // Xử lý phản hồi từ API (nếu cần)
+                        console.log(data);
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+                } else {
+                    console.error('Không thể lấy thông tin người dùng từ API.');
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
+        } else {
+            console.log('Người dùng chưa đăng nhập.');
+        }
     };
+    
+    
     
     
 
