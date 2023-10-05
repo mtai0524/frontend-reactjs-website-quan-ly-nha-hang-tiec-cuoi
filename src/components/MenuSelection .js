@@ -59,7 +59,7 @@ class MenuSelection extends Component {
     };
 
     handleOrderSubmit = () => {
-        const { selectedItems, menuItems } = this.state;
+        const { selectedItems } = this.state;
     
         // Lấy thông tin người dùng từ cookie
         const token = Cookies.get('token_user');
@@ -75,30 +75,19 @@ class MenuSelection extends Component {
             console.log('Người dùng chưa đăng nhập.');
         }
     
-        // Lọc ra các món ăn đã chọn từ danh sách món ăn
-        const selectedMenuItems = menuItems.filter((menuItem) => selectedItems.includes(menuItem.menuId));
+        // Tạo một đối tượng request để gửi lên API
+        const request = {
+            UserId: 1, // Thay thế bằng UserId thực tế
+            OrderMenus: selectedItems.map(menuId => ({ MenuID: menuId }))
+        };
     
-        // Lấy danh sách tên của các món ăn đã chọn
-        const selectedMenuNames = selectedMenuItems.map((menuItem) => menuItem.name);
-    
-        toast.success('Đặt nhà hàng thành công gòi!', {
-            position: 'top-right',
-            autoClose: 3000, // Thời gian hiển thị toast (3 giây)
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-        });
-    
-        console.log('Danh sách món ăn đã chọn:', selectedMenuNames);
-        
-        // Gửi danh sách món ăn đã chọn đến API ASP.NET Core
-        fetch('/api/order', {
+        // Gửi yêu cầu POST đến API ASP.NET Core
+        fetch('https://localhost:7296/api/invoice', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ selectedItems: this.state.selectedItems }),
+            body: JSON.stringify(request), // Gửi dữ liệu theo đúng định dạng của API
         })
             .then((response) => response.json())
             .then((data) => {
@@ -109,6 +98,7 @@ class MenuSelection extends Component {
                 console.error('Error:', error);
             });
     };
+    
     
 
     render() {
