@@ -1,38 +1,41 @@
-body {
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;1,200&family=Roboto:ital,wght@1,500&display=swap');
+
+
+
+* {
+
+  padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  cursor: pointer;
+  list-style: none;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+  font-family: "Poppins", sans-serif;
+  scroll-behavior: smooth;
 }
 
-/* Trong tệp CSS của bạn hoặc inline CSS */
-.custom-card {
-  position: relative;
+.container {
+  max-width: 1440px;
+  padding: 0px 80px;
+  margin: 0px auto;
 }
 
-.custom-card .custom-checkbox {
-  position: absolute;
-  top: 10px; /* Điều chỉnh vị trí theo y để đưa nó lên trên */
-  left: 10px; /* Điều chỉnh vị trí theo x để đưa nó sang trái */
+.text-gradient {
+
+  background: linear-gradient(90deg, #FE8E5C 0%, #F5576C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
 }
 
-.custom-card .custom-checkbox input[type="checkbox"] {
-  width: 20px; /* Điều chỉnh chiều rộng của checkbox */
-  height: 20px; /* Điều chỉnh chiều cao của checkbox */
-  margin-right: 5px; /* Khoảng cách giữa checkbox và văn bản */
-  border: 2px solid #e01c1c; /* Thêm đường viền cho checkbox */
-  border-radius: 10px; /* Điều chỉnh độ cong của đường viền */
-}
 
-.custom-card .custom-checkbox label {
-  background: white; /* Để checkbox không bị che khuất bởi hình ảnh */
-  padding: 5px; /* Điều chỉnh khoảng cách từ checkbox đến viền thẻ */
-  border-radius: 4px; /* Để làm cho checkbox trông tốt hơn */
+.main-background {
+
+  background: linear-gradient(90deg, #FE8E5C 0%, #F5576C 100%);
 }

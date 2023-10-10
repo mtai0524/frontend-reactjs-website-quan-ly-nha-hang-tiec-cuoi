@@ -1,26 +1,42 @@
-import React from 'react'
-import Header from './layout/Header'
-import Footer from './layout/Footer'
-import MenuForm from './components/MenuForm'
-import SignUpForm from './components/SignUpForm'
-import LoginForm from './components/LoginForm'
-import MyApp from './components/MyApp'
-import { ToastContainer, toast } from 'react-toastify';
-import MenuSelection from './components/MenuSelection '
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Header from "./layout/Header/Header";
+import Footer from "./layout/Footer";
+import Home from "./layout/Home/Home";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import ListHall from "./component/page/ListHall/ListHall";
+import ListBranch from "./component/page/ListBranch/ListBranch";
+import Login from "./component/page/Login/Login";
+import Register from "./component/page/Register/Register";
+import Bill from "./component/page/Bill/Bill";
+import ListMenu from "./component/page/ListMenu/ListMenu";
+import Profile from "./component/page/Profile/Profile";
 
-export default function App() {
+
+
+const App = () => {
+
   return (
-    <>
-    <ToastContainer />
-    <MenuSelection />
+    <div>
 
-      {/* <Header/> */}
-      <MyApp/>
-      <SignUpForm/>
-      <div>App</div>
-      <LoginForm/>
-      <MenuForm/>
-      <Footer/>
-    </>
+      <BrowserRouter>
+        <Header />
+
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/bill" element={<Bill />} />
+          <Route path="/listmenu" element={<ListMenu />} />
+
+          <Route path="/listhall" element={<ListHall />} />
+          <Route path="/listbranch" element={<ListBranch />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/login/profile" element={<Profile />} />
+
+          <Route path="/login/register" element={<Register />} />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+    </div>
   )
+
 }
+export default App;
