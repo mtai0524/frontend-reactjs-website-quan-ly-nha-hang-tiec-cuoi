@@ -10,7 +10,21 @@ const Bill = () => {
     const [selectedHallIndex, setSelectedHallIndex] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
     const [selectedHalls, setSelectedHalls] = useState([]);
+    const [scrollY, setScrollY] = useState(0);
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrollY(window.scrollY);
+        };
 
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+    const selectedItemsStyle = {
+        top: `${scrollY + 20}px`, // 20px là khoảng cách ban đầu từ đỉnh cửa sổ
+    };
     // Tải dữ liệu từ API khi component được render
     useEffect(() => {
         fetch('https://localhost:7296/api/ApiBranch')
@@ -28,7 +42,9 @@ const Bill = () => {
 
     const handleBranchCheckboxChange = (branchId) => {
         setSelectedBranchId(branchId);
+        setSelectedHallId(null); // Đặt hội trường về null khi thay đổi chi nhánh
         setSelectedHallIndex(null); // Đặt lại lựa chọn của hall khi chọn branch khác
+        setSelectedHalls([]); // Xóa danh sách hội trường đã chọn
 
         // Kiểm tra xem chi nhánh đã được chọn chưa
         if (selectedItems.includes(branchId)) {
@@ -42,14 +58,14 @@ const Bill = () => {
 
     const handleHallCheckboxChange = (hallId) => {
         setSelectedHallId(hallId);
-    
+
         // Lấy thông tin hội trường đã chọn
         const selectedHall = halls.find(hall => hall.hallId === hallId);
-    
+
         if (selectedHall) {
             // Kiểm tra xem hội trường đã chọn có trùng với bất kỳ hội trường nào trong danh sách selectedHalls không
             const isHallSelected = selectedHalls.some(hall => hall.hallId === selectedHall.hallId);
-    
+
             if (isHallSelected) {
                 // Nếu trùng, loại bỏ khỏi danh sách
                 setSelectedHalls(selectedHalls.filter(hall => hall.hallId !== selectedHall.hallId));
@@ -59,8 +75,8 @@ const Bill = () => {
             }
         }
     };
-    
-    
+
+
 
     const selectedBranch = branchs.find(branch => branch.branchId === selectedBranchId);
     const selectedItemHall = halls.filter(hall => hall.branchName === selectedBranch?.name);
@@ -75,7 +91,7 @@ const Bill = () => {
     };
 
     return (
-        <div className='bill'>
+        <div className="bill">
             <div className="bill-page">
                 <div className="bill-form-container">
                     <h1 className="title">Đơn Hàng</h1>
@@ -151,11 +167,55 @@ const Bill = () => {
                     </form>
                 </div>
                 <div className="selected-items">
-                    <h2>Danh sách chi nhánh đã chọn:</h2>
-                    <p>{selectedBranch ? selectedBranch.name : 'Chưa chọn chi nhánh'}</p>
-                    <h2>Danh sách hội trường đã chọn:</h2>
-                    <p>{selectedHalls.length > 0 ? selectedHalls.map(hall => hall.name).join(', ') : 'Chưa chọn hội trường'}</p>
+                    <div className="selected-items-content" style={{ overflowY: 'auto', maxHeight: '800px' }}>
+                        <h2>Chi nhánh đã chọn:</h2>
+                        {selectedBranch ? (
+                            <div className="center-content">
+                                <img
+                                    src={selectedBranch.image}
+                                    alt={selectedBranch.name}
+                                    style={{ width: '100%', height: '250px' }}
+                                />
+                                <p><b>{selectedBranch.name}</b></p> {/* Hiển thị tên chi nhánh */}
+                            </div>
+                        ) : 'Chưa chọn chi nhánh'}
+
+                        <h2>Hội trường đã chọn:</h2>
+                        {selectedHalls.length > 0 ? (
+                            <div className="center-content">
+                                {selectedHalls.map((hall, index) => (
+                                    <div key={index}>
+                                        <img
+                                            src={hall.image}
+                                            alt={hall.name}
+                                            style={{ width: '100%', height: '250px' }}
+                                        />
+                                        <p><b>{hall.name}</b></p>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : 'Chưa chọn hội trường'}
+
+                        <h2>Hội trường đã chọn:</h2>
+                        {selectedHalls.length > 0 ? (
+                            <div className="center-content">
+                                {selectedHalls.map((hall, index) => (
+                                    <div key={index}>
+                                        <img
+                                            src={hall.image}
+                                            alt={hall.name}
+                                            style={{ width: '100%', height: '250px' }}
+                                        />
+                                        <p><b>{hall.name}</b></p>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : 'Chưa chọn hội trường'}
+                        <h2>Danh sách món ăn đã chọn:</h2>
+                    </div>
                 </div>
+
+
             </div>
         </div>
     );

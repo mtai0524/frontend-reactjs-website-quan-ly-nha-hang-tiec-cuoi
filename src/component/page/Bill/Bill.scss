@@ -1,3 +1,24 @@
+.selected-items {
+    width: 25%;
+    position: fixed;
+    top: 150px;
+    right: 20px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    padding: 10px;
+    transition: top 0.3s; /* Thêm transition để làm mượt hiệu chỉnh khi di chuyển */
+  }
+  
+  .selected-items-content {
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  .center-content {
+    text-align: center; /* Căn giữa theo chiều ngang */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Căn giữa theo chiều dọc */
+}
 .bill {
     margin-top: 50px;
 
@@ -9,7 +30,7 @@
     .bill-page {
         margin-top: 150px;
 
-        margin-left: 15%;
+        margin-left: 10%;
 
         .bill-form-container {
             width: 1100px;
