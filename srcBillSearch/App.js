@@ -10,7 +10,6 @@ import Register from "./component/page/Register/Register";
 import Bill from "./component/page/Bill/Bill";
 import ListMenu from "./component/page/ListMenu/ListMenu";
 import Profile from "./component/page/Profile/Profile";
-import { AuthProvider } from "./component/Context/AuthProvider";
 
 
 
@@ -18,8 +17,7 @@ const App = () => {
 
   return (
     <div>
-<AuthProvider>
-    
+
       <BrowserRouter>
         <Header />
 
@@ -37,8 +35,6 @@ const App = () => {
         </Routes>
         <Footer />
       </BrowserRouter>
-    </AuthProvider>
-
     </div>
   )
 

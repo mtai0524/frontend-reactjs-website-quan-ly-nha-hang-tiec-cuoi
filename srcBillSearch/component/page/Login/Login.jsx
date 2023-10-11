@@ -1,44 +1,27 @@
 import { Link, useNavigate } from "react-router-dom";
-import './login.scss';
-import { useState } from "react";
+import './login.scss'
+import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import jwt_decode from 'jwt-decode';
-import { useAuth } from "../../Context/AuthProvider";
-import { ToastContainer, toast } from 'react-toastify';
+
 
 const Login = () => {
-    const { setToken, setFirstName, setEmail } = useAuth();
+
     const nav = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
 
-    const handleLoginSuccess = (token, firstName, email) => {
-        // Sau khi đăng nhập thành công
-        // Lưu token và firstName vào Context
-        setToken(token); // Lưu token vào trạng thái toàn cục
-        setFirstName(firstName); // Lưu firstName vào trạng thái toàn cục
-        setEmail(email); // Lưu firstName vào trạng thái toàn cục
-        toast.success('Đăng nhập thành công!', {
-            position: 'top-right',
-            autoClose: 3000, // Thời gian hiển thị toast (3 giây)
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-          });
-        // Chuyển hướng người dùng về trang home hoặc bất kỳ trang nào bạn muốn
-        nav('/');
-      }
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
+
     const handleLogin = async (e) => {
         e.preventDefault();
+
 
         try {
             const response = await fetch('https://localhost:7296/api/account/SignIn', {
@@ -51,17 +34,19 @@ const Login = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log('Phản hồi từ API:', data);
+                console.log('Phản hồi từ API:', data); // In ra dữ liệu từ API để kiểm tra
 
                 const token = data.token;
-                Cookies.set('token_user', token, { expires: 7 });
+
+                Cookies.set('token_user', token, { expires: 7 }); // expires: 7 là thời gian sống trong 7 ngày
 
                 const decodedToken = jwt_decode(token);
 
-                const email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']; // lấy từ jwt.io phân giải token
-                const firstName = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
-                handleLoginSuccess(token, firstName, email);
-
+                const username = decodedToken.name; // Lấy tên người dùng từ token
+                const email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'];
+                console.log('Tên người dùng:', username);
+                console.log('Email:', email);
+                nav('/');
             } else {
                 console.error('Đăng nhập không thành công.');
             }
@@ -70,6 +55,9 @@ const Login = () => {
         }
 
     };
+
+
+
 
     return (
         <div className=" login container col-xl-10 col-xxl-8 px-4 py-5 mt-4">
@@ -136,5 +124,4 @@ const Login = () => {
 
     )
 }
-
 export default Login;

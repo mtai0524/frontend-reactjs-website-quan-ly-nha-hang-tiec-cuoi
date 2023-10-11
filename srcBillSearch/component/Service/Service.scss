@@ -1,0 +1,42 @@
+.service {
+
+    box-shadow: 2px 6px 6px rgba(0, 0, 0, 0.25);
+    padding: 50px 0px;
+    margin-top: 20px;
+
+
+    &__container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__right {
+
+        width: 100%; // Kích thước chiều rộng của .service__right bằng 100% của cha (.service)
+        height: 100%;
+
+        img {
+            max-width: 100%; // Đảm bảo hình ảnh không vượt quá kích thước của .service__right
+            max-height: 100%;
+        }
+
+        h1 {
+            font-size: 40px;
+            font-weight: 900;
+            color: rgba(0, 0, 0, 0.6);
+            margin: 14px 0px;
+
+        }
+
+        p {
+            max-width: 542px;
+            color: rgba(0, 0, 0, 0.6);
+            margin-bottom: 50px;
+        }
+    }
+
+    &__left {
+        text-align: center;
+    }
+}

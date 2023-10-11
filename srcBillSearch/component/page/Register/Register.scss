@@ -1,0 +1,18 @@
+.register-page {
+    margin-top: 150px;
+    width: 500px;
+    margin-left: 33%;
+
+    .register-form-container {
+        width: 520px;
+        padding: 50px;
+        box-shadow: 0px 0px 21px rgba(0, 0, 0, 0.6);
+    }
+
+    .error {
+        color: red;
+        margin-top: 7px;
+        font-size: 14px;
+    }
+
+}

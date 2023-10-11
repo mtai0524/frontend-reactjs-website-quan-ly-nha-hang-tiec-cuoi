@@ -1,0 +1,85 @@
+.menu {
+    padding: 50px 0px;
+    box-shadow: 2px 6px 6px rgba(0, 0, 0, 0.25);
+
+    &__container {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+
+        &__item--img {
+            width: 20px;
+            height: 50px;
+        }
+
+        span {
+            font-size: 18px;
+            font-weight: 600;
+
+        }
+
+        h1 {
+            font-size: 40px;
+            font-weight: 850;
+            // color: rgba(0, 0, 0, 0.6);
+            margin: 15px 0px;
+        }
+
+        p {
+            max-width: 821px;
+            text-align: center;
+            color: rgba(0, 0, 0, 0.6);
+
+        }
+
+    }
+
+    &__chosselist {
+        margin-top: 10px;
+        display: flex;
+        gap: 10px;
+
+        .button {
+            width: 200px;
+        }
+    }
+
+    &__list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-top: 50px;
+
+    }
+
+    &__item {
+        cursor: pointer;
+        width: auto;
+        min-height: auto;
+        border: 0.5px solid rgba(21, 20, 20, 0.65);
+        transition: 0.4s all ease-out;
+
+        &:hover {
+            box-shadow: 0px 6px 20px rgba(48, 64, 119, 0.45);
+        }
+
+        &--content {
+            padding: 20px;
+            // color: rgba(0, 0, 0, 0.7);
+
+            h3 {
+                font-weight: 900;
+                color: rgba(0, 0, 0, 0.6);
+
+            }
+
+            p {
+                text-align: start;
+                margin-bottom: 50px;
+                margin-top: 12px;
+                letter-spacing: 0.2px;
+            }
+
+        }
+    }
+}

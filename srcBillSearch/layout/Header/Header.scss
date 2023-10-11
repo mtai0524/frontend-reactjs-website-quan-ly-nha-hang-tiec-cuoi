@@ -1,0 +1,59 @@
+.nav {
+
+    position: fixed;
+    width: 100%;
+    height: 100px;
+    background: #fff;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.06);
+    top: 0;
+    /* Đặt top thành 0 để nó cố định ở phía trên cùng của trang */
+    left: 0;
+    /* Đặt left thành 0 để nó cố định ở phía bên trái của trang */
+
+
+    z-index: 1000;
+
+    &__container {
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+    }
+
+    &__logo {
+        font-size: 25px;
+        font-weight: 900;
+    }
+
+    &__links {
+        display: flex;
+        gap: 0px 50px;
+
+
+
+    }
+
+    &__search {
+        width: 400px;
+        margin-top: auto;
+    }
+
+    li {
+        position: relative;
+
+        Link {
+            font-size: 30px;
+            color: rgb(0, 0, 0);
+        }
+
+        span {
+            position: absolute;
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(90deg, #FE8E5C 0%, #F5576C 100%);
+            bottom: -8px;
+            left: 0;
+        }
+    }
+}

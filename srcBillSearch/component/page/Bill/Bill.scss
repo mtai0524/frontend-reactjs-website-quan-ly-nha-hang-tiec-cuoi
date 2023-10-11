@@ -1,0 +1,58 @@
+.bill {
+    margin-top: 50px;
+
+
+
+    .bill-page {
+        margin-top: 150px;
+
+        margin-left: 15%;
+
+        .bill-form-container {
+            width: 1100px;
+            padding: 50px;
+            box-shadow: 0px 0px 21px rgba(0, 0, 0, 0.6);
+
+            .title {
+                font-size: 50px;
+                font-weight: 650;
+                text-align: center
+            }
+
+            .label-container {
+                display: flex;
+                font-size: 20px;
+                font-weight: 850;
+                margin-top: 10px;
+                /* Nếu bạn muốn căn giữa theo chiều ngang */
+                /* Các thuộc tính khác (màu sắc, kích thước, vị trí, v.v.) */
+            }
+
+            .body {
+                display: flex;
+                flex-wrap: wrap;
+                /* Thiết lập flex-wrap để các phần tử tự động xuống hàng */
+                justify-content: space-between;
+
+                .card {
+                    margin-bottom: 16px;
+                    /* Ví dụ: Khoảng cách dưới mỗi Card là 16px */
+
+                }
+
+                .form-check {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    transform: scale(1.5);
+                    /* Điều chỉnh kích thước của checkbox khi được kiểm tra */
+                    margin-top: 4px;
+                }
+
+            }
+
+        }
+    }
+
+
+}
