@@ -2,6 +2,8 @@ import './Bill.scss';
 import { Accordion, Button, Card } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import Cookies from 'js-cookie';
+import jwt_decode from 'jwt-decode';
 
 const Bill = () => {
     const [branchs, setBranchs] = useState([]);
@@ -107,6 +109,11 @@ const Bill = () => {
                 const selectedMenu = menus.find(menu => menu.menuId === menuId);
                 return selectedMenu ? selectedMenu.name : '';
             }).join(', '));
+
+            // Gửi đơn hàng nếu các điều kiện đều đúng
+    console.log('orderData:', orderData);
+
+            sendOrderData();
         }
         else {
             toast.error('Chi nhánh hoặc sảnh chưa được chọn á !', {
@@ -175,6 +182,42 @@ const Bill = () => {
 
         return total;
     };
+
+
+    const tokenFromCookie = Cookies.get('token_user');
+    let id = null;
+    if (tokenFromCookie) {
+        const decodedToken = jwt_decode(tokenFromCookie);
+        id = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+      }
+    // Lấy ID của sảnh (hall) đã chọn
+    const selectedHallIdDo = selectedHalls.length > 0 ? selectedHalls[0].hallId : null;
+
+    const orderData = {
+        userId: id, // Thay bằng ID người dùng đang đăng nhập
+        branch: selectedBranch ? selectedBranch.branchId : null, // ID của chi nhánh đã chọn
+        halls: selectedHallIdDo, // ID của sảnh đã chọn
+        selectedMenus: selectedMenus, // Danh sách ID của các món ăn đã chọn
+    };
+    const sendOrderData = () => {
+        fetch('https://your-api-endpoint.com/submit-order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(orderData),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Đã gửi đơn hàng thành công:', data);
+                // Thực hiện xử lý hoặc hiển thị thông báo tùy ý sau khi gửi đơn hàng thành công.
+            })
+            .catch(error => {
+                console.error('Lỗi khi gửi đơn hàng:', error);
+                // Xử lý lỗi hoặc hiển thị thông báo lỗi nếu có.
+            });
+    };
+
     return (
         <div className="bill">
             <div className="bill-page">
@@ -285,39 +328,43 @@ const Bill = () => {
                 </div>
                 <div className="selected-items">
                     <div className="selected-items-content" style={{ overflowY: 'auto', maxHeight: '800px' }}>
-                        <h2>Chi nhánh đã chọn:</h2>
-                        {selectedBranch ? (
-                            <div className="center-content">
-                                <img
-                                    src={selectedBranch.image}
-                                    alt={selectedBranch.name}
-                                    style={{ width: '100%', height: '250px' }}
-                                />
-                                <h3><b>{selectedBranch.name}</b></h3> {/* Hiển thị tên chi nhánh */}
+                        {selectedBranch && (
+                            <div>
+                                <h2>Chi nhánh đã chọn:</h2>
+                                <div className="center-content">
+                                    <img
+                                        src={selectedBranch.image}
+                                        alt={selectedBranch.name}
+                                        style={{ width: '100%', height: '250px' }}
+                                    />
+                                    <h3><b>{selectedBranch.name}</b></h3>
+                                </div>
+                                <hr />
                             </div>
-                        ) : 'Chưa chọn chi nhánh'}
-                        <hr></hr>
+                        )}
 
-                        <h2>Hội trường đã chọn:</h2>
-                        {selectedHalls.length > 0 ? (
-                            <div className="center-content">
-                                {selectedHalls.map((hall, index) => (
-                                    <div key={index}>
-                                        <img
-                                            src={hall.image}
-                                            alt={hall.name}
-                                            style={{ width: '100%', height: '250px' }}
-                                        />
-                                        <h3><b>{hall.name}</b></h3>
-                                    </div>
-                                ))}
+                        {selectedHalls.length > 0 && (
+                            <div>
+                                <h2>Hội trường đã chọn:</h2>
+                                <div className="center-content">
+                                    {selectedHalls.map((hall, index) => (
+                                        <div key={index}>
+                                            <img
+                                                src={hall.image}
+                                                alt={hall.name}
+                                                style={{ width: '100%', height: '250px' }}
+                                            />
+                                            <h3><b>{hall.name}</b></h3>
+                                        </div>
+                                    ))}
+                                </div>
+                                <hr />
                             </div>
-                        ) : 'Chưa chọn hội trường'}
-                        <hr></hr>
+                        )}
+
                         <h2>Danh sách món ăn đã chọn:</h2>
                         {selectedMenus.length > 0 ? (
                             <div className="selected-menus">
-
                                 {selectedMenus.map((menuId, index) => {
                                     const selectedMenu = menus.find(menu => menu.menuId === menuId);
                                     return (
@@ -332,19 +379,18 @@ const Bill = () => {
                                         </div>
                                     );
                                 })}
-
                             </div>
                         ) : 'Chưa chọn món ăn'}
                     </div>
                     <div className="total-row">
                         <h5 className="total-label">Tổng tiền các món ăn: {calculateTotalPrice()} VND</h5>
-                        <span className="total-amount">
-
-                        </span>
+                        <span className="total-amount"></span>
                     </div>
                 </div>
+
             </div>
         </div>
+
     );
 };
 

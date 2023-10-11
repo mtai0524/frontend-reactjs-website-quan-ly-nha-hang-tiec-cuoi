@@ -7,19 +7,20 @@ import { useAuth } from "../../Context/AuthProvider";
 import { ToastContainer, toast } from 'react-toastify';
 
 const Login = () => {
-    const { setToken, setFirstName, setEmail } = useAuth();
+    const { setToken, setFirstName, setEmail, setId } = useAuth();
     const nav = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
 
-    const handleLoginSuccess = (token, firstName, email) => {
+    const handleLoginSuccess = (token, firstName, email, id) => {
         // Sau khi đăng nhập thành công
         // Lưu token và firstName vào Context
         setToken(token); // Lưu token vào trạng thái toàn cục
         setFirstName(firstName); // Lưu firstName vào trạng thái toàn cục
         setEmail(email); // Lưu firstName vào trạng thái toàn cục
+        setId(id); // Lưu firstName vào trạng thái toàn cục
         toast.success('Đăng nhập thành công!', {
             position: 'top-right',
             autoClose: 3000, // Thời gian hiển thị toast (3 giây)
@@ -28,10 +29,11 @@ const Login = () => {
             pauseOnHover: true,
             draggable: true,
           });
+          console.log("Id nè nha: " + id);
         // Chuyển hướng người dùng về trang home hoặc bất kỳ trang nào bạn muốn
         nav('/');
       }
-
+      
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -60,7 +62,8 @@ const Login = () => {
 
                 const email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']; // lấy từ jwt.io phân giải token
                 const firstName = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
-                handleLoginSuccess(token, firstName, email);
+                const id = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+                handleLoginSuccess(token, firstName, email, id);
 
             } else {
                 toast.error('Đăng nhập thất bại!', {
