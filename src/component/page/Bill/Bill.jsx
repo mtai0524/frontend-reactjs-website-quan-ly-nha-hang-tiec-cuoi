@@ -1,6 +1,7 @@
 import './Bill.scss';
 import { Accordion, Button, Card } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 
 const Bill = () => {
     const [branchs, setBranchs] = useState([]);
@@ -46,13 +47,19 @@ const Bill = () => {
         setSelectedHallIndex(null); // Đặt lại lựa chọn của hall khi chọn branch khác
         setSelectedHalls([]); // Xóa danh sách hội trường đã chọn
 
-        // Kiểm tra xem chi nhánh đã được chọn chưa
         if (selectedItems.includes(branchId)) {
-            // Nếu đã chọn, loại bỏ khỏi danh sách
             setSelectedItems(selectedItems.filter(item => item !== branchId));
+
         } else {
-            // Nếu chưa chọn, thêm vào danh sách
             setSelectedItems([...selectedItems, branchId]);
+            toast.success(`Đã chọn chi nhánh: ${branchs.find(branch => branch.branchId === branchId).name}`, {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
         }
     };
 
@@ -72,6 +79,14 @@ const Bill = () => {
             } else {
                 // Nếu không trùng, thêm vào danh sách
                 setSelectedHalls([selectedHall]);
+                toast.success(`Đã chọn sảnh: ${selectedHall.name}`, {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
             }
         }
     };
@@ -85,11 +100,81 @@ const Bill = () => {
         e.preventDefault();
 
         if (selectedBranch && selectedHalls.length > 0) {
+
             console.log("Chi nhánh đã chọn:", selectedBranch.name);
             console.log("Hội trường đã chọn:", selectedHalls.map(hall => hall.name).join(', '));
+            console.log("Danh sách món ăn đã chọn:", selectedMenus.map(menuId => {
+                const selectedMenu = menus.find(menu => menu.menuId === menuId);
+                return selectedMenu ? selectedMenu.name : '';
+            }).join(', '));
+        }
+        else {
+            toast.error('Chi nhánh hoặc sảnh chưa được chọn á !', {
+                position: 'top-right',
+                autoClose: 3000, // Thời gian hiển thị toast (3 giây)
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
         }
     };
 
+
+    const [menus, setMenus] = useState([]);
+    const [selectedMenus, setSelectedMenus] = useState([]);
+    // Tải dữ liệu từ API khi component được render
+    useEffect(() => {
+        fetch('https://localhost:7296/api/menu')
+            .then(response => response.json())
+            .then(data => setMenus(data))
+            .catch(error => console.error('Error fetching data:', error));
+    }, []);
+    // Sử dụng reduce để nhóm món ăn vào từng danh mục
+    const categorizedMenus = menus.reduce((categories, menu) => {
+        if (!categories[menu.categoryName]) {
+            categories[menu.categoryName] = [];
+        }
+        categories[menu.categoryName].push(menu);
+        return categories;
+    }, {});
+
+    const handleMenuCheckboxChange = (menuId) => {
+        const selectedMenu = menus.find(menu => menu.menuId === menuId);
+
+        if (selectedMenus.includes(menuId)) {
+            // Nếu đã chọn, loại bỏ món ăn khỏi danh sách
+            setSelectedMenus(selectedMenus.filter(id => id !== menuId));
+            toast.error(`Đã hủy món: ${selectedMenu.name}`, {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        } else {
+            // Nếu chưa chọn, thêm món ăn vào danh sách
+            setSelectedMenus([...selectedMenus, menuId]);
+            toast.success(`Đã chọn món: ${selectedMenu.name}`, {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
+    };
+
+    const calculateTotalPrice = () => {
+        const total = selectedMenus.reduce((acc, menuId) => {
+            const selectedMenu = menus.find(menu => menu.menuId === menuId);
+            return acc + selectedMenu.price;
+        }, 0);
+
+        return total;
+    };
     return (
         <div className="bill">
             <div className="bill-page">
@@ -162,6 +247,38 @@ const Bill = () => {
                                     ))}
                                 </Accordion.Body>
                             </Accordion.Item>
+
+                            {Object.entries(categorizedMenus).map(([categoryName, categoryMenus]) => (
+                                <Accordion.Item key={categoryName} eventKey={categoryName}>
+                                    <Accordion.Header>{categoryName}</Accordion.Header>
+                                    <Accordion.Body className='body'>
+                                        {categoryMenus.map(menu => (
+                                            <Card key={menu.menuId} style={{ width: '18rem' }}>
+                                                <Card.Img className='image-fixed-height' variant="top" src={menu.image} />
+                                                <Card.Body>
+                                                    <Card.Title>{menu.name}</Card.Title>
+                                                    <Card.Text>{menu.price}</Card.Text>
+                                                    <Card.Text>{menu.description}</Card.Text>
+                                                    <Card.Text>{menu.categoryName}</Card.Text>
+                                                    <Button variant="primary">Go somewhere</Button>
+                                                    <div className="form-check">
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="checkbox"
+                                                            value=""
+                                                            id={`flexCheckDefault-${menu.menuId}`}
+                                                            checked={selectedMenus.includes(menu.menuId)}
+                                                            onChange={() => handleMenuCheckboxChange(menu.menuId)}
+                                                        />
+                                                    </div>
+                                                </Card.Body>
+                                            </Card>
+                                        ))}
+                                    </Accordion.Body>
+                                </Accordion.Item>
+                            ))}
+
+
                         </Accordion>
                         <Button variant="primary" type="submit">Submit</Button>
                     </form>
@@ -176,9 +293,10 @@ const Bill = () => {
                                     alt={selectedBranch.name}
                                     style={{ width: '100%', height: '250px' }}
                                 />
-                                <p><b>{selectedBranch.name}</b></p> {/* Hiển thị tên chi nhánh */}
+                                <h3><b>{selectedBranch.name}</b></h3> {/* Hiển thị tên chi nhánh */}
                             </div>
                         ) : 'Chưa chọn chi nhánh'}
+                        <hr></hr>
 
                         <h2>Hội trường đã chọn:</h2>
                         {selectedHalls.length > 0 ? (
@@ -190,32 +308,41 @@ const Bill = () => {
                                             alt={hall.name}
                                             style={{ width: '100%', height: '250px' }}
                                         />
-                                        <p><b>{hall.name}</b></p>
+                                        <h3><b>{hall.name}</b></h3>
                                     </div>
                                 ))}
                             </div>
                         ) : 'Chưa chọn hội trường'}
-
-                        <h2>Hội trường đã chọn:</h2>
-                        {selectedHalls.length > 0 ? (
-                            <div className="center-content">
-                                {selectedHalls.map((hall, index) => (
-                                    <div key={index}>
-                                        <img
-                                            src={hall.image}
-                                            alt={hall.name}
-                                            style={{ width: '100%', height: '250px' }}
-                                        />
-                                        <p><b>{hall.name}</b></p>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : 'Chưa chọn hội trường'}
+                        <hr></hr>
                         <h2>Danh sách món ăn đã chọn:</h2>
+                        {selectedMenus.length > 0 ? (
+                            <div className="selected-menus">
+
+                                {selectedMenus.map((menuId, index) => {
+                                    const selectedMenu = menus.find(menu => menu.menuId === menuId);
+                                    return (
+                                        <div key={index} className="selected-menu">
+                                            <div className="menu-image">
+                                                <img src={selectedMenu.image} alt={selectedMenu.name} />
+                                            </div>
+                                            <div className="menu-details">
+                                                <h4>{selectedMenu.name}</h4>
+                                                <p>Giá: {selectedMenu.price} VND</p>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+
+                            </div>
+                        ) : 'Chưa chọn món ăn'}
+                    </div>
+                    <div className="total-row">
+                        <h5 className="total-label">Tổng tiền các món ăn: {calculateTotalPrice()} VND</h5>
+                        <span className="total-amount">
+
+                        </span>
                     </div>
                 </div>
-
-
             </div>
         </div>
     );

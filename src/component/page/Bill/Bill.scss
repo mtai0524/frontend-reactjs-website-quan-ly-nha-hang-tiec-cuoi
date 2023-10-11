@@ -1,3 +1,23 @@
+.selected-menus {
+    display: flex; /* Sử dụng hiển thị theo kiểu flexbox để các món ăn nằm cùng một hàng */
+    flex-wrap: wrap; /* Cho phép các món ăn xuống dòng nếu không đủ không gian */
+    gap: 20px; /* Khoảng cách giữa các món ăn */
+}
+
+.selected-menu {
+    display: flex; /* Sử dụng hiển thị theo kiểu flexbox để hình ảnh và chi tiết nằm cùng một hàng */
+    align-items: center; /* Canh giữa nội dung trong món ăn */
+}
+
+.menu-image {
+    width: 100px; /* Độ rộng của phần hình ảnh */
+    margin-right: 10px; /* Khoảng cách giữa hình ảnh và chi tiết */
+}
+
+img {
+    max-width: 100%; /* Hình ảnh tự co giãn để vừa vào phần chi tiết */
+}
+
 .selected-items {
     width: 25%;
     position: fixed;
