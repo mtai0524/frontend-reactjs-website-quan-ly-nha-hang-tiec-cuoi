@@ -6,6 +6,7 @@ const Bill = () => {
     const [branchs, setBranchs] = useState([]);
     const [halls, setHalls] = useState([]);
     const [selectedBranchId, setSelectedBranchId] = useState(null);
+    const [selectedHallId, setSelectedHallId] = useState(null);
     const [selectedHallIndex, setSelectedHallIndex] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
     const [selectedHalls, setSelectedHalls] = useState([]);
@@ -39,19 +40,26 @@ const Bill = () => {
         }
     };
 
-    const handleHallCheckboxChange = (hallIndex) => {
-        setSelectedHallIndex(hallIndex);
+    const handleHallCheckboxChange = (hallId) => {
+        setSelectedHallId(hallId);
     
         // Lấy thông tin hội trường đã chọn
-        const selectedHall = halls[hallIndex];
+        const selectedHall = halls.find(hall => hall.hallId === hallId);
     
-        // Kiểm tra xem hội trường đã chọn có trùng với hội trường đã lưu hay không
-        if (selectedHalls.some(hall => hall.hallId === selectedHall.hallId)) {
-            setSelectedHalls([selectedHall]);
-        } else {
-            setSelectedHalls([selectedHall]);
+        if (selectedHall) {
+            // Kiểm tra xem hội trường đã chọn có trùng với bất kỳ hội trường nào trong danh sách selectedHalls không
+            const isHallSelected = selectedHalls.some(hall => hall.hallId === selectedHall.hallId);
+    
+            if (isHallSelected) {
+                // Nếu trùng, loại bỏ khỏi danh sách
+                setSelectedHalls(selectedHalls.filter(hall => hall.hallId !== selectedHall.hallId));
+            } else {
+                // Nếu không trùng, thêm vào danh sách
+                setSelectedHalls([selectedHall]);
+            }
         }
     };
+    
     
 
     const selectedBranch = branchs.find(branch => branch.branchId === selectedBranchId);
@@ -129,8 +137,8 @@ const Bill = () => {
                                                         type="checkbox"
                                                         value=""
                                                         id={`flexCheckHall-${index}`}
-                                                        checked={index === selectedHallIndex}
-                                                        onChange={() => handleHallCheckboxChange(index)}
+                                                        checked={hall.hallId === selectedHallId}
+                                                        onChange={() => handleHallCheckboxChange(hall.hallId)}
                                                     />
                                                 </div>
                                             </Card.Body>
