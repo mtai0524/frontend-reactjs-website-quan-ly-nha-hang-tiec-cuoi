@@ -63,6 +63,14 @@ const Login = () => {
                 handleLoginSuccess(token, firstName, email);
 
             } else {
+                toast.error('Đăng nhập thất bại!', {
+                    position: 'top-right',
+                    autoClose: 3000, // Thời gian hiển thị toast (3 giây)
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                  });
                 console.error('Đăng nhập không thành công.');
             }
         } catch (error) {

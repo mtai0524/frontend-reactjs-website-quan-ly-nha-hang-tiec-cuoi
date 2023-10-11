@@ -113,7 +113,6 @@ const Header = () => {
                             <>
                                 <span className="nav-link text-black"> {email}</span>
                                 <button onClick={handleLogout} className="nav-link text-black">Đăng Xuất</button>
-                                {/* xin chào {firstName} */}
                             </>
                         ) : (
                             <Link className="nav-link text-black" to="/login">
@@ -131,7 +130,6 @@ const Header = () => {
                         <Link className="nav-link text-black">
                             <BsClipboardFill />
                         </Link>
-
                     </li>
                 </ul>
             </div>

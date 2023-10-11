@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie';
 import React, { createContext, useContext, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 
 const AuthContext = createContext();
 
@@ -14,6 +15,14 @@ export function AuthProvider({ children }) {
   };
   const logout = () => {
     // Xóa token khỏi cookie
+    toast.success('Đăng xuất thành công!', {
+      position: 'top-right',
+      autoClose: 3000, // Thời gian hiển thị toast (3 giây)
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
     Cookies.remove('token_user');
 
     // Đặt token và firstName thành null
