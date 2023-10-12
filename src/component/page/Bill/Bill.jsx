@@ -14,6 +14,41 @@ const Bill = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const [selectedHalls, setSelectedHalls] = useState([]);
     const [scrollY, setScrollY] = useState(0);
+
+    const [services, setServices] = useState([]);
+    const [selectedServices, setSelectedServices] = useState([]);
+    const [categorizedServices, setCategorizedServices] = useState({});
+    useEffect(() => {
+        fetch('https://localhost:7296/api/service')
+            .then(response => response.json())
+            .then(data => {
+                setServices(data);
+
+                // Nhóm dịch vụ vào từng danh mục
+                const categorized = data.reduce((categories, service) => {
+                    if (!categories[service.categoryName]) {
+                        categories[service.categoryName] = [];
+                    }
+                    categories[service.categoryName].push(service);
+                    return categories;
+                }, {});
+
+                setCategorizedServices(categorized);
+            })
+            .catch(error => console.error('Error fetching service data:', error));
+    }, []);
+
+    const handleServiceCheckboxChange = (serviceId) => {
+        if (selectedServices.includes(serviceId)) {
+            // Nếu đã chọn, loại bỏ dịch vụ khỏi danh sách
+            setSelectedServices(selectedServices.filter(id => id !== serviceId));
+        } else {
+            // Nếu chưa chọn, thêm dịch vụ vào danh sách
+            setSelectedServices([...selectedServices, serviceId]);
+        }
+    };
+
+
     useEffect(() => {
         const handleScroll = () => {
             setScrollY(window.scrollY);
@@ -182,12 +217,17 @@ const Bill = () => {
     };
 
     const calculateTotalPrice = () => {
-        const total = selectedMenus.reduce((acc, menuId) => {
+        const menuTotal = selectedMenus.reduce((acc, menuId) => {
             const selectedMenu = menus.find(menu => menu.menuId === menuId);
             return acc + selectedMenu.price;
         }, 0);
-
-        return total;
+    
+        const serviceTotal = selectedServices.reduce((acc, serviceId) => {
+            const selectedService = services.find(service => service.serviceId === serviceId);
+            return acc + selectedService.price;
+        }, 0);
+    
+        return menuTotal + serviceTotal;
     };
 
 
@@ -209,6 +249,11 @@ const Bill = () => {
             Price: 0, // Thêm giá trị theo đúng yêu cầu của OrderMenuRequest
             Quantity: 0, // Thêm giá trị theo đúng yêu cầu của OrderMenuRequest
             MenuID: menuId
+        })), // Danh sách các món ăn đã chọn dưới dạng danh sách OrderMenuRequest // Danh sách ID của các món ăn đã chọn
+        OrderServices: selectedServices.map(serviceId => ({
+            Price: 0, // Thêm giá trị theo đúng yêu cầu của OrderMenuRequest
+            Quantity: 0, // Thêm giá trị theo đúng yêu cầu của OrderMenuRequest
+            ServiceID: serviceId
         })) // Danh sách các món ăn đã chọn dưới dạng danh sách OrderMenuRequest // Danh sách ID của các món ăn đã chọn
     };
 
@@ -334,6 +379,36 @@ const Bill = () => {
                                 </Accordion.Item>
                             ))}
 
+                            {Object.entries(categorizedServices).map(([categoryName, categoryServices]) => (
+                                <Accordion.Item key={categoryName} eventKey={categoryName}>
+                                    <Accordion.Header>{categoryName}</Accordion.Header>
+                                    <Accordion.Body className='body'>
+                                        {categoryServices.map(service => (
+                                            <Card key={service.serviceId} style={{ width: '18rem' }}>
+                                                <Card.Img className='image-fixed-height' variant="top" src={service.image} />
+                                                <Card.Body>
+                                                    <Card.Title>{service.name}</Card.Title>
+                                                    <Card.Text>{service.price} VND</Card.Text>
+                                                    <Card.Text>{service.description}</Card.Text>
+                                                    <Button variant="primary">Chọn dịch vụ</Button>
+                                                    <div className="form-check">
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="checkbox"
+                                                            value=""
+                                                            id={`flexCheckDefault-${service.serviceId}`}
+                                                            checked={selectedServices.includes(service.serviceId)}
+                                                            onChange={() => handleServiceCheckboxChange(service.serviceId)}
+                                                        />
+                                                    </div>
+                                                </Card.Body>
+                                            </Card>
+                                        ))}
+                                    </Accordion.Body>
+                                </Accordion.Item>
+                            ))}
+
+
 
                         </Accordion>
                         <Button variant="primary" type="submit">Submit</Button>
@@ -395,6 +470,28 @@ const Bill = () => {
                             </div>
                         ) : 'Chưa chọn món ăn'}
                     </div>
+
+                    <h2>Dịch vụ đã chọn:</h2>
+                    {selectedServices.length > 0 ? (
+                        <div className="selected-menus">
+                            {selectedServices.map(serviceId => {
+                                const selectedService = services.find(service => service.serviceId === serviceId);
+                                return (
+                                    <div key={serviceId} className="selected-menu">
+                                        <div className="menu-image">
+                                            <img src={selectedService.image} alt={selectedService.name} />
+                                        </div>
+                                        <div className="menu-details">
+                                            <h4>{selectedService.name}</h4>
+                                            <p>Giá: {selectedService.price} VND</p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        'Chưa chọn dịch vụ'
+                    )}
                     <div className="total-row">
                         <h5 className="total-label">Tổng tiền các món ăn: {calculateTotalPrice()} VND</h5>
                         <span className="total-amount"></span>
