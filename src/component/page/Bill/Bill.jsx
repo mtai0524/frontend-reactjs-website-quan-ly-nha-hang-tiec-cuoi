@@ -111,8 +111,15 @@ const Bill = () => {
             }).join(', '));
 
             // Gửi đơn hàng nếu các điều kiện đều đúng
-    console.log('orderData:', orderData);
-
+            console.log('orderData:', orderData);
+            toast.success('Đặt nhà hàng thành công gòi á !', {
+                position: 'top-right',
+                autoClose: 3000, // Thời gian hiển thị toast (3 giây)
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
             sendOrderData();
         }
         else {
@@ -189,18 +196,24 @@ const Bill = () => {
     if (tokenFromCookie) {
         const decodedToken = jwt_decode(tokenFromCookie);
         id = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
-      }
+    }
+
     // Lấy ID của sảnh (hall) đã chọn
     const selectedHallIdDo = selectedHalls.length > 0 ? selectedHalls[0].hallId : null;
 
     const orderData = {
-        userId: id, // Thay bằng ID người dùng đang đăng nhập
-        branch: selectedBranch ? selectedBranch.branchId : null, // ID của chi nhánh đã chọn
-        halls: selectedHallIdDo, // ID của sảnh đã chọn
-        selectedMenus: selectedMenus, // Danh sách ID của các món ăn đã chọn
+        UserId: id, // Thay bằng ID người dùng đang đăng nhập
+        BranchId: selectedBranch ? selectedBranch.branchId : null, // ID của chi nhánh đã chọn
+        HallId: selectedHallIdDo, // ID của sảnh đã chọn
+        OrderMenus: selectedMenus.map(menuId => ({
+            Price: 0, // Thêm giá trị theo đúng yêu cầu của OrderMenuRequest
+            Quantity: 0, // Thêm giá trị theo đúng yêu cầu của OrderMenuRequest
+            MenuID: menuId
+        })) // Danh sách các món ăn đã chọn dưới dạng danh sách OrderMenuRequest // Danh sách ID của các món ăn đã chọn
     };
+
     const sendOrderData = () => {
-        fetch('https://your-api-endpoint.com/submit-order', {
+        fetch('https://localhost:7296/api/invoice', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
