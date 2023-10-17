@@ -11,6 +11,7 @@ import Bill from "./component/page/Bill/Bill";
 import ListMenu from "./component/page/ListMenu/ListMenu";
 import Profile from "./component/page/Profile/Profile";
 import { AuthProvider } from "./component/Context/AuthProvider";
+import Feedback from "react-bootstrap/esm/Feedback";
 
 
 
@@ -34,6 +35,7 @@ const App = () => {
           <Route path="/login/profile" element={<Profile />} />
 
           <Route path="/login/register" element={<Register />} />
+          <Route path="/feedback" element={<Feedback />} />
         </Routes>
         <Footer />
       </BrowserRouter>

@@ -51,10 +51,6 @@ const Header = () => {
         {
             title: "Service",
             active: false
-        },
-        {
-            title: "Contact",
-            active: false
         }
 
     ]
@@ -118,9 +114,13 @@ const Header = () => {
                             <Link className="nav-link text-black" to="/login">
                                 Đăng Nhập
                             </Link>
+                            
                         )}
                     </li>
                     <li>
+                    <Link className="nav-link text-black" to="/feedback">
+                                feedback
+                            </Link>
                         <Link to='profile' className="nav-link text-black" >
                             <BsFillPersonFill />
                         </Link>

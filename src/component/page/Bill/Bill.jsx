@@ -469,9 +469,8 @@ const Bill = () => {
                                 })}
                             </div>
                         ) : 'Chưa chọn món ăn'}
-                    </div>
-
-                    <h2>Dịch vụ đã chọn:</h2>
+                        
+                         <h2>Dịch vụ đã chọn:</h2>
                     {selectedServices.length > 0 ? (
                         <div className="selected-menus">
                             {selectedServices.map(serviceId => {
@@ -492,6 +491,9 @@ const Bill = () => {
                     ) : (
                         'Chưa chọn dịch vụ'
                     )}
+                    </div>
+
+                   
                     <div className="total-row">
                         <h5 className="total-label">Tổng tiền các món ăn: {calculateTotalPrice()} VND</h5>
                         <span className="total-amount"></span>

@@ -1,3 +1,53 @@
-.branch {
-    margin-top: 100px;
-}
+.fixed-height-image {
+    height: 100%; /* Đảm bảo hình ảnh có cùng chiều cao với div cha */
+    width: 100%; /* Đảm bảo hình ảnh có cùng chiều rộng với div cha */
+    object-fit: cover; /* Đảm bảo hình ảnh bao phủ toàn bộ div cha */
+  }
+  
+  .image-container {
+    height: 200px; /* Thay đổi chiều cao theo ý muốn */
+    overflow: hidden; /* Đảm bảo hình ảnh không tràn ra ngoài div cha */
+  }
+/* ListBranch.scss */
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    float: left; /* Hiển thị avatar bên trái */
+    margin-right: 10px; /* Tạo khoảng cách giữa avatar và email */
+  }
+  
+  .feedback-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    margin-bottom: 5px;
+  }
+  .email-info {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Chia đôi khoảng trống bên phải của hình ảnh avatar */
+  }
+  
+  .email {
+    font-weight: bold;
+  }
+  
+  .feedback-date {
+    color: #999;
+    width:30%;
+  }  
+  
+  .feedback-email {
+    position: absolute;
+    top: 10px; /* Đặt top để đặt vị trí của email ở góc trên phải của modal */
+    right: 10px; /* Đặt right để đặt vị trí của email ở góc trên phải của modal */
+    display: flex;
+    align-items: center;
+  }
+  
+ 
+  

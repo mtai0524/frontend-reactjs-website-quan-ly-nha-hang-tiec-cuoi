@@ -1,6 +1,8 @@
 ## setup cùng tài
-yarn add image-compressor
+yarn add @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons
 
+npm install --save @fortawesome/react-fontawesome@0.1.14
+npm install --save @fortawesome/fontawesome-svg-core@1.2.36
 
 # Getting Started with Create React App
 
