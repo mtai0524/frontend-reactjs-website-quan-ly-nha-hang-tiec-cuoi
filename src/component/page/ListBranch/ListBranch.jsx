@@ -15,9 +15,15 @@ const ListBranch = () => {
     const [content, setContent] = useState('');
     const [rating, setRating] = useState(0);
     const [branchId, setBranchId] = useState(0);
-    const openModal = (branchId) => {
+    const [branchName, setBranchName] = useState('');
+    const [currentModalBranchId, setCurrentModalBranchId] = useState(null); // State để lưu branchId của modal hiện tại
+
+    const openModal = (branchId, branchName) => {
+        // Gán branchId của modal hiện tại vào state
+        setCurrentModalBranchId(branchId);
         // Gọi hàm fetchFeedbacksByBranch để tải dữ liệu phản hồi và lưu vào feedbackData state.
         fetchFeedbacksByBranch(branchId);
+        setBranchName(branchName);
         setShowModal(true);
     };
     function formatDate(dateString) {
@@ -84,14 +90,14 @@ const ListBranch = () => {
     }
     const submitFeedback = () => {
         console.log(id);
-    
+
         const feedbackData = {
             userId: id, // Lấy userId từ token
             content: content, // Lấy content từ state
             rating: rating, // Lấy rating từ state
-            branchId: branchId, // Lấy branchId từ state
+            branchId: currentModalBranchId, // Lấy branchId từ state
         };
-    
+
         fetch('https://localhost:7296/api/feedback', {
             method: 'POST',
             headers: {
@@ -100,18 +106,18 @@ const ListBranch = () => {
             },
             body: JSON.stringify(feedbackData),
         })
-        .then((response) => {
-            if (response.ok) {
-                console.log('Phản hồi đã được tạo thành công');
-                // Đóng modal hoặc làm điều gì đó khác sau khi gửi phản hồi thành công
-                setShowModal(false);
-            } else {
-                console.error('Lỗi khi tạo phản hồi');
-            }
-        });
+            .then((response) => {
+                if (response.ok) {
+                    console.log('Phản hồi đã được tạo thành công');
+                    // Đóng modal hoặc làm điều gì đó khác sau khi gửi phản hồi thành công
+                    setShowModal(false);
+                } else {
+                    console.error('Lỗi khi tạo phản hồi');
+                }
+            });
     };
-    
-    
+
+
     return (
         <>
             <Row className='branch'>
@@ -128,10 +134,11 @@ const ListBranch = () => {
                                 <Card.Title>{branch.phone}</Card.Title>
                                 <Button
                                     variant="primary"
-                                    onClick={() => openModal(branch.branchId)}
+                                    onClick={() => openModal(branch.branchId, branch.name)}
                                 >
                                     Xem phản hồi
                                 </Button>
+            
                             </Card.Body>
                         </Card>
                     </Col>
@@ -140,7 +147,7 @@ const ListBranch = () => {
             </Row>
             <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
                 <Modal.Header closeButton>
-                    <Modal.Title>Danh sách phản hồi</Modal.Title>
+                    <Modal.Title>Danh sách phản hồi {branchName}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="feedback-list-container">
@@ -150,7 +157,15 @@ const ListBranch = () => {
                                 <div className="email-info">
                                     <p className="email">{feedback.id.email}</p>
                                     <p className="content">{feedback.content}</p>
-                                    <p className="rating">{renderStarRating(feedback.rating)}</p>
+                                    <p className="rating">
+                                        <Rating
+                                            initialRating={feedback.rating} // Sử dụng giá trị rating từ dữ liệu
+                                            emptySymbol={<FontAwesomeIcon icon={faStar} style={{ color: 'gray' }} />}
+                                            fullSymbol={<FontAwesomeIcon icon={faStar} style={{ color: 'gold' }} />}
+                                            fractions={2} // Cho phép rating với nửa ngôi sao
+                                            readonly // Để ngăn người dùng thay đổi rating trong danh sách phản hồi
+                                        />
+                                    </p>
                                 </div>
                                 <p className="feedback-date">{formatDate(feedback.feedbackDate)}</p>
                                 {/* Và bất kỳ thông tin nào khác bạn muốn hiển thị */}
@@ -162,19 +177,22 @@ const ListBranch = () => {
                     <div className="feedback-input">
                         <h4>Nhập phản hồi của bạn</h4>
                         <textarea
-    placeholder="Nhập phản hồi của bạn..."
-    rows="4"
-    cols="50"
-    value={content}
-    onChange={(e) => setContent(e.target.value)}
-></textarea>
-<input
-    type="number"
-    placeholder="Điểm đánh giá"
-    value={rating}
-    onChange={(e) => setRating(e.target.value)}
-/>
-                        <button onClick={submitFeedback}>Gửi phản hồi</button>
+                            placeholder="Nhập phản hồi của bạn..."
+                            rows="4"
+                            cols="50"
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                        ></textarea>
+
+                        <Rating
+                            initialRating={rating}
+                            emptySymbol={<FontAwesomeIcon icon={faStar} style={{ color: 'gray' }} />}
+                            fullSymbol={<FontAwesomeIcon icon={faStar} style={{ color: 'gold' }} />}
+                            fractions={2} // Cho phép chọn 1 nửa ngôi sao
+                            onClick={(value) => setRating(value)}
+                        />
+                      
+                        <button className='btn btn-success' onClick={submitFeedback}>Gửi phản hồi</button>
                     </div>
                 </Modal.Body>
 
