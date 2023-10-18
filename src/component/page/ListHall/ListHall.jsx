@@ -1,93 +1,80 @@
-import { useState } from 'react'
-
-import './ListHall.scss'
-import { Button, Form } from 'react-bootstrap'
+import React, { useState, useEffect } from 'react';
+import { Button, Form, Card, Row, Col } from 'react-bootstrap';
 
 const ListHall = () => {
-    const initalHall = [
-        {
-            title: "Hall 1 ",
-            img_url: require("../../../assets/assets/img_6.png"),
-            desc: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-        },
-        {
-            title: "Hall 2 ",
-            img_url: require("../../../assets/assets/img_5.png"),
-            desc: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-        },
-        {
-            title: "Hall 3 ",
-            img_url: require("../../../assets/assets/img_5.png"),
-            desc: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-        },
-        {
-            title: "Hall 4 ",
-            img_url: require("../../../assets/assets/Untitled.png"),
-            desc: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-        },
-        {
-            title: "Hall 5 ",
-            img_url: require("../../../assets/assets/img_8.png"),
-            desc: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-        },
+  const [hallData, setHallData] = useState([]);
+  const [searchResult, setSearchResult] = useState([]);
+  const [searchKeyword, setSearchKeyword] = useState('');
 
-    ]
-    const [hall] = useState(initalHall)
+  useEffect(() => {
+    // Fetch data from the API
+    fetch('https://localhost:7296/api/hall')
+      .then((response) => response.json())
+      .then((data) => setHallData(data));
+  }, []);
 
-    // =====Search=====
-    const [searchResult, setSearchResult] = useState([]);
+  const handleSearch = (e) => {
+    e.preventDefault();
 
-    const handleSearch = (e) => {
-        e.preventDefault(); // Ngăn chặn sự kiện gửi form mặc định
+    const keyword = searchKeyword.toLowerCase();
 
-        // Lấy giá trị từ input tìm kiếm
-        const searchKeyword = e.target.kw.value.toLowerCase();
+    // Filter the halls based on the search keyword
+    const searchResults = hallData.filter((item) =>
+      item.name.toLowerCase().includes(keyword)
+    );
 
-        // Sử dụng hàm filter để tìm kiếm trong danh sách menu
-        const searchResults = hall.filter(item =>
-            item.name.toLowerCase().includes(searchKeyword)
-        );
+    setSearchResult(searchResults);
+  };
 
-        // Cập nhật trạng thái searchResult với kết quả tìm kiếm
-        setSearchResult(searchResults);
-    };
-    return (
-        <>
-            <div className='tilte'>
-                <h1>Danh Sách Sảnh Cưới</h1>
+  return (
+    <div>
+      <div className='title'>
+        <h1>Danh Sách Sảnh Cưới</h1>
+        <Form className='filter d-flex' onSubmit={handleSearch}>
+          {/* ... (previous code) */}
+        </Form>
+      </div>
+      <div className='listhall' id='listhall'>
+        <div className='listhall__container'>
+          <Row xs={1} sm={2} md={3}>
+            {searchResult.length > 0
+              ? searchResult.map((item) => (
+                  <Col key={item.hallId}>
+                    <Card className='listhall__item'>
+                      <Card.Img
+                        variant='top'
+                        src={item.image}
+                        className='card-img-custom' // Apply the custom class
+                      />
+                      <Card.Body>
+                        <Card.Title>{item.name}</Card.Title>
+                        <Card.Text>{item.description}</Card.Text>
+                        <Card.Text>Chi nhánh: {item.branchName}</Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))
+              : hallData.map((item) => (
+                  <Col key={item.hallId}>
+                    <Card className='listhall__item'>
+                      <Card.Img
+                        variant='top'
+                        src={item.image}
+                        className='card-img-custom' // Apply the custom class
+                      />
+                      <Card.Body>
+                        <Card.Title>{item.name}</Card.Title>
+                        <Card.Text>{item.description}</Card.Text>
+                        <Card.Text>Chi nhánh: {item.branchName}</Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))}
+          </Row>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-
-                <Form className="filter d-flex" onSubmit={handleSearch}>
-                    <Form.Control
-                        type="text"
-                        placeholder="Nhập sảnh cưới bạn muốn tìm kiếm"
-                        name="kw"
-                        className="me-2"
-                        aria-label="Search"
-                    />
-                    <Button type='submit'>Search</Button>
-                </Form>
-            </div>
-            <div className='listhall' id='listhall'>
-                <div className='listhall__container '>
-                    <ul className='listhall__list'>{
-                        hall.map(item => {
-                            return <li className='listhall__item' key={item.title}>
-                                <div className='listhall__item--img'>
-                                    <img src={item.img_url} alt=""></img>
-                                </div>
-                                <div className='listhall__item--content'>
-                                    <h3>{item.title}</h3>
-                                    <p>{item.desc}</p>
-                                </div>
-                            </li>
-                        })
-                    }</ul>
-                </div>
-            </div>
-        </>
-
-
-    )
-}
 export default ListHall;

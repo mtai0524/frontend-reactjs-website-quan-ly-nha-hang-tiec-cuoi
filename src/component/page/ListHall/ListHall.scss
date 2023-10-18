@@ -77,3 +77,31 @@
 
 
 }
+
+/* ListHall.css */
+.listhall__container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .listhall__item {
+    width: 30%;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .listhall__item img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .listhall__item--content {
+    padding: 10px;
+  }
+  .card-img-custom {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+  }

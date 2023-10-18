@@ -7,6 +7,8 @@ import { faStar, faStarHalfAlt } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
 import jwt_decode from 'jwt-decode';
 import Rating from 'react-rating';
+import { ToastContainer, toast } from 'react-toastify';
+
 const ListBranch = () => {
     const [branches, setBranches] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -111,6 +113,14 @@ const ListBranch = () => {
                     console.log('Phản hồi đã được tạo thành công');
                     // Đóng modal hoặc làm điều gì đó khác sau khi gửi phản hồi thành công
                     setShowModal(false);
+                    toast.success('Đă gửi phản hồi !', {
+                        position: 'top-right',
+                        autoClose: 3000, // Thời gian hiển thị toast (3 giây)
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                    });
                 } else {
                     console.error('Lỗi khi tạo phản hồi');
                 }
@@ -120,31 +130,30 @@ const ListBranch = () => {
 
     return (
         <>
-            <Row className='branch'>
-                {branches.map((branch) => (
-                    <Col xs={12} md={3} key={branch.branchId}>
-                        <Card style={{ width: '18rem' }}>
-                            <div className="image-container">
-                                <Card.Img variant="top" src={branch.image} className="fixed-height-image" />
-                            </div>
-                            <Card.Body>
-                                <Card.Title>{branch.name}</Card.Title>
-                                <Card.Title>{branch.description}</Card.Title>
-                                <Card.Title>{branch.address}</Card.Title>
-                                <Card.Title>{branch.phone}</Card.Title>
-                                <Button
-                                    variant="primary"
-                                    onClick={() => openModal(branch.branchId, branch.name)}
-                                >
-                                    Xem phản hồi
-                                </Button>
+            <Row className="branch">
+  {branches.map((branch) => (
+    <Col xs={12} md={3} key={branch.branchId}>
+      <Card className="branch-card">
+        <div className="image-container">
+          <Card.Img variant="top" src={branch.image} className="fixed-height-image" />
+        </div>
+        <Card.Body>
+          <Card.Title className="branch-name">{branch.name}</Card.Title>
+          <Card.Text className="branch-description">Mô tả: {branch.description}</Card.Text>
+          <Card.Text className="branch-info">
+            <span>Địa chỉ: {branch.address}</span>
+            <span>Số điện thoại: {branch.phone}</span>
+          </Card.Text>
+          <button onClick={() => openModal(branch.branchId, branch.name)} className='btn btn-success'>
+            
+            Xem phản hồi
+          </button>
+        </Card.Body>
+      </Card>
+    </Col>
+  ))}
+</Row>
 
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                ))}
-
-            </Row>
             <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
                 <Modal.Header closeButton>
                     <Modal.Title>Danh sách phản hồi {branchName}</Modal.Title>

@@ -1,11 +1,53 @@
-.fixed-height-image {
-    height: 100%; /* Đảm bảo hình ảnh có cùng chiều cao với div cha */
-    width: 100%; /* Đảm bảo hình ảnh có cùng chiều rộng với div cha */
-    object-fit: cover; /* Đảm bảo hình ảnh bao phủ toàn bộ div cha */
+.branch-card {
+  margin: 10px;
+  border: 1px solid #e2e2e2;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
+}
+.branch {
+  margin-top: 120px; /* Thêm margin top 20px */
+  margin-right: 20px; /* Thêm margin right 20px */
+  margin-left: 20px;
+}
+.branch-name {
+  font-weight: bold;
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+
+.branch-description {
+  margin-bottom: 10px;
+}
+
+.branch-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #555;
+
+  span {
+    flex: 1;
+  }
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.fixed-height-image {
+  height: 200px;
+  width: 100%;
+  object-fit: cover;
+}
   
   .image-container {
-    height: 200px; /* Thay đổi chiều cao theo ý muốn */
+    height: 200px;
     overflow: hidden; /* Đảm bảo hình ảnh không tràn ra ngoài div cha */
   }
 /* ListBranch.scss */

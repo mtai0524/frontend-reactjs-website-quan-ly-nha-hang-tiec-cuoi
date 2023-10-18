@@ -411,7 +411,7 @@ const Bill = () => {
 
 
                         </Accordion>
-                        <Button variant="primary" type="submit">Submit</Button>
+                        <button style={{marginTop:'20px'}} className='btn btn-success' variant="primary" type="submit">Xác nhận đặt nhà hàng</button>
                     </form>
                 </div>
                 <div className="selected-items">
