@@ -138,7 +138,7 @@ const ListBranch = () => {
                                 >
                                     Xem phản hồi
                                 </Button>
-            
+
                             </Card.Body>
                         </Card>
                     </Col>
@@ -155,8 +155,14 @@ const ListBranch = () => {
                             <div key={feedback.feedbackId} className="feedback-item">
                                 <Card.Img className="avatar" variant="top" src={feedback.id.avatar} />
                                 <div className="email-info">
-                                    <p className="email">{feedback.id.email}</p>
-                                    <p className="content">{feedback.content}</p>
+                                <p className="email">{feedback.id.email}</p>
+                                <p className="feedback-date">{formatDate(feedback.feedbackDate)}</p>
+
+                                    <div className="content">
+                                        <textarea
+                                            style={{ width: '100%' }}
+                                        >{feedback.content}</textarea>
+                                    </div>
                                     <p className="rating">
                                         <Rating
                                             initialRating={feedback.rating} // Sử dụng giá trị rating từ dữ liệu
@@ -167,7 +173,6 @@ const ListBranch = () => {
                                         />
                                     </p>
                                 </div>
-                                <p className="feedback-date">{formatDate(feedback.feedbackDate)}</p>
                                 {/* Và bất kỳ thông tin nào khác bạn muốn hiển thị */}
                             </div>
                         ))}
@@ -175,25 +180,35 @@ const ListBranch = () => {
 
                     {/* Vùng nhập phản hồi */}
                     <div className="feedback-input">
-                        <h4>Nhập phản hồi của bạn</h4>
-                        <textarea
-                            placeholder="Nhập phản hồi của bạn..."
-                            rows="4"
-                            cols="50"
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                        ></textarea>
+                        <div className="content">
+                            <h4>Nhập phản hồi của bạn</h4>
+                            <textarea
+                                placeholder="Nhập phản hồi của bạn..."
+                                rows="4"
+                                value={content}
+                                onChange={(e) => setContent(e.target.value)}
+                                style={{ width: '100%' }}
+                            ></textarea>
+                        </div>
 
-                        <Rating
-                            initialRating={rating}
-                            emptySymbol={<FontAwesomeIcon icon={faStar} style={{ color: 'gray' }} />}
-                            fullSymbol={<FontAwesomeIcon icon={faStar} style={{ color: 'gold' }} />}
-                            fractions={2} // Cho phép chọn 1 nửa ngôi sao
-                            onClick={(value) => setRating(value)}
-                        />
-                      
-                        <button className='btn btn-success' onClick={submitFeedback}>Gửi phản hồi</button>
+                        <div className="rating-button-container">
+                            <div className="rating">
+                                <Rating
+                                    initialRating={rating}
+                                    emptySymbol={<FontAwesomeIcon icon={faStar} style={{ color: 'gray' }} />}
+                                    fullSymbol={<FontAwesomeIcon icon={faStar} style={{ color: 'gold' }} />}
+                                    fractions={2}
+                                    onClick={(value) => setRating(value)}
+                                />
+                            </div>
+
+                            <div className="button-container">
+                                <button className='btn btn-success' onClick={submitFeedback}>Gửi phản hồi</button>
+                            </div>
+                        </div>
                     </div>
+
+
                 </Modal.Body>
 
                 <Modal.Footer>

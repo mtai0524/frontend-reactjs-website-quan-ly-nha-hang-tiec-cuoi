@@ -39,10 +39,15 @@
   .email {
     font-weight: bold;
   }
-  
+  .content textarea{
+    margin-top: 8px;
+  }
   .feedback-date {
+    margin-top: -2%;
     color: #999;
     width:30%;
+    white-space: nowrap;
+    height: 10px;
   }  
   
   .feedback-email {
@@ -52,6 +57,47 @@
     display: flex;
     align-items: center;
   }
+  .feedback-input {
+    padding: 20px;
+    /* Thêm hiệu ứng viền nổi 3D */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s;
+}
+
+.feedback-input:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+}
+.feedback-input {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.content {
+  width: 100%;
+}
+
+
+.feedback-input {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.rating-button-container {
+  display: flex;
+  align-items: center;
+}
+
+.rating {
+  flex: 1;
+}
+
+.button-container {
+  margin-left: 20px; /* Điều chỉnh khoảng cách giữa rating và nút */
+}
+
+
   
  
   
