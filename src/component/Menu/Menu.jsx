@@ -10,26 +10,27 @@ const Menu = () => {
         {
             title: "gỏi ngó sen ",
             img_url: require("../../assets/assets/img_6.png"),
-            desc: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            desc: "Món ngon đến từ ngó sen rất đậm vị"
         },
         {
             title: "gà nướng muối ớt ",
             img_url: require("../../assets/assets/img_5.png"),
-            desc: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            desc: "Món gà sẽ làm bạn có trải nghiệm ngon"
         },
         {
             title: "gỏi tôm với cổ hủ dừa ",
             img_url: require("../../assets/assets/img_4.png"),
-            desc: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            desc: "Món ngon tươi ngọt ngon và xịn"
         }
 
     ]
     const [food, setFoods] = useState(initalFood)
+    
     return (
         <div className='menu' id='menu'>
             <div className='menu__container container'>
-                <span className='text-gradient'>Thực Đơn</span>
-                <h1>Danh Sách Thực Đơn</h1>
+                <span className='text-gradient'>__Thực Đơn__</span>
+                <h1>THỰC ĐƠN ĐÁP ỨNG</h1>
                 <Link to="/listmenu"><Button>Xem Danh Sách Thực Đơn</Button></Link>
                 <li className='menu__chosselist'>
                     <Button variant="outline-primary">Sáng </Button>

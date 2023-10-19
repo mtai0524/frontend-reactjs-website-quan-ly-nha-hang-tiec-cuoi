@@ -1,7 +1,5 @@
-
-
 .nav {
-
+    font-weight: 600;
     position: fixed;
     width: 100%;
     height: 100px;
@@ -10,8 +8,30 @@
     top: 0;
     /* Đặt top thành 0 để nó cố định ở phía trên cùng của trang */
     left: 0;
-    /* Đặt left thành 0 để nó cố định ở phía bên trái của trang */
 
+    /* Đặt left thành 0 để nó cố định ở phía bên trái của trang */
+    .nav__links .nav-link.text-black {
+        text-decoration: none;
+        color: black;
+        transition: color 0.3s;
+        /* Thời gian chuyển đổi màu sắc khi hover */
+        position: relative;
+        /* Đặt vị trí là tương đối để sử dụng một số hiệu ứng */
+    }
+
+
+    .nav__links .nav-link.text-black:hover::before {
+        content: '';
+        /* Tạo một phần tử pseudo-element để làm hiệu ứng underline */
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        /* Độ dày và chiều cao của underline */
+        background-color: #ff5733;
+        /* Màu của underline khi hover */
+    }
 
     z-index: 1000;
 
@@ -31,6 +51,11 @@
     &__links {
         display: flex;
         gap: 0px 50px;
+
+        .header {
+            margin-top: 15px;
+            display: flex;
+        }
 
 
 

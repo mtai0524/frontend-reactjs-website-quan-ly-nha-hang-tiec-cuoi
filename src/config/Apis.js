@@ -4,7 +4,8 @@ import axios from 'axios'
 
 export const endpoint = {
     // "users" : `${SERVER_CONTEXT}/api/users`
-    "menu": "api/menu"
+    "menu": "api/menu",
+    "hall": "api/hall"
 }
 export default axios.create({
     baseURL: "https://localhost:7296"

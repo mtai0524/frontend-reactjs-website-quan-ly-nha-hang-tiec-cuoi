@@ -13,6 +13,7 @@ const Register = () => {
         password: "",
         confirmPassword: "",
         avatar: "",
+        phoneNumber: "",
     };
     const [formValue, setformValue] = useState(initFormValue);
     //check error
@@ -54,7 +55,9 @@ const Register = () => {
         } else if (formValue.confirmPassword !== formValue.password) {
             error["confirmPassword"] = "Passwords do not match";
         }
-
+        if (isEmptyValue(formValue.phoneNumber)) {
+            error["phoneNumber"] = "Phone is required";
+        }
         setformError(error);
         return Object.keys(error).length === 0;
     };
@@ -210,6 +213,23 @@ const Register = () => {
                         />
                         {formError.confirmPassword && (
                             <div className='error'>{formError.confirmPassword}</div>
+                        )}
+                    </div>
+                    <div className='mb-2'>
+                        <label htmlFor="phoneNumber" className="form-label">
+                            Phone Number
+                        </label>
+                        <input
+                            id="phoneNumber"
+                            className="form-control"
+                            type="text"
+                            name="phoneNumber"
+                            value={formValue.phoneNumber}
+                            onChange={handleChange}
+
+                        />
+                        {formError.phoneNumber && (
+                            <div className='error'>{formError.phoneNumber}</div>
                         )}
                     </div>
 

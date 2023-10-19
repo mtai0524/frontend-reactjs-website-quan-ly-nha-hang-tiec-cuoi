@@ -1,56 +1,71 @@
 .selected-menus {
-    display: flex; /* Sử dụng hiển thị theo kiểu flexbox để các món ăn nằm cùng một hàng */
-    flex-wrap: wrap; /* Cho phép các món ăn xuống dòng nếu không đủ không gian */
-    gap: 20px; /* Khoảng cách giữa các món ăn */
+    display: flex;
+    /* Sử dụng hiển thị theo kiểu flexbox để các món ăn nằm cùng một hàng */
+    flex-wrap: wrap;
+    /* Cho phép các món ăn xuống dòng nếu không đủ không gian */
+    gap: 20px;
+    /* Khoảng cách giữa các món ăn */
 }
 
 .selected-menu {
-    display: flex; /* Sử dụng hiển thị theo kiểu flexbox để hình ảnh và chi tiết nằm cùng một hàng */
-    align-items: center; /* Canh giữa nội dung trong món ăn */
+    display: flex;
+    /* Sử dụng hiển thị theo kiểu flexbox để hình ảnh và chi tiết nằm cùng một hàng */
+    align-items: center;
+    /* Canh giữa nội dung trong món ăn */
 }
 
 .menu-image {
-    width: 100px; /* Độ rộng của phần hình ảnh */
-    margin-right: 10px; /* Khoảng cách giữa hình ảnh và chi tiết */
+    width: 100px;
+    /* Độ rộng của phần hình ảnh */
+    margin-right: 10px;
+    /* Khoảng cách giữa hình ảnh và chi tiết */
 }
 
 img {
-    max-width: 100%; /* Hình ảnh tự co giãn để vừa vào phần chi tiết */
+    max-width: 100%;
+    /* Hình ảnh tự co giãn để vừa vào phần chi tiết */
 }
 
 .selected-items {
     width: 25%;
     position: fixed;
-    top: 150px;
+    top: 100px;
     right: 20px;
     border: 1px solid #ccc;
     background-color: #fff;
     padding: 10px;
-    transition: top 0.3s; /* Thêm transition để làm mượt hiệu chỉnh khi di chuyển */
-  }
-  
-  .selected-items-content {
+    transition: top 0.3s;
+    /* Thêm transition để làm mượt hiệu chỉnh khi di chuyển */
+}
+
+.selected-items-content {
     border: 1px solid #ccc;
     padding: 10px;
-  }
-  .center-content {
-    text-align: center; /* Căn giữa theo chiều ngang */
+}
+
+.center-content {
+    text-align: center;
+    /* Căn giữa theo chiều ngang */
     display: flex;
     flex-direction: column;
-    align-items: center; /* Căn giữa theo chiều dọc */
+    align-items: center;
+    /* Căn giữa theo chiều dọc */
 }
+
 .bill {
     margin-top: 50px;
 
     .image-fixed-height {
-        height: 200px; /* Thay đổi kích thước tùy ý */
-        object-fit: cover; /* Đảm bảo hình ảnh không bị méo */
-      }
+        height: 200px;
+        /* Thay đổi kích thước tùy ý */
+        object-fit: cover;
+        /* Đảm bảo hình ảnh không bị méo */
+    }
 
     .bill-page {
         margin-top: 150px;
 
-        margin-left: 10%;
+        // margin-left: 10%;
 
         .bill-form-container {
             width: 1100px;

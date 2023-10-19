@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import Cookies from 'js-cookie';
 import jwt_decode from 'jwt-decode';
-
+import { useCookies } from 'react-cookie';
 const Bill = () => {
+    const [cookies] = useCookies(['token_user']);
     const [branchs, setBranchs] = useState([]);
     const [halls, setHalls] = useState([]);
     const [selectedBranchId, setSelectedBranchId] = useState(null);
@@ -135,32 +136,65 @@ const Bill = () => {
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
-
+    
+        // Kiểm tra token_user trong cookie
+        const tokenFromCookie = Cookies.get('token_user');
+        let id = null;
+        if (tokenFromCookie) {
+            const decodedToken = jwt_decode(tokenFromCookie);
+            id = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+        }
+    
+        if (!id) {
+            // Người dùng chưa đăng nhập hoặc không có token hợp lệ
+            toast.error('Bạn phải đăng nhập để đặt món.', {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            return;
+        }
+    
         if (selectedBranch && selectedHalls.length > 0) {
-
+            // Kiểm tra số lượng món ăn đã chọn
+            if (selectedMenus.length < 3) {
+                toast.error('Bạn phải chọn ít nhất 3 món ăn.', {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                return;
+            }
+    
+            // Tất cả điều kiện đều đúng và người dùng đã đăng nhập
             console.log("Chi nhánh đã chọn:", selectedBranch.name);
             console.log("Hội trường đã chọn:", selectedHalls.map(hall => hall.name).join(', '));
             console.log("Danh sách món ăn đã chọn:", selectedMenus.map(menuId => {
                 const selectedMenu = menus.find(menu => menu.menuId === menuId);
                 return selectedMenu ? selectedMenu.name : '';
             }).join(', '));
-
-            // Gửi đơn hàng nếu các điều kiện đều đúng
+    
+            // Gửi đơn hàng
             console.log('orderData:', orderData);
             toast.success('Đặt nhà hàng thành công gòi á !', {
                 position: 'top-right',
-                autoClose: 3000, // Thời gian hiển thị toast (3 giây)
+                autoClose: 3000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
             });
             sendOrderData();
-        }
-        else {
+        } else {
             toast.error('Chi nhánh hoặc sảnh chưa được chọn á !', {
                 position: 'top-right',
-                autoClose: 3000, // Thời gian hiển thị toast (3 giây)
+                autoClose: 3000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -168,6 +202,7 @@ const Bill = () => {
             });
         }
     };
+    
 
 
     const [menus, setMenus] = useState([]);
@@ -227,7 +262,19 @@ const Bill = () => {
             return acc + selectedService.price;
         }, 0);
     
-        return menuTotal + serviceTotal;
+        // Tính giá cho sảnh cưới (hall.price) và định dạng nó bằng hàm formatPrice
+        let hallTotal = 0;
+        if (selectedHallId) {
+            const selectedHall = halls.find(hall => hall.hallId === selectedHallId);
+            if (selectedHall) {
+                hallTotal = selectedHall.price;
+            }
+        }
+    
+        // Cộng tất cả các tổng lại để tính tổng tổng cộng
+        const total = menuTotal + serviceTotal + hallTotal;
+    
+        return total;
     };
 
 
@@ -275,7 +322,13 @@ const Bill = () => {
                 // Xử lý lỗi hoặc hiển thị thông báo lỗi nếu có.
             });
     };
-
+    function formatPrice(price) {
+        const formattedPrice = price.toLocaleString("vi-VN", {
+          style: "currency",
+          currency: "VND"
+        });
+        return formattedPrice;
+      }
     return (
         <div className="bill">
             <div className="bill-page">
@@ -326,10 +379,13 @@ const Bill = () => {
                                             <Card.Img className='image-fixed-height' variant="top" src={hall.image} />
                                             <Card.Body>
                                                 <Card.Title>{hall.name}</Card.Title>
-                                                <Card.Text>
-                                                    Mô tả: {hall.description}
-                                                </Card.Text>
-                                                <Card.Text>
+                                              
+                                                
+                                                <Card.Text>Sức chứa: {hall.capacity}</Card.Text>
+                                    <Card.Text>
+                                    Giá sảnh: {formatPrice(hall.price)}
+                                    </Card.Text>
+                                    <Card.Text>
                                                     Thuộc chi nhánh: {hall.branchName}
                                                 </Card.Text>
                                                 <Button variant="primary">Go somewhere</Button>
@@ -358,9 +414,10 @@ const Bill = () => {
                                                 <Card.Img className='image-fixed-height' variant="top" src={menu.image} />
                                                 <Card.Body>
                                                     <Card.Title>{menu.name}</Card.Title>
-                                                    <Card.Text>{menu.price}</Card.Text>
                                                     <Card.Text>{menu.description}</Card.Text>
                                                     <Card.Text>{menu.categoryName}</Card.Text>
+                                                    <Card.Text>{formatPrice(menu.price)}</Card.Text>
+
                                                     <Button variant="primary">Go somewhere</Button>
                                                     <div className="form-check">
                                                         <input
@@ -388,7 +445,8 @@ const Bill = () => {
                                                 <Card.Img className='image-fixed-height' variant="top" src={service.image} />
                                                 <Card.Body>
                                                     <Card.Title>{service.name}</Card.Title>
-                                                    <Card.Text>{service.price} VND</Card.Text>
+                                                    <Card.Text>{formatPrice(service.price)}</Card.Text>
+
                                                     <Card.Text>{service.description}</Card.Text>
                                                     <Button variant="primary">Chọn dịch vụ</Button>
                                                     <div className="form-check">
@@ -443,6 +501,7 @@ const Bill = () => {
                                                 style={{ width: '100%', height: '250px' }}
                                             />
                                             <h3><b>{hall.name}</b></h3>
+                                            <h3><b>{formatPrice(hall.price)}</b></h3>
                                         </div>
                                     ))}
                                 </div>
@@ -462,7 +521,8 @@ const Bill = () => {
                                             </div>
                                             <div className="menu-details">
                                                 <h4>{selectedMenu.name}</h4>
-                                                <p>Giá: {selectedMenu.price} VND</p>
+                                                <p>Giá: {formatPrice(selectedMenu.price)}</p>
+                                                
                                             </div>
                                         </div>
                                     );
@@ -482,7 +542,8 @@ const Bill = () => {
                                         </div>
                                         <div className="menu-details">
                                             <h4>{selectedService.name}</h4>
-                                            <p>Giá: {selectedService.price} VND</p>
+                                            <p>Giá: {formatPrice(selectedService.price)}</p>
+
                                         </div>
                                     </div>
                                 );
@@ -495,7 +556,7 @@ const Bill = () => {
 
                    
                     <div className="total-row">
-                        <h5 className="total-label">Tổng tiền các món ăn: {calculateTotalPrice()} VND</h5>
+                        <h5 className="total-label">Tổng tiền các món ăn: {formatPrice(calculateTotalPrice())}</h5>
                         <span className="total-amount"></span>
                     </div>
                 </div>

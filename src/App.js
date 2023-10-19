@@ -9,9 +9,11 @@ import Login from "./component/page/Login/Login";
 import Register from "./component/page/Register/Register";
 import Bill from "./component/page/Bill/Bill";
 import ListMenu from "./component/page/ListMenu/ListMenu";
+import ListService from "./component/page/ListService/ListService";
 import Profile from "./component/page/Profile/Profile";
 import { AuthProvider } from "./component/Context/AuthProvider";
 import Feedback from "react-bootstrap/esm/Feedback";
+
 
 
 
@@ -19,27 +21,29 @@ const App = () => {
 
   return (
     <div>
-<AuthProvider>
-    
-      <BrowserRouter>
-        <Header />
+      <AuthProvider>
 
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/bill" element={<Bill />} />
-          <Route path="/listmenu" element={<ListMenu />} />
+        <BrowserRouter>
+          <Header />
 
-          <Route path="/listhall" element={<ListHall />} />
-          <Route path="/listbranch" element={<ListBranch />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/login/profile" element={<Profile />} />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/bill" element={<Bill />} />
+            <Route path="/listmenu" element={<ListMenu />} />
 
-          <Route path="/login/register" element={<Register />} />
-          <Route path="/feedback" element={<Feedback />} />
-        </Routes>
-        <Footer />
-      </BrowserRouter>
-    </AuthProvider>
+            <Route path="/listhall" element={<ListHall />} />
+            <Route path="/listbranch" element={<ListBranch />} />
+            <Route path="/listservice" element={<ListService />} />
+
+            <Route path="/login" element={<Login />} />
+            <Route path="/profile" element={<Profile />} />
+
+            <Route path="/login/register" element={<Register />} />
+            <Route path="/feedback" element={<Feedback />} />
+          </Routes>
+          <Footer />
+        </BrowserRouter>
+      </AuthProvider>
 
     </div>
   )

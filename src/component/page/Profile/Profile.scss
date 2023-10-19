@@ -1,0 +1,29 @@
+.profile {
+    margin-top: 150px;
+
+    &_avatar {
+        width: 500px;
+        display: flex;
+        border-radius: 50%;
+
+
+    }
+
+    &_detail {
+        margin-left: 500px;
+    }
+
+    .container {
+        width: auto;
+        padding: 50px;
+
+        box-shadow: 0px 0px 21px rgba(0, 0, 0, 0.6);
+    }
+}
+.profile_avatar img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    object-fit: cover;
+}

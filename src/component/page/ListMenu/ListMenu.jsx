@@ -16,8 +16,6 @@ const ListMenu = () => {
             try {
                 let e = endpoint[`menu`];
 
-
-
                 let res = await Apis.get(e)
                 setMenus(res.data);
 
@@ -47,7 +45,13 @@ const ListMenu = () => {
         // Cập nhật trạng thái searchResult với kết quả tìm kiếm
         setSearchResult(searchResults);
     };
-
+    function formatPrice(price) {
+        const formattedPrice = price.toLocaleString("vi-VN", {
+          style: "currency",
+          currency: "VND"
+        });
+        return formattedPrice;
+      }
     return (
 
         <>
@@ -75,7 +79,7 @@ const ListMenu = () => {
                                 <Card.Body>
                                     <Card.Title>{menuItem.name}</Card.Title>
                                     <Card.Text>
-                                        {menuItem.price}
+                                    Giá món ăn: {formatPrice(menuItem.price)}
                                     </Card.Text>
                                     <Link to="/bill"><Button variant="primary"><BsCartCheck />Đặt Đơn</Button></Link>
                                     <Button className='btndetail' variant="primary">Xem Chi Tiết</Button>
@@ -89,9 +93,9 @@ const ListMenu = () => {
                             <Card className='card' style={{ width: '18rem' }}>
                                 <Card.Img variant="top" src={menuItem.image} className="custom-img" />
                                 <Card.Body>
-                                    <Card.Title>{menuItem.name}</Card.Title>
+                                <Card.Title>{menuItem.name}</Card.Title>
                                     <Card.Text>
-                                        {menuItem.price}
+                                    Giá món ăn: {formatPrice(menuItem.price)}
                                     </Card.Text>
                                     <Link to="/bill"><Button variant="primary"><BsCartCheck />Đặt Đơn</Button></Link>
                                     <Button className='btndetail' variant="primary">Xem Chi Tiết</Button>

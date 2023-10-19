@@ -2,6 +2,7 @@
     background: rgba(255, 255, 255, 0.6);
     box-shadow: 2px 6px 6px rgba(0, 0, 0, 0.25);
     padding: 50px 0px;
+    margin-top: 150px;
 
     // background-image: url(../../../assets/assets/background-trang-xam.jpg);
     background-size: cover;
@@ -83,25 +84,26 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-  }
-  
-  .listhall__item {
+}
+
+.listhall__item {
     width: 30%;
     margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
-  }
-  
-  .listhall__item img {
+}
+
+.listhall__item img {
     max-width: 100%;
     height: auto;
-  }
-  
-  .listhall__item--content {
+}
+
+.listhall__item--content {
     padding: 10px;
-  }
-  .card-img-custom {
+}
+
+.card-img-custom {
     height: 200px;
     width: 100%;
     object-fit: cover;
-  }
+}
