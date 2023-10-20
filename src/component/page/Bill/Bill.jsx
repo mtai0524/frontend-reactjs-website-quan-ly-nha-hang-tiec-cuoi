@@ -21,6 +21,17 @@ const Bill = () => {
     const [services, setServices] = useState([]);
     const [selectedServices, setSelectedServices] = useState([]);
     const [categorizedServices, setCategorizedServices] = useState({});
+    const [fullName, setFullName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [note, setNote] = useState('');
+    const [phoneValid, setPhoneValid] = useState(true);
+
+    // sdt phải đủ 10 số
+    const isPhoneNumberValid = (phone) => {
+        const phoneRegex = /^[0-9]{10}$/;
+        return phoneRegex.test(phone);
+      };
+      
     useEffect(() => {
         fetch('https://localhost:7296/api/service')
             .then(response => response.json())
@@ -191,6 +202,32 @@ const Bill = () => {
                 return;
             }
 
+
+            if (!fullName || !phoneNumber) {
+                // Kiểm tra xem các trường dữ liệu đã nhập đủ hay chưa
+                toast.error('Vui lòng điền đầy đủ thông tin nha!', {
+                  position: 'top-right',
+                  autoClose: 3000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                });
+                return;
+              }
+
+              if (!isPhoneNumberValid(phoneNumber)) {
+                toast.error('Số điện thoại không hợp lệ - Phải đủ 10 số', {
+                  position: 'top-right',
+                  autoClose: 3000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                });
+                setPhoneValid(false);
+                return;
+              }
             // Tất cả điều kiện đều đúng và người dùng đã đăng nhập
             console.log("Chi nhánh đã chọn:", selectedBranch.name);
             console.log("Hội trường đã chọn:", selectedHalls.map(hall => hall.name).join(', '));
@@ -329,7 +366,10 @@ const Bill = () => {
             ServiceID: serviceId
         })), // Danh sách các món ăn đã chọn dưới dạng danh sách OrderMenuRequest // Danh sách ID của các món ăn đã chọn
         AttendanceDate: selectedDate,
-        Total: total // tổng tiền cần thanh toán
+        Total: total, // tổng tiền cần thanh toán
+        FullName: fullName,
+        PhoneNumber: phoneNumber,
+        Note: note
     };
 
     const sendOrderData = () => {
@@ -493,10 +533,43 @@ const Bill = () => {
                                     </Accordion.Body>
                                 </Accordion.Item>
                             ))}
-                            <div className="form-group">
+                            <h1 style={{marginTop:'20px'}} className="title">Thông tin người đặt</h1>
+                            <div style={{marginTop:'20px'}} className="mb-2">
+                                <label>Họ và Tên:</label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    value={fullName}
+                                    onChange={(e) => setFullName(e.target.value)}
+                                    placeholder="Họ và tên"
+                                />
+                            </div>
+
+                            <div className="mb-2">
+                                <label>Số Điện Thoại:</label>
+                                <input
+                                    className="form-control"
+                                    type="tel"
+                                    value={phoneNumber}
+                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    placeholder="Số điện thoại"
+                                />
+                            </div>
+
+                            <div className="mb-2">
+                                <label>Ghi Chú cho Nhà Hàng:</label>
+                                <textarea
+                                    className="form-control"
+                                    value={note}
+                                    onChange={(e) => setNote(e.target.value)}
+                                    placeholder="Ghi chú nếu có"
+                                />
+                            </div>
+
+                            <div className="mb-2">
                                 <label>Ngày đến tham dự: </label>
                                 <DatePicker
-                                className="custom-date-picker"
+                                    className="custom-date-picker"
                                     selected={selectedDate}
                                     onChange={handleDateChange}
                                     dateFormat="dd/MM/yyyy" // Định dạng ngày tháng
