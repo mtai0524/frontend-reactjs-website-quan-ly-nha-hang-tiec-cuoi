@@ -25,13 +25,13 @@ const Bill = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [note, setNote] = useState('');
     const [phoneValid, setPhoneValid] = useState(true);
-
+    const [isDuplicateInvoice, setIsDuplicateInvoice] = useState(false);
     // sdt phải đủ 10 số
     const isPhoneNumberValid = (phone) => {
         const phoneRegex = /^[0-9]{10}$/;
         return phoneRegex.test(phone);
-      };
-      
+    };
+
     useEffect(() => {
         fetch('https://localhost:7296/api/service')
             .then(response => response.json())
@@ -147,7 +147,7 @@ const Bill = () => {
     const selectedBranch = branchs.find(branch => branch.branchId === selectedBranchId);
     const selectedItemHall = halls.filter(hall => hall.branchName === selectedBranch?.name);
 
-    const handleFormSubmit = (e) => {
+    const handleFormSubmit = async (e) => {
         e.preventDefault();
 
         // Kiểm tra token_user trong cookie
@@ -206,31 +206,61 @@ const Bill = () => {
             if (!fullName || !phoneNumber) {
                 // Kiểm tra xem các trường dữ liệu đã nhập đủ hay chưa
                 toast.error('Vui lòng điền đầy đủ thông tin nha!', {
-                  position: 'top-right',
-                  autoClose: 3000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
                 });
                 return;
-              }
+            }
 
-              if (!isPhoneNumberValid(phoneNumber)) {
+            if (!isPhoneNumberValid(phoneNumber)) {
                 toast.error('Số điện thoại không hợp lệ - Phải đủ 10 số', {
-                  position: 'top-right',
-                  autoClose: 3000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
                 });
                 setPhoneValid(false);
                 return;
-              }
+            }
+
+
+            const duplicateCheckRequest = {
+                AttendanceDate: selectedDate,
+                BranchId: selectedBranch ? selectedBranch.branchId : null, // ID của chi nhánh đã chọn
+                HallId: selectedHallIdDo,
+            };
+
+            const response = await fetch('https://localhost:7296/api/invoice/checked', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(duplicateCheckRequest),
+            });
+            if (response.status === 400) {
+                // Hóa đơn trùng lặp
+                const data = await response.json();
+                setIsDuplicateInvoice(true);
+                toast.error(data.message, {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                return;
+
+            }
             // Tất cả điều kiện đều đúng và người dùng đã đăng nhập
             console.log("Chi nhánh đã chọn:", selectedBranch.name);
-            console.log("Hội trường đã chọn:", selectedHalls.map(hall => hall.name).join(', '));
+            console.log("Sảnh cưới đã chọn:", selectedHalls.map(hall => hall.name).join(', '));
             console.log("Danh sách món ăn đã chọn:", selectedMenus.map(menuId => {
                 const selectedMenu = menus.find(menu => menu.menuId === menuId);
                 return selectedMenu ? selectedMenu.name : '';
@@ -533,9 +563,9 @@ const Bill = () => {
                                     </Accordion.Body>
                                 </Accordion.Item>
                             ))}
-                            <h1 style={{marginTop:'20px'}} className="title">Thông tin người đặt</h1>
-                            <div style={{marginTop:'20px'}} className="mb-2">
-                                <label>Họ và Tên:</label>
+                            <h1 style={{ marginTop: '20px' }} className="title">Thông tin người đặt</h1>
+                            <div style={{ marginTop: '20px' }} className="mb-2">
+                                <label>Họ và tên:</label>
                                 <input
                                     className="form-control"
                                     type="text"
@@ -546,7 +576,7 @@ const Bill = () => {
                             </div>
 
                             <div className="mb-2">
-                                <label>Số Điện Thoại:</label>
+                                <label>Số điện thoại:</label>
                                 <input
                                     className="form-control"
                                     type="tel"
@@ -557,7 +587,7 @@ const Bill = () => {
                             </div>
 
                             <div className="mb-2">
-                                <label>Ghi Chú cho Nhà Hàng:</label>
+                                <label>Ghi chú cho nhà hàng:</label>
                                 <textarea
                                     className="form-control"
                                     value={note}
@@ -605,7 +635,7 @@ const Bill = () => {
 
                         {selectedHalls.length > 0 && (
                             <div>
-                                <h2>Hội trường đã chọn:</h2>
+                                <h2>Sảnh cưới đã chọn:</h2>
                                 <div className="center-content">
                                     {selectedHalls.map((hall, index) => (
                                         <div key={index}>
@@ -682,3 +712,5 @@ const Bill = () => {
 };
 
 export default Bill;
+
+
