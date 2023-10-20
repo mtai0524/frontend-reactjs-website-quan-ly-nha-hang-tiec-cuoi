@@ -174,7 +174,7 @@ const Bill = () => {
         if (selectedBranch && selectedHalls.length > 0) {
             // Kiểm tra số lượng món ăn đã chọn
             if (selectedMenus.length < 3) {
-                toast.error('Bạn phải chọn ít nhất 3 món ăn.', {
+                toast.error('Phải đặt ít nhất 3 món ăn', {
                     position: 'top-right',
                     autoClose: 3000,
                     hideProgressBar: false,

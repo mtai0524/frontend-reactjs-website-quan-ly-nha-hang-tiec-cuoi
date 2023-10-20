@@ -95,7 +95,7 @@ const Header = () => {
 
                     </li>
                     <li>
-                        <Link className="nav-link text-black">
+                        <Link to='history' className="nav-link text-black">
                             <BsClipboardFill className='header' />
                         </Link>
                     </li>

@@ -1,4 +1,3 @@
-
 import { BsCartCheck } from 'react-icons/bs';
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Col, Form, Row } from 'react-bootstrap';
@@ -123,21 +122,21 @@ const ListMenu = () => {
                 )}
             </Row>
             <div className='tilte'>
-            <h1>Danh sách sảnh đã có người đặt</h1>
+                <h1>Danh sách sảnh đã có người đặt</h1>
             </div>
-            <div style={{marginTop:'20px', marginRight:'20px', marginLeft:'20px'}} className="row">
-  {bookedHalls.map((hall) => (
-    <div key={hall.HallId} className="col-md-3 mb-3">
-      <div className="card">
-        <div className="card-body">
-          <h5 className="card-title">Chi nhánh: {hall.branchName}</h5>
-          <h5 className="card-title">Sảnh: {hall.hallName}</h5>
-          <p className="card-text">Ngày đặt: {format(new Date(hall.bookingDate), 'dd/MM/yyyy')}</p>
-        </div>
-      </div>
-    </div>
-  ))}
-</div>
+            <div style={{ marginTop: '20px', marginRight: '20px', marginLeft: '20px' }} className="row">
+                {bookedHalls.map((hall) => (
+                    <div key={hall.HallId} className="col-md-3 mb-3">
+                        <div className="card">
+                            <div className="card-body">
+                                <h5 className="card-title">Chi nhánh: {hall.branchName}</h5>
+                                <h5 className="card-title">Sảnh: {hall.hallName}</h5>
+                                <p className="card-text">Ngày đặt: {format(new Date(hall.bookingDate), 'dd/MM/yyyy')}</p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </>
     )
 }

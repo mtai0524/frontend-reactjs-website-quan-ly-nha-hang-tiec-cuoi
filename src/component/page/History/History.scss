@@ -1,0 +1,32 @@
+/* invoice.css */
+
+/* Điều chỉnh khoảng cách giữa các hóa đơn */
+.invoice-card {
+    margin-bottom: 20px;
+}
+
+/* Tùy chỉnh kiểu hiển thị cho các phần tử */
+.invoice-card h5 {
+    font-size: 1.2rem;
+}
+
+.invoice-card p {
+    font-size: 1rem;
+}
+
+/* Định dạng danh sách thực đơn và dịch vụ */
+.invoice-card ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.invoice-card li {
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+/* Định dạng tiền tệ */
+.price {
+    font-weight: bold;
+    color: #007bff; /* Màu xanh dương cho giá tiền */
+}
