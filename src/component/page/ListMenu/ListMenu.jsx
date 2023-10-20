@@ -1,4 +1,3 @@
-
 import './ListMenu.scss'
 import { BsCartCheck } from 'react-icons/bs';
 import React, { useEffect, useState } from 'react';
@@ -106,36 +105,6 @@ const ListMenu = () => {
                 )}
             </Row>
         </>
-        // <div className='listmenu' id='listmenu'>
-        //     <div className='menu__container container'>
-        //         <span className='text-gradient'>Thực Đơn</span>
-        // <h1>Danh Sách Thực Đơn</h1>
-        // <Form className="filter d-flex">
-        //     <Form.Control
-        //         type="search"
-        //         placeholder="Search"
-        //         className="me-2"
-        //         aria-label="Search"
-        //     />
-        //     <Button variant="outline-success">Search</Button>
-        // </Form>
-
-        //         <ul className='menu__list'>{
-        //             menu.map(item => {
-        //                 return <li className='menu__item' key={item.name}>
-        //                     <div className='menu__item--img'>
-        //                         <img className='menu__item--img-content' src={item.image} alt=''></img>
-        //                     </div>
-        //                     <div className='menu__item--content'>
-        //                         <h3>{item.name}</h3>
-        //                         <p>{item.price}</p>
-        //                         <Button><BsCartCheck />Order Here</Button>
-        //                     </div>
-        //                 </li>
-        //             })
-        //         }</ul>
-        //     </div>
-        // </div >
     )
 }
 export default ListMenu;

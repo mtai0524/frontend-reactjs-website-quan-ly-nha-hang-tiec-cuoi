@@ -7,6 +7,8 @@ npm install --save react-rating
 
 
 npm install react-cookie
+
+npm install react-datepicker
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

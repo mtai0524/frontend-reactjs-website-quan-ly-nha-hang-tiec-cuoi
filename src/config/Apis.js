@@ -1,12 +1,11 @@
-import axios from 'axios'
-
-// const SERVER_CONTEXT = "/WeatherForecast";
+import axios from 'axios';
 
 export const endpoint = {
-    // "users" : `${SERVER_CONTEXT}/api/users`
-    "menu": "api/menu",
-    "hall": "api/hall"
-}
+  menu: 'api/menu',
+  hall: 'api/hall',
+  service: 'api/service', // Thêm endpoint cho dịch vụ
+};
+
 export default axios.create({
-    baseURL: "https://localhost:7296"
-})
+  baseURL: 'https://localhost:7296',
+});

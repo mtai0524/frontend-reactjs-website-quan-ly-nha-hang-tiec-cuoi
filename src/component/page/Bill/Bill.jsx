@@ -5,6 +5,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import Cookies from 'js-cookie';
 import jwt_decode from 'jwt-decode';
 import { useCookies } from 'react-cookie';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 const Bill = () => {
     const [cookies] = useCookies(['token_user']);
     const [branchs, setBranchs] = useState([]);
@@ -136,7 +138,7 @@ const Bill = () => {
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
-    
+
         // Kiểm tra token_user trong cookie
         const tokenFromCookie = Cookies.get('token_user');
         let id = null;
@@ -144,10 +146,10 @@ const Bill = () => {
             const decodedToken = jwt_decode(tokenFromCookie);
             id = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
         }
-    
+
         if (!id) {
             // Người dùng chưa đăng nhập hoặc không có token hợp lệ
-            toast.error('Bạn phải đăng nhập để đặt món.', {
+            toast.error('Bạn phải đăng nhập để đặt nhà hàng', {
                 position: 'top-right',
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -157,7 +159,7 @@ const Bill = () => {
             });
             return;
         }
-    
+
         if (selectedBranch && selectedHalls.length > 0) {
             // Kiểm tra số lượng món ăn đã chọn
             if (selectedMenus.length < 3) {
@@ -171,7 +173,24 @@ const Bill = () => {
                 });
                 return;
             }
-    
+
+            // Kiểm tra attendanceDate
+            const currentDate = new Date();
+            const twentyDaysFromNow = new Date();
+            twentyDaysFromNow.setDate(currentDate.getDate() + 20);
+
+            if (selectedDate <= twentyDaysFromNow) {
+                toast.error('Ngày đến tham dự phải cách ít nhất 20 ngày kể từ ngày hiện tại.', {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                return;
+            }
+
             // Tất cả điều kiện đều đúng và người dùng đã đăng nhập
             console.log("Chi nhánh đã chọn:", selectedBranch.name);
             console.log("Hội trường đã chọn:", selectedHalls.map(hall => hall.name).join(', '));
@@ -179,7 +198,7 @@ const Bill = () => {
                 const selectedMenu = menus.find(menu => menu.menuId === menuId);
                 return selectedMenu ? selectedMenu.name : '';
             }).join(', '));
-    
+
             // Gửi đơn hàng
             console.log('orderData:', orderData);
             toast.success('Đặt nhà hàng thành công gòi á !', {
@@ -202,7 +221,7 @@ const Bill = () => {
             });
         }
     };
-    
+
 
 
     const [menus, setMenus] = useState([]);
@@ -256,12 +275,12 @@ const Bill = () => {
             const selectedMenu = menus.find(menu => menu.menuId === menuId);
             return acc + selectedMenu.price;
         }, 0);
-    
+
         const serviceTotal = selectedServices.reduce((acc, serviceId) => {
             const selectedService = services.find(service => service.serviceId === serviceId);
             return acc + selectedService.price;
         }, 0);
-    
+
         // Tính giá cho sảnh cưới (hall.price) và định dạng nó bằng hàm formatPrice
         let hallTotal = 0;
         if (selectedHallId) {
@@ -270,10 +289,10 @@ const Bill = () => {
                 hallTotal = selectedHall.price;
             }
         }
-    
+
         // Cộng tất cả các tổng lại để tính tổng tổng cộng
         const total = menuTotal + serviceTotal + hallTotal;
-    
+
         return total;
     };
 
@@ -288,6 +307,13 @@ const Bill = () => {
     // Lấy ID của sảnh (hall) đã chọn
     const selectedHallIdDo = selectedHalls.length > 0 ? selectedHalls[0].hallId : null;
 
+    const [selectedDate, setSelectedDate] = useState(new Date()); // Khởi tạo giá trị mặc định
+
+    const handleDateChange = (date) => {
+        setSelectedDate(date); // Cập nhật giá trị ngày khi người dùng chọn
+    };
+
+    const total = calculateTotalPrice();
     const orderData = {
         UserId: id, // Thay bằng ID người dùng đang đăng nhập
         BranchId: selectedBranch ? selectedBranch.branchId : null, // ID của chi nhánh đã chọn
@@ -301,7 +327,9 @@ const Bill = () => {
             Price: 0, // Thêm giá trị theo đúng yêu cầu của OrderMenuRequest
             Quantity: 0, // Thêm giá trị theo đúng yêu cầu của OrderMenuRequest
             ServiceID: serviceId
-        })) // Danh sách các món ăn đã chọn dưới dạng danh sách OrderMenuRequest // Danh sách ID của các món ăn đã chọn
+        })), // Danh sách các món ăn đã chọn dưới dạng danh sách OrderMenuRequest // Danh sách ID của các món ăn đã chọn
+        AttendanceDate: selectedDate,
+        Total: total // tổng tiền cần thanh toán
     };
 
     const sendOrderData = () => {
@@ -324,11 +352,11 @@ const Bill = () => {
     };
     function formatPrice(price) {
         const formattedPrice = price.toLocaleString("vi-VN", {
-          style: "currency",
-          currency: "VND"
+            style: "currency",
+            currency: "VND"
         });
         return formattedPrice;
-      }
+    }
     return (
         <div className="bill">
             <div className="bill-page">
@@ -379,13 +407,13 @@ const Bill = () => {
                                             <Card.Img className='image-fixed-height' variant="top" src={hall.image} />
                                             <Card.Body>
                                                 <Card.Title>{hall.name}</Card.Title>
-                                              
-                                                
+
+
                                                 <Card.Text>Sức chứa: {hall.capacity}</Card.Text>
-                                    <Card.Text>
-                                    Giá sảnh: {formatPrice(hall.price)}
-                                    </Card.Text>
-                                    <Card.Text>
+                                                <Card.Text>
+                                                    Giá sảnh: {formatPrice(hall.price)}
+                                                </Card.Text>
+                                                <Card.Text>
                                                     Thuộc chi nhánh: {hall.branchName}
                                                 </Card.Text>
                                                 <Button variant="primary">Go somewhere</Button>
@@ -465,11 +493,24 @@ const Bill = () => {
                                     </Accordion.Body>
                                 </Accordion.Item>
                             ))}
-
-
+                            <div className="form-group">
+                                <label>Ngày đến tham dự: </label>
+                                <DatePicker
+                                className="custom-date-picker"
+                                    selected={selectedDate}
+                                    onChange={handleDateChange}
+                                    dateFormat="dd/MM/yyyy" // Định dạng ngày tháng
+                                    isClearable // Cho phép xóa ngày
+                                    showYearDropdown // Hiển thị dropdown năm
+                                    showMonthDropdown // Hiển thị dropdown tháng
+                                    dropdownMode="select" // Chế độ dropdown
+                                    placeholderText="Chọn ngày" // Văn bản mặc định
+                                />
+                            </div>
 
                         </Accordion>
-                        <button style={{marginTop:'20px'}} className='btn btn-success' variant="primary" type="submit">Xác nhận đặt nhà hàng</button>
+                        <button style={{ marginTop: '20px' }} className='btn btn-success' variant="primary" type="submit">Xác nhận đặt nhà hàng</button>
+
                     </form>
                 </div>
                 <div className="selected-items">
@@ -522,41 +563,41 @@ const Bill = () => {
                                             <div className="menu-details">
                                                 <h4>{selectedMenu.name}</h4>
                                                 <p>Giá: {formatPrice(selectedMenu.price)}</p>
-                                                
+
                                             </div>
                                         </div>
                                     );
                                 })}
                             </div>
                         ) : 'Chưa chọn món ăn'}
-                        
-                         <h2>Dịch vụ đã chọn:</h2>
-                    {selectedServices.length > 0 ? (
-                        <div className="selected-menus">
-                            {selectedServices.map(serviceId => {
-                                const selectedService = services.find(service => service.serviceId === serviceId);
-                                return (
-                                    <div key={serviceId} className="selected-menu">
-                                        <div className="menu-image">
-                                            <img src={selectedService.image} alt={selectedService.name} />
-                                        </div>
-                                        <div className="menu-details">
-                                            <h4>{selectedService.name}</h4>
-                                            <p>Giá: {formatPrice(selectedService.price)}</p>
 
+                        <h2>Dịch vụ đã chọn:</h2>
+                        {selectedServices.length > 0 ? (
+                            <div className="selected-menus">
+                                {selectedServices.map(serviceId => {
+                                    const selectedService = services.find(service => service.serviceId === serviceId);
+                                    return (
+                                        <div key={serviceId} className="selected-menu">
+                                            <div className="menu-image">
+                                                <img src={selectedService.image} alt={selectedService.name} />
+                                            </div>
+                                            <div className="menu-details">
+                                                <h4>{selectedService.name}</h4>
+                                                <p>Giá: {formatPrice(selectedService.price)}</p>
+
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ) : (
-                        'Chưa chọn dịch vụ'
-                    )}
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            'Chưa chọn dịch vụ'
+                        )}
                     </div>
 
-                   
+
                     <div className="total-row">
-                        <h5 className="total-label">Tổng tiền các món ăn: {formatPrice(calculateTotalPrice())}</h5>
+                        <h5 className="total-label">Tổng tiền cần thanh toán: {formatPrice(calculateTotalPrice())}</h5>
                         <span className="total-amount"></span>
                     </div>
                 </div>

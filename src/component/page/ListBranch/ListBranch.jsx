@@ -122,7 +122,14 @@ const ListBranch = () => {
                         draggable: true,
                     });
                 } else {
-                    console.error('Lỗi khi tạo phản hồi');
+                    toast.error('Hãy đăng nhập để gửi phản hồi !', {
+                        position: 'top-right',
+                        autoClose: 3000, // Thời gian hiển thị toast (3 giây)
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                    });
                 }
             });
     };
@@ -131,28 +138,28 @@ const ListBranch = () => {
     return (
         <>
             <Row className="branch">
-  {branches.map((branch) => (
-    <Col xs={12} md={3} key={branch.branchId}>
-      <Card className="branch-card">
-        <div className="image-container">
-          <Card.Img variant="top" src={branch.image} className="fixed-height-image" />
-        </div>
-        <Card.Body>
-          <Card.Title className="branch-name">{branch.name}</Card.Title>
-          <Card.Text className="branch-description">Mô tả: {branch.description}</Card.Text>
-          <Card.Text className="branch-info">
-            <span>Địa chỉ: {branch.address}</span>
-            <span>Số điện thoại: {branch.phone}</span>
-          </Card.Text>
-          <button onClick={() => openModal(branch.branchId, branch.name)} className='btn btn-success'>
-            
-            Xem phản hồi
-          </button>
-        </Card.Body>
-      </Card>
-    </Col>
-  ))}
-</Row>
+                {branches.map((branch) => (
+                    <Col xs={12} md={3} key={branch.branchId}>
+                        <Card className="branch-card">
+                            <div className="image-container">
+                                <Card.Img variant="top" src={branch.image} className="fixed-height-image" />
+                            </div>
+                            <Card.Body>
+                                <Card.Title className="branch-name">{branch.name}</Card.Title>
+                                <Card.Text className="branch-description">Mô tả: {branch.description}</Card.Text>
+                                <Card.Text className="branch-info">
+                                    <span>Địa chỉ: {branch.address}</span>
+                                    <span>Số điện thoại: {branch.phone}</span>
+                                </Card.Text>
+                                <button onClick={() => openModal(branch.branchId, branch.name)} className='btn btn-success'>
+
+                                    Xem phản hồi
+                                </button>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                ))}
+            </Row>
 
             <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
                 <Modal.Header closeButton>
@@ -164,8 +171,8 @@ const ListBranch = () => {
                             <div key={feedback.feedbackId} className="feedback-item">
                                 <Card.Img className="avatar" variant="top" src={feedback.id.avatar} />
                                 <div className="email-info">
-                                <p className="email">{feedback.id.email}</p>
-                                <p className="feedback-date">{formatDate(feedback.feedbackDate)}</p>
+                                    <p className="email">{feedback.id.email}</p>
+                                    <p className="feedback-date">{formatDate(feedback.feedbackDate)}</p>
 
                                     <div className="content">
                                         <textarea

@@ -52,6 +52,22 @@ img {
     /* Căn giữa theo chiều dọc */
 }
 
+.custom-date-picker {
+    width: 100%; /* Độ rộng 100% của phần chọn ngày */
+    padding: 10px; /* Khoảng cách giữa các phần tử */
+    border: 1px solid #ccc; /* Viền xung quanh */
+    border-radius: 4px; /* Bo góc viền */
+    font-size: 16px; /* Kích thước chữ */
+}
+
+.custom-date-picker:hover {
+    border-color: #007BFF; /* Màu viền khi di chuột qua */
+}
+
+.custom-date-picker:focus {
+    border-color: #007BFF; /* Màu viền khi trạng thái focus (click vào) */
+}
+
 .bill {
     margin-top: 50px;
 

@@ -1,58 +1,52 @@
-
-import './ListService.scss'
+import './ListService.scss';
 import { BsCartCheck } from 'react-icons/bs';
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import Apis, { endpoint } from '../../../config/Apis';
 import { Link } from 'react-router-dom';
 
-
-
-const ListMenu = () => {
-
-
+const ListService = () => {
     useEffect(() => {
-        const loadService = async () => {
+        const loadServices = async () => {
             try {
-                let e = endpoint[`menu`];
+                let e = endpoint.service;
 
-                let res = await Apis.get(e)
+                let res = await Apis.get(e);
                 setServices(res.data);
-
             } catch (error) {
                 console.error(error);
-
             }
-        }
-        loadService();
+        };
+        loadServices();
     }, []);
 
-    const [service, setServices] = useState([])
-    // ======
+    const [services, setServices] = useState([]);
     const [searchResult, setSearchResult] = useState([]);
 
     const handleSearch = (e) => {
-        e.preventDefault(); // Ngăn chặn sự kiện gửi form mặc định
+        e.preventDefault();
 
-        // Lấy giá trị từ input tìm kiếm
         const searchKeyword = e.target.kw.value.toLowerCase();
 
-        // Sử dụng hàm filter để tìm kiếm trong danh sách menu
-        const searchResults = service.filter(item =>
+        const searchResults = services.filter(item =>
             item.name.toLowerCase().includes(searchKeyword)
         );
 
-        // Cập nhật trạng thái searchResult với kết quả tìm kiếm
         setSearchResult(searchResults);
     };
 
-    return (
+    function formatPrice(price) {
+        const formattedPrice = price.toLocaleString("vi-VN", {
+          style: "currency",
+          currency: "VND"
+        });
+        return formattedPrice;
+    }
 
+    return (
         <>
             <div className='tilte'>
                 <h1>Danh Sách Dịch Vụ</h1>
-
-
                 <Form className="filter d-flex" onSubmit={handleSearch}>
                     <Form.Control
                         type="text"
@@ -64,34 +58,34 @@ const ListMenu = () => {
                     <Button type='submit'>Search</Button>
                 </Form>
             </div>
-            <Row className='listmenu'>
+            <Row className='listservice'>
                 {searchResult.length > 0 ? (
-                    searchResult.map(menuItem => (
+                    searchResult.map(serviceItem => (
                         <Col xs={12} md={3} className='mt-3'>
-                            <Card className='card' style={{ width: '18rem' }}>
-                                <Card.Img variant="top" src={menuItem.image} className="custom-img" />
+                            <Card className='rounded shadow' style={{ width: '18rem' }}>
+                                <Card.Img variant="top" src={serviceItem.image} className="custom-img" />
                                 <Card.Body>
-                                    <Card.Title>{menuItem.name}</Card.Title>
+                                    <Card.Title>{serviceItem.name}</Card.Title>
                                     <Card.Text>
-                                        {menuItem.price}
+                                        Giá dịch vụ: {formatPrice(serviceItem.price)}
                                     </Card.Text>
-                                    <Link to="/bill"><Button variant="primary"><BsCartCheck />Đặt Đơn</Button></Link>
+                                    <Link to="/bill"><Button variant="primary"><BsCartCheck />Đặt Dịch Vụ</Button></Link>
                                     <Button className='btndetail' variant="primary">Xem Chi Tiết</Button>
                                 </Card.Body>
                             </Card>
                         </Col>
                     ))
                 ) : (
-                    service.map(menuItem => (
+                    services.map(serviceItem => (
                         <Col xs={12} md={3} className='mt-3'>
-                            <Card className='card' style={{ width: '18rem' }}>
-                                <Card.Img variant="top" src={menuItem.image} className="custom-img" />
+                            <Card className='rounded shadow' style={{ width: '18rem' }}>
+                                <Card.Img variant="top" src={serviceItem.image} className="custom-img" />
                                 <Card.Body>
-                                    <Card.Title>{menuItem.name}</Card.Title>
+                                    <Card.Title>{serviceItem.name}</Card.Title>
                                     <Card.Text>
-                                        {menuItem.price}
+                                        Giá dịch vụ: {formatPrice(serviceItem.price)}
                                     </Card.Text>
-                                    <Link to="/bill"><Button variant="primary"><BsCartCheck />Đặt Đơn</Button></Link>
+                                    <Link to="/bill"><Button variant="primary"><BsCartCheck />Đặt Dịch Vụ</Button></Link>
                                     <Button className='btndetail' variant="primary">Xem Chi Tiết</Button>
                                 </Card.Body>
                             </Card>
@@ -100,36 +94,7 @@ const ListMenu = () => {
                 )}
             </Row>
         </>
-        // <div className='listmenu' id='listmenu'>
-        //     <div className='menu__container container'>
-        //         <span className='text-gradient'>Thực Đơn</span>
-        // <h1>Danh Sách Thực Đơn</h1>
-        // <Form className="filter d-flex">
-        //     <Form.Control
-        //         type="search"
-        //         placeholder="Search"
-        //         className="me-2"
-        //         aria-label="Search"
-        //     />
-        //     <Button variant="outline-success">Search</Button>
-        // </Form>
-
-        //         <ul className='menu__list'>{
-        //             menu.map(item => {
-        //                 return <li className='menu__item' key={item.name}>
-        //                     <div className='menu__item--img'>
-        //                         <img className='menu__item--img-content' src={item.image} alt=''></img>
-        //                     </div>
-        //                     <div className='menu__item--content'>
-        //                         <h3>{item.name}</h3>
-        //                         <p>{item.price}</p>
-        //                         <Button><BsCartCheck />Order Here</Button>
-        //                     </div>
-        //                 </li>
-        //             })
-        //         }</ul>
-        //     </div>
-        // </div >
     )
 }
-export default ListMenu;
+
+export default ListService;
