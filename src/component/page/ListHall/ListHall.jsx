@@ -52,12 +52,27 @@ const ListMenu = () => {
     }
 
     const [bookedHalls, setBookedHalls] = useState([]);
-    useEffect(() => {
-        fetch('https://localhost:7296/api/invoice/booked-hall')
-            .then((response) => response.json())
-            .then((data) => setBookedHalls(data))
-            .catch((error) => console.error('Error fetching data:', error));
-    }, []);
+    const fetchBookedHalls = async () => {
+        try {
+          const response = await fetch(`https://localhost:7296/api/invoice/booked-hall`);
+          if (response.ok) {
+            const data = await response.json();
+    
+            // Sắp xếp danh sách theo BookingDate tăng dần
+            data.sort((a, b) => new Date(a.bookingDate) - new Date(b.bookingDate));
+    
+            setBookedHalls(data);
+          } else {
+            console.error("Lỗi khi lấy danh sách sảnh đã đặt");
+          }
+        } catch (error) {
+          console.error("Lỗi server:", error);
+        }
+      };
+    
+      useEffect(() => {
+        fetchBookedHalls();
+      }, []);
     return (
         <>
 
