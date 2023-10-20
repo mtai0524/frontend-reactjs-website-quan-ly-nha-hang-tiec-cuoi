@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import Apis, { endpoint } from '../../../config/Apis';
 import { Link } from 'react-router-dom';
-
+import { format } from 'date-fns';
 
 
 const ListMenu = () => {
@@ -46,14 +46,22 @@ const ListMenu = () => {
     };
     function formatPrice(price) {
         const formattedPrice = price.toLocaleString("vi-VN", {
-          style: "currency",
-          currency: "VND"
+            style: "currency",
+            currency: "VND"
         });
         return formattedPrice;
-      }
-    return (
+    }
 
+    const [bookedHalls, setBookedHalls] = useState([]);
+    useEffect(() => {
+        fetch('https://localhost:7296/api/invoice/booked-hall')
+            .then((response) => response.json())
+            .then((data) => setBookedHalls(data))
+            .catch((error) => console.error('Error fetching data:', error));
+    }, []);
+    return (
         <>
+
             <div className='tilte'>
                 <h1>Danh Sách Sảnh Cưới</h1>
 
@@ -84,7 +92,7 @@ const ListMenu = () => {
                                         {hallItem.capacity}
                                     </Card.Text>
                                     <Card.Text>
-                                    {formatPrice(hallItem.price)}
+                                        {formatPrice(hallItem.price)}
                                     </Card.Text>
                                     <Link to="/bill"><Button variant="primary"><BsCartCheck />Đặt Đơn</Button></Link>
                                     <Button className='btndetail' variant="primary">Xem Chi Tiết</Button>
@@ -99,7 +107,7 @@ const ListMenu = () => {
                                 <Card.Img variant="top" src={hallItem.image} className="custom-img" />
                                 <Card.Body>
                                     <Card.Title>{hallItem.name}</Card.Title>
-                                 
+
                                     <Card.Text>
                                         Số khách tham gia tối đa: {hallItem.capacity}
                                     </Card.Text>
@@ -114,6 +122,22 @@ const ListMenu = () => {
                     ))
                 )}
             </Row>
+            <div className='tilte'>
+            <h1>Danh sách sảnh đã có người đặt</h1>
+            </div>
+            <div style={{marginTop:'20px', marginRight:'20px', marginLeft:'20px'}} className="row">
+  {bookedHalls.map((hall) => (
+    <div key={hall.HallId} className="col-md-3 mb-3">
+      <div className="card">
+        <div className="card-body">
+          <h5 className="card-title">Chi nhánh: {hall.branchName}</h5>
+          <h5 className="card-title">Sảnh: {hall.hallName}</h5>
+          <p className="card-text">Ngày đặt: {format(new Date(hall.bookingDate), 'dd/MM/yyyy')}</p>
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
         </>
     )
 }

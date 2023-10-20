@@ -5,10 +5,13 @@ npm install --save @fortawesome/react-fontawesome@0.1.14
 npm install --save @fortawesome/fontawesome-svg-core@1.2.36
 npm install --save react-rating
 
-
+Day 30
 npm install react-cookie
 
 npm install react-datepicker
+
+yarn add date-fns
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
