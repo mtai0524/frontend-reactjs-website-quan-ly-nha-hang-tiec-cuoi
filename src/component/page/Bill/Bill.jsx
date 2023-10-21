@@ -148,7 +148,6 @@ const Bill = () => {
     };
 
 
-
     const selectedBranch = branchs.find(branch => branch.branchId === selectedBranchId);
     const selectedItemHall = halls.filter(hall => hall.branchName === selectedBranch?.name);
 
@@ -481,7 +480,10 @@ const Bill = () => {
         Total: total, // tổng tiền cần thanh toán
         FullName: fullName,
         PhoneNumber: phoneNumber,
-        Note: note
+        Note: note,
+        InvoiceCodeRequest: selectedCodes.map(codeId => ({
+            CodeId: codeId
+        }))
     };
 
     const sendOrderData = () => {
