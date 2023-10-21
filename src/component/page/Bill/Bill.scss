@@ -53,19 +53,26 @@ img {
 }
 
 .custom-date-picker {
-    width: 100%; /* Độ rộng 100% của phần chọn ngày */
-    padding: 10px; /* Khoảng cách giữa các phần tử */
-    border: 1px solid #ccc; /* Viền xung quanh */
-    border-radius: 4px; /* Bo góc viền */
-    font-size: 16px; /* Kích thước chữ */
+    width: 100%;
+    /* Độ rộng 100% của phần chọn ngày */
+    padding: 10px;
+    /* Khoảng cách giữa các phần tử */
+    border: 1px solid #ccc;
+    /* Viền xung quanh */
+    border-radius: 4px;
+    /* Bo góc viền */
+    font-size: 16px;
+    /* Kích thước chữ */
 }
 
 .custom-date-picker:hover {
-    border-color: #007BFF; /* Màu viền khi di chuột qua */
+    border-color: #007BFF;
+    /* Màu viền khi di chuột qua */
 }
 
 .custom-date-picker:focus {
-    border-color: #007BFF; /* Màu viền khi trạng thái focus (click vào) */
+    border-color: #007BFF;
+    /* Màu viền khi trạng thái focus (click vào) */
 }
 
 .bill {
@@ -131,3 +138,46 @@ img {
 
 
 }
+.promo-code-card label {
+    display: flex;
+    flex-direction: column;
+}
+
+.promo-code-quantity,
+.promo-code-expiration {
+    font-weight: bold;
+}
+.promo-code-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.promo-code-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    width: 300px;
+    background-color: #f85454;
+    transition: background-color 0.3s;
+}
+
+.promo-code-card:hover {
+    transform: scale(0.9); /* Tăng kích thước khi hover */
+    transition: transform 0.4s ease-in-out; /* Thêm hiệu ứng chuyển đổi màu nền và kích thước */
+}
+
+
+.promo-code-info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.promo-code-string {
+    font-weight: bold;
+}
+
+.promo-code-discount {
+    color: #f3ebeb;
+}
+

@@ -7,6 +7,8 @@ import jwt_decode from 'jwt-decode';
 import { useCookies } from 'react-cookie';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { format } from 'date-fns';
+
 const Bill = () => {
     const [cookies] = useCookies(['token_user']);
     const [branchs, setBranchs] = useState([]);
@@ -26,6 +28,9 @@ const Bill = () => {
     const [note, setNote] = useState('');
     const [phoneValid, setPhoneValid] = useState(true);
     const [isDuplicateInvoice, setIsDuplicateInvoice] = useState(false);
+    const [promoCodes, setPromoCodes] = useState([]);
+    const [selectedCodes, setSelectedCodes] = useState([]);
+    const [discount, setDiscount] = useState(0);
     // sdt phải đủ 10 số
     const isPhoneNumberValid = (phone) => {
         const phoneRegex = /^[0-9]{10}$/;
@@ -258,6 +263,18 @@ const Bill = () => {
                 return;
 
             }
+            for (const promoCodeId of selectedCodes) {
+                const usePromoCodeResponse = await fetch(`https://localhost:7296/api/invoice/use-promo-code?codeId=${promoCodeId}`, {
+                    method: 'POST',
+                });
+                if (usePromoCodeResponse.ok) {
+                    // Xử lý khi mã giảm giá được sử dụng thành công
+                    console.log('Sử dụng mã giảm giá thành công cho mã có ID:', promoCodeId);
+                } else {
+                    // Xử lý khi có lỗi khi sử dụng mã giảm giá
+                    console.error('Lỗi khi sử dụng mã giảm giá cho mã có ID:', promoCodeId);
+                }
+            }
             // Tất cả điều kiện đều đúng và người dùng đã đăng nhập
             console.log("Chi nhánh đã chọn:", selectedBranch.name);
             console.log("Sảnh cưới đã chọn:", selectedHalls.map(hall => hall.name).join(', '));
@@ -336,7 +353,69 @@ const Bill = () => {
             });
         }
     };
+    useEffect(() => {
+        const fetchPromoCodes = async () => {
+            try {
+                const response = await fetch('https://localhost:7296/api/invoice/promo-code');
+                if (response.ok) {
+                    const data = await response.json();
+                    setPromoCodes(data);
+                } else {
+                    console.error('Lỗi khi lấy danh sách mã giảm giá:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Lỗi khi lấy danh sách mã giảm giá:', error);
+            }
+        };
 
+        // GET mỗi 5 giây
+        const interval = setInterval(fetchPromoCodes, 5000);
+
+        // Dừng polling khi component unmount
+        return () => clearInterval(interval);
+
+        // Khởi tạo ban đầu
+        fetchPromoCodes();
+    }, []);
+
+
+    // Xử lý sự kiện khi người dùng chọn hoặc bỏ chọn mã giảm giá
+    const handleCodeSelection = (codeId) => {
+        if (selectedCodes.includes(codeId)) {
+            setSelectedCodes(selectedCodes.filter((id) => id !== codeId));
+            toast.error('Đã hủy bỏ mã giảm giá', {
+                position: 'top-right',
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        } else {
+            setSelectedCodes([...selectedCodes, codeId]);
+            toast.success('Đã áp dụng mã giảm giá', {
+                position: 'top-right',
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
+    };
+    useEffect(() => {
+        // Tính toán giảm giá từ các mã giảm giá đã chọn
+        const selectedCodesDiscount = selectedCodes.reduce((acc, codeId) => {
+            const selectedCode = promoCodes.find((code) => code.codeId === codeId);
+            if (selectedCode) {
+                return acc + selectedCode.discount;
+            }
+            return acc;
+        }, 0);
+
+        // Cập nhật giá trị giảm giá
+        setDiscount(selectedCodesDiscount);
+    }, [selectedCodes, promoCodes]);
     const calculateTotalPrice = () => {
         const menuTotal = selectedMenus.reduce((acc, menuId) => {
             const selectedMenu = menus.find(menu => menu.menuId === menuId);
@@ -357,8 +436,11 @@ const Bill = () => {
             }
         }
 
-        // Cộng tất cả các tổng lại để tính tổng tổng cộng
-        const total = menuTotal + serviceTotal + hallTotal;
+        // Tổng tiền trước khi áp dụng giảm giá
+        const totalBeforeDiscount = menuTotal + serviceTotal + hallTotal;
+        const discountedAmount = (discount / 100) * totalBeforeDiscount;
+        // Áp dụng giảm giá
+        const total = totalBeforeDiscount - discountedAmount;
 
         return total;
     };
@@ -563,7 +645,7 @@ const Bill = () => {
                                     </Accordion.Body>
                                 </Accordion.Item>
                             ))}
-                            <h1 style={{ marginTop: '20px' }} className="title">Thông tin người đặt</h1>
+                            <h1 style={{ fontSize: '2rem', marginTop: '20px' }} className="title">Thông tin người đặt</h1>
                             <div style={{ marginTop: '20px' }} className="mb-2">
                                 <label>Họ và tên:</label>
                                 <input
@@ -612,6 +694,45 @@ const Bill = () => {
                             </div>
 
                         </Accordion>
+                        <div>
+    <h3 style={{ fontSize: '2rem', marginTop: '20px' }} className="title">Danh sách mã giảm giá</h3>
+
+    <div className="promo-code-list row">
+        {promoCodes.map((promoCode) => (
+            <div className="promo-code-card col-md-6" key={promoCode.codeId}>
+                <label htmlFor={promoCode.codeId} className="promo-code-label">
+                    <input
+                        type="checkbox"
+                        id={promoCode.codeId}
+                        checked={selectedCodes.includes(promoCode.codeId)}
+                        onChange={() => handleCodeSelection(promoCode.codeId)}
+                        className="form-check-input"
+                    />
+                    <div className="promo-code-info">
+                        <div className="promo-code-string">
+                           {promoCode.codeString}
+                        </div>
+                        <div className="promo-code-discount">
+                            Giảm {promoCode.discount}%
+                        </div>
+                    </div>
+                    <div className="promo-code-quantity">
+                        Số lượng: {promoCode.quantity}
+                    </div>
+                    <div className="promo-code-expiration">
+                        Hết hạn: {format(new Date(promoCode.expirationDate), 'dd/MM/yyyy hh:mm')}
+                    </div>
+                </label>
+            </div>
+        ))}
+    </div>
+</div>
+
+
+
+
+
+
                         <button style={{ marginTop: '20px' }} className='btn btn-success' variant="primary" type="submit">Xác nhận đặt nhà hàng</button>
 
                     </form>
