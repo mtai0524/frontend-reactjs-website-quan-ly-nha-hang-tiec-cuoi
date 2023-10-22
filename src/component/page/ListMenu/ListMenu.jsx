@@ -66,7 +66,7 @@ const ListMenu = () => {
                         className="me-2"
                         aria-label="Search"
                     />
-                    <Button type='submit'>Search</Button>
+                    <Button type='submit'>Tìm</Button>
                 </Form>
             </div>
             <Row className='listmenu'>

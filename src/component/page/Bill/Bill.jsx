@@ -1,5 +1,5 @@
 import './Bill.scss';
-import { Accordion, Button, Card } from 'react-bootstrap';
+import { Accordion, Button, Card, Modal } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import Cookies from 'js-cookie';
@@ -415,6 +415,7 @@ const Bill = () => {
         // Cập nhật giá trị giảm giá
         setDiscount(selectedCodesDiscount);
     }, [selectedCodes, promoCodes]);
+    let totalBeforeDiscount = 0;
     const calculateTotalPrice = () => {
         const menuTotal = selectedMenus.reduce((acc, menuId) => {
             const selectedMenu = menus.find(menu => menu.menuId === menuId);
@@ -436,7 +437,7 @@ const Bill = () => {
         }
 
         // Tổng tiền trước khi áp dụng giảm giá
-        const totalBeforeDiscount = menuTotal + serviceTotal + hallTotal;
+        totalBeforeDiscount = menuTotal + serviceTotal + hallTotal;
         const discountedAmount = (discount / 100) * totalBeforeDiscount;
         // Áp dụng giảm giá
         const total = totalBeforeDiscount - discountedAmount;
@@ -483,7 +484,8 @@ const Bill = () => {
         Note: note,
         InvoiceCodeRequest: selectedCodes.map(codeId => ({
             CodeId: codeId
-        }))
+        })),
+        TotalBeforeDiscount: totalBeforeDiscount,
     };
 
     const sendOrderData = () => {
@@ -511,6 +513,47 @@ const Bill = () => {
         });
         return formattedPrice;
     }
+
+    const [showModal, setShowModal] = useState(false);
+
+    const [bookedHalls, setBookedHalls] = useState([]);
+    const fetchBookedHalls = async () => {
+        try {
+            const response = await fetch(`https://localhost:7296/api/invoice/booked-hall`);
+            if (response.ok) {
+                const data = await response.json();
+
+                // Sắp xếp danh sách theo BookingDate tăng dần
+                data.sort((a, b) => new Date(a.bookingDate) - new Date(b.bookingDate));
+
+                setBookedHalls(data);
+            } else {
+                console.error("Lỗi khi lấy danh sách sảnh đã đặt");
+            }
+        } catch (error) {
+            console.error("Lỗi server:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchBookedHalls();
+    }, []);
+
+    // mở modal
+    const openModal = () => {
+        setShowModal(true);
+    };
+
+    const [searchDate, setSearchDate] = useState('');
+
+    const handleSearchDateChange = (event) => {
+        setSearchDate(event.target.value);
+    };
+
+    const filteredHalls = bookedHalls.filter((hall) => {
+        const formattedDate = format(new Date(hall.bookingDate), 'dd/MM/yyyy');
+        return formattedDate.includes(searchDate);
+    });
     return (
         <div className="bill">
             <div className="bill-page">
@@ -697,48 +740,82 @@ const Bill = () => {
 
                         </Accordion>
                         <div>
-    <h3 style={{ fontSize: '2rem', marginTop: '20px' }} className="title">Danh sách mã giảm giá</h3>
 
-    <div className="promo-code-list row">
-        {promoCodes.map((promoCode) => (
-            <div className="promo-code-card col-md-6" key={promoCode.codeId}>
-                <label htmlFor={promoCode.codeId} className="promo-code-label">
-                    <input
-                        type="checkbox"
-                        id={promoCode.codeId}
-                        checked={selectedCodes.includes(promoCode.codeId)}
-                        onChange={() => handleCodeSelection(promoCode.codeId)}
-                        className="form-check-input"
-                    />
-                    <div className="promo-code-info">
-                        <div className="promo-code-string">
-                           {promoCode.codeString}
+                            <h3 style={{ fontSize: '2rem', marginTop: '20px' }} className="title">Danh sách mã giảm giá</h3>
+
+                            <div style={{ margin: '0 auto', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="promo-code-list row">
+                                {promoCodes.map((promoCode) => (
+                                    <div className="promo-code-card col-md-6" key={promoCode.codeId}>
+                                        <label htmlFor={promoCode.codeId} className="promo-code-label">
+                                            <input
+                                                type="checkbox"
+                                                id={promoCode.codeId}
+                                                checked={selectedCodes.includes(promoCode.codeId)}
+                                                onChange={() => handleCodeSelection(promoCode.codeId)}
+                                                className="form-check-input"
+                                            />
+                                            <div className="promo-code-info">
+                                                <div className="promo-code-string">
+                                                    {promoCode.codeString}
+                                                </div>
+                                                <div className="promo-code-discount">
+                                                    Giảm {promoCode.discount}%
+                                                </div>
+                                            </div>
+                                            <div className="promo-code-quantity">
+                                                Số lượng: {promoCode.quantity}
+                                            </div>
+                                            <div className="promo-code-expiration">
+                                                Hết hạn: {format(new Date(promoCode.expirationDate), 'dd/MM/yyyy hh:mm')}
+                                            </div>
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                        <div className="promo-code-discount">
-                            Giảm {promoCode.discount}%
-                        </div>
-                    </div>
-                    <div className="promo-code-quantity">
-                        Số lượng: {promoCode.quantity}
-                    </div>
-                    <div className="promo-code-expiration">
-                        Hết hạn: {format(new Date(promoCode.expirationDate), 'dd/MM/yyyy hh:mm')}
-                    </div>
-                </label>
-            </div>
-        ))}
-    </div>
-</div>
-
-
-
-
-
-
                         <button style={{ marginTop: '20px' }} className='btn btn-success' variant="primary" type="submit">Xác nhận đặt nhà hàng</button>
-
+                        <button style={{ float: 'right', marginTop: '20px' }} type='button' onClick={() => openModal()} className='btn btn-secondary'>
+                            Xem danh sách đã được đặt trước
+                        </button>
                     </form>
+
                 </div>
+
+                <Modal show={showModal} onHide={() => setShowModal(false)} size="xl" dialogClassName="modal-100w">
+                    <Modal.Header closeButton>
+                        <Modal.Title>Danh sách sảnh đã có người đặt</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div style={{ marginBottom: '20px' }}>
+                            <label htmlFor="searchDate">Tìm kiếm ngày:</label>
+                            <input
+                                type="text"
+                                id="searchDate"
+                                value={searchDate}
+                                onChange={handleSearchDateChange}
+                                className="form-control"
+                            />
+                        </div>
+                        <div style={{ marginTop: '20px', marginRight: '20px', marginLeft: '20px' }} className="row">
+                            {filteredHalls.map((hall) => (
+                                <div key={hall.HallId} className="col-md-3 mb-3">
+                                    <div className="card">
+                                        <div className="card-body">
+                                            <h5 className="card-title">Chi nhánh: {hall.branchName}</h5>
+                                            <h5 className="card-title">Sảnh: {hall.hallName}</h5>
+                                            <p className="card-text">Ngày đặt: {format(new Date(hall.bookingDate), 'dd/MM/yyyy')}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowModal(false)}>
+                            Đóng
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
                 <div className="selected-items">
                     <div className="selected-items-content" style={{ overflowY: 'auto', maxHeight: '800px' }}>
                         {selectedBranch && (
@@ -828,8 +905,8 @@ const Bill = () => {
                     </div>
                 </div>
 
-            </div>
-        </div>
+            </div >
+        </div >
 
     );
 };

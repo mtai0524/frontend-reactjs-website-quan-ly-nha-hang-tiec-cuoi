@@ -83,12 +83,12 @@ const ListMenu = () => {
                 <Form className="filter d-flex" onSubmit={handleSearch}>
                     <Form.Control
                         type="text"
-                        placeholder="Nhập món ăn bạn muốn tìm kiếm"
+                        placeholder="Nhập sảnh cưới bạn muốn tìm kiếm"
                         name="kw"
                         className="me-2"
                         aria-label="Search"
                     />
-                    <Button type='submit'>Search</Button>
+                    <Button type='submit'>Tìm</Button>
                 </Form>
             </div>
             <Row className='listmenu'>

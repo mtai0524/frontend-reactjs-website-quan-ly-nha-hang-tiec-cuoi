@@ -52,6 +52,9 @@ const Header = () => {
                     {
 
                         <li className='header'>
+                            <Link className="nav-link text-black" to="/">
+                                Trang Chủ
+                            </Link>
                             <Link className="nav-link text-black" to="/listbranch">
                                 Chi Nhánh
                             </Link>
@@ -63,9 +66,6 @@ const Header = () => {
                             </Link>
                             <Link className="nav-link text-black" to="/listservice">
                                 Dịch Vụ
-                            </Link>
-                            <Link className="nav-link text-black" to="/feedback">
-                                Đánh Giá
                             </Link>
                             {/* {
                                     item.active && <span></span>

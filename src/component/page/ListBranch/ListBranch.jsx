@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Col, Row, Modal } from 'react-bootstrap';
+import { Button, Card, Col, Row, Modal, Form } from 'react-bootstrap';
 import './ListBranch.scss';
 import StarRating from '../../Context/Rating';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -67,17 +67,18 @@ const ListBranch = () => {
 
         const starArray = [];
 
-        // Add full stars with a yellow color
+      
+        // một ngôi sao
         for (let i = 0; i < fullStars; i++) {
             starArray.push(<FontAwesomeIcon key={i} icon={faStar} style={{ color: 'gold' }} />);
         }
 
-        // Add half stars with a yellow color
+        // một nửa ngôi sao
         if (halfStars === 1) {
             starArray.push(<FontAwesomeIcon key="half" icon={faStarHalfAlt} style={{ color: 'gold' }} />);
         }
 
-        // Add empty stars with a gray color
+        // ngôi sao trống
         for (let i = 0; i < emptyStars; i++) {
             starArray.push(<FontAwesomeIcon key={`empty${i}`} icon={faStar} style={{ color: 'gray' }} />);
         }
@@ -137,7 +138,22 @@ const ListBranch = () => {
 
     return (
         <>
-            <Row className="branch">
+         <div className='tilte'>
+                <h1>Danh Sách Chi Nhánh</h1>
+
+
+                <Form className="filter d-flex" >
+                    <Form.Control
+                        type="text"
+                        placeholder="Nhập chi nhánh bạn muốn tìm kiếm"
+                        name="kw"
+                        className="me-2"
+                        aria-label="Search"
+                    />
+                    <Button type='submit'>Tìm</Button>
+                </Form>
+            </div>
+            <Row style={{marginTop:'-7px'}} className="branch">
                 {branches.map((branch) => (
                     <Col xs={12} md={3} key={branch.branchId}>
                         <Card className="branch-card">
