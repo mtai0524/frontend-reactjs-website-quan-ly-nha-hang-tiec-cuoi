@@ -514,7 +514,6 @@ const Bill = () => {
         return formattedPrice;
     }
 
-    const [showModal, setShowModal] = useState(false);
 
     const [bookedHalls, setBookedHalls] = useState([]);
     const fetchBookedHalls = async () => {
@@ -538,6 +537,8 @@ const Bill = () => {
     useEffect(() => {
         fetchBookedHalls();
     }, []);
+    
+    const [showModal, setShowModal] = useState(false);
 
     // mở modal
     const openModal = () => {
