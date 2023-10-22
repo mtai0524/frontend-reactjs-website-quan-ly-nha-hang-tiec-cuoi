@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+
 import Cookies from 'js-cookie';
 import jwt_decode from 'jwt-decode';
 import './Profile.scss';
 import avatar from '../../../assets/assets/img_6.png';
-
+import axios from 'axios';
 const Profile = () => {
-    // Lấy token từ cookie
+    const [avatar, setAvatar] = useState(''); // Khai báo avatar và setAvatar bằng useState
+    const [id, setId] = useState(''); // Khai báo id bằng useState
+    const [firstName, setFirstName] = useState(''); // Khai báo firstName bằng useState
+    const [lastName, setLastName] = useState(''); // Khai báo lastName bằng useState
+    const [email, setEmail] = useState(''); // Khai báo email bằng useState
+    const [phoneNumber, setPhoneNumber] = useState('');
+    useEffect(() => {
+         // Lấy token từ cookie
     const tokenFromCookie = Cookies.get('token_user');
     let decodedToken = null;
 
@@ -26,11 +34,25 @@ const Profile = () => {
     }
 
     // Lấy thông tin người dùng từ token
-    const firstName = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
-    const lastName = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'];
-    const email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'];
-    const phoneNumber = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone'];
-    const avatar = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri'];
+    setId(decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']);
+    setFirstName(decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']);
+    setLastName(decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname']);
+    setEmail(decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']);
+    setPhoneNumber(decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone']);
+        if (id !== '') {
+          async function getAvatar() {
+            try {
+              const response = await axios.get(`https://localhost:7296/api/account/GetAvatar?id=${id}`);
+              setAvatar(response.data.avatar);
+            } catch (error) {
+              console.error('Error:', error);
+            }
+          }
+    
+          // Gọi hàm lấy avatar khi id thay đổi
+          getAvatar();
+        }
+      }, [id]);
 
     return (
         <div className="profile">
