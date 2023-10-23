@@ -776,7 +776,7 @@ const Bill = () => {
                         </div>
                         <button style={{ marginTop: '20px' }} className='btn btn-success' variant="primary" type="submit">Xác nhận đặt nhà hàng</button>
                         <button style={{ float: 'right', marginTop: '20px' }} type='button' onClick={() => openModal()} className='btn btn-secondary'>
-                            Xem danh sách đã được đặt trước
+                            Xem danh sách sảnh đã được đặt trước
                         </button>
                     </form>
 

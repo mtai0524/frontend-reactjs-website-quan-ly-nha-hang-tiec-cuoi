@@ -134,7 +134,19 @@ const ListBranch = () => {
                 }
             });
     };
+    const [selectedService, setSelectedService] = useState(null);
 
+    const [showModalBranch, setShowModalBranch] = useState(false);
+
+    // mở modal
+    const openModalBranch = () => {
+        console.log('Opening modal with:', selectedService);
+
+        setShowModalBranch(true);
+    };
+    const closeModalBranch = () => {
+        setShowModalBranch(false);
+    };
 
     return (
         <>
@@ -162,7 +174,6 @@ const ListBranch = () => {
                             </div>
                             <Card.Body>
                                 <Card.Title className="branch-name">{branch.name}</Card.Title>
-                                <Card.Text className="branch-description">Mô tả: {branch.description}</Card.Text>
                                 <Card.Text className="branch-info">
                                     <span>Địa chỉ: {branch.address}</span>
                                     <span>Số điện thoại: {branch.phone}</span>
@@ -171,12 +182,42 @@ const ListBranch = () => {
 
                                     Xem phản hồi
                                 </button>
+                                <Button
+                                        className='btndetail'
+                                        variant="primary"
+                                        onClick={() => {
+                                            setSelectedService(branch);
+                                            openModalBranch();
+                                        }}
+                                    >
+                                        Xem Chi Tiết
+                                    </Button>
                             </Card.Body>
                         </Card>
                     </Col>
                 ))}
             </Row>
-
+            <Modal show={showModalBranch} onHide={closeModalBranch} size="sm">
+                <Modal.Header closeButton>
+                    <Modal.Title>Chi tiết chi nhánh</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {selectedService && (
+                        <div>
+                            <img src={selectedService.image} className="custom-img"></img>
+                            <h3>{selectedService.name}</h3>
+                            <p>Mô tả: {selectedService.description}</p>
+                            <p>Số điện thoại: {selectedService.phone}</p>
+                            <p>Địa chỉ: {selectedService.address}</p>
+                        </div>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button style={{float:'right'}} variant="secondary" onClick={closeModalBranch}>
+                        Đóng
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
                 <Modal.Header closeButton>
                     <Modal.Title>Danh sách phản hồi {branchName}</Modal.Title>

@@ -177,7 +177,6 @@ const ListMenu = () => {
                             <h3>{selectedService.name}</h3>
                             <p>Giá sảnh cưới: {formatPrice(selectedService.price)}</p>
                             <p>Mô tả: {selectedService.description}</p>
-                            {/* Add more service details as needed */}
                         </div>
                     )}
                 </Modal.Body>

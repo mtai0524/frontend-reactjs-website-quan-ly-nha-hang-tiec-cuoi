@@ -123,7 +123,7 @@ const Register = () => {
 
             <div className="register-form-container">
                 <h1 className="title">
-                    Register Account
+                    Đăng kí tài khoản
                 </h1>
                 <form onSubmit={handleSubmit}>
                     <div>
@@ -252,7 +252,7 @@ const Register = () => {
                         )}
                     </div>
                     <button className="w-100 btn btn-lg btn-primary mt-3 custom-button" type="submit">
-                        Register
+                        Đăng kí
                     </button>
 
 
