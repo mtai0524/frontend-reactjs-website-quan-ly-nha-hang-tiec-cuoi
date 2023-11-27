@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/frontend-reactjs-website-quan-ly-nha-hang-tiec-cuoi/static/css/main.5f6e2aa9.css",
+    "main.js": "/frontend-reactjs-website-quan-ly-nha-hang-tiec-cuoi/static/js/main.ae304a06.js",
+    "static/media/Untitled.png": "/frontend-reactjs-website-quan-ly-nha-hang-tiec-cuoi/static/media/Untitled.8e9248b23878d556cf52.png",
+    "static/media/img_1.png": "/frontend-reactjs-website-quan-ly-nha-hang-tiec-cuoi/static/media/img_1.18597bd86e620b4a0043.png",
+    "static/media/login.png": "/frontend-reactjs-website-quan-ly-nha-hang-tiec-cuoi/static/media/login.8bf94f22bfafe906d5cd.png",
+    "static/media/img_2.png": "/frontend-reactjs-website-quan-ly-nha-hang-tiec-cuoi/static/media/img_2.e2ef028d6ee76d479271.png",
+    "static/media/img_4.png": "/frontend-reactjs-website-quan-ly-nha-hang-tiec-cuoi/static/media/img_4.138d5e72340d241b66f0.png",
+    "static/media/img_5.png": "/frontend-reactjs-website-quan-ly-nha-hang-tiec-cuoi/static/media/img_5.35dc8bdc4a567a814afb.png",
+    "static/media/img_6.png": "/frontend-reactjs-website-quan-ly-nha-hang-tiec-cuoi/static/media/img_6.e5a23cb883828ddc0c61.png",
+    "index.html": "/frontend-reactjs-website-quan-ly-nha-hang-tiec-cuoi/index.html",
+    "main.5f6e2aa9.css.map": "/frontend-reactjs-website-quan-ly-nha-hang-tiec-cuoi/static/css/main.5f6e2aa9.css.map",
+    "main.ae304a06.js.map": "/frontend-reactjs-website-quan-ly-nha-hang-tiec-cuoi/static/js/main.ae304a06.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.5f6e2aa9.css",
+    "static/js/main.ae304a06.js"
+  ]
+}
