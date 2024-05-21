@@ -1,5 +1,5 @@
 import './Bill.scss';
-import { Accordion, Button, Card, Modal } from 'react-bootstrap';
+import { Accordion, Button, Card, Modal,Spinner } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import Cookies from 'js-cookie';
@@ -31,6 +31,7 @@ const Bill = () => {
     const [promoCodes, setPromoCodes] = useState([]);
     const [selectedCodes, setSelectedCodes] = useState([]);
     const [discount, setDiscount] = useState(0);
+    const [loading, setLoading] = useState(true);
     // sdt phải đủ 10 số
     const isPhoneNumberValid = (phone) => {
         const phoneRegex = /^[0-9]{10}$/;
@@ -146,11 +147,27 @@ const Bill = () => {
             }
         }
     };
-
+    const [paymentUrl, setPaymentUrl] = useState('');
 
     const selectedBranch = branchs.find(branch => branch.branchId === selectedBranchId);
     const selectedItemHall = halls.filter(hall => hall.branchName === selectedBranch?.name);
 
+
+    const demoPayment = async (e) => {
+        try {
+            const amount = "9999999900"; 
+            const response = await fetch(`https://localhost:7296/api/Payment?amount=${amount}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch payment URL');
+            }
+            const paymentUrl = await response.text(); // URL thanh toán từ API
+            window.location.href = paymentUrl; // Chuyển hướng người dùng đến URL thanh toán
+        } catch (error) {
+            console.error('Error creating payment URL: ', error);
+        }
+    }
+    
+    
     const handleFormSubmit = async (e) => {
         e.preventDefault();
 
@@ -174,7 +191,21 @@ const Bill = () => {
             });
             return;
         }
+        const currentDate = new Date();
+        const oneYearFromNow = new Date();
+        oneYearFromNow.setFullYear(currentDate.getFullYear() + 1);
 
+        if (selectedDate > oneYearFromNow) {
+            toast.error('Ngày đến tham dự không được quá 1 năm kể từ ngày hiện tại.', {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            return;
+        }
         if (selectedBranch && selectedHalls.length > 0) {
             // Kiểm tra số lượng món ăn đã chọn
             if (selectedMenus.length < 3) {
@@ -293,6 +324,7 @@ const Bill = () => {
                 draggable: true,
             });
             sendOrderData();
+            demoPayment();
         } else {
             toast.error('Chi nhánh hoặc sảnh chưa được chọn á !', {
                 position: 'top-right',

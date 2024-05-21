@@ -1,13 +1,13 @@
 import { BsCartCheck } from 'react-icons/bs';
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Col, Form, Modal, Row } from 'react-bootstrap';
+import { Button, Card, Col, Form, Modal, Row, Spinner } from 'react-bootstrap';
 import Apis, { endpoint } from '../../../config/Apis';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
 
 const ListMenu = () => {
-
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadHalls = async () => {
@@ -54,6 +54,7 @@ const ListMenu = () => {
     const [bookedHalls, setBookedHalls] = useState([]);
     const fetchBookedHalls = async () => {
         try {
+            setLoading(true); 
             const response = await fetch(`https://localhost:7296/api/invoice/booked-hall`);
             if (response.ok) {
                 const data = await response.json();
@@ -62,7 +63,10 @@ const ListMenu = () => {
                 data.sort((a, b) => new Date(a.bookingDate) - new Date(b.bookingDate));
 
                 setBookedHalls(data);
+                setLoading(false); 
+
             } else {
+                setLoading(false); 
                 console.error("Lỗi khi lấy danh sách sảnh đã đặt");
             }
         } catch (error) {
@@ -90,7 +94,11 @@ const ListMenu = () => {
 
             <div className='tilte'>
                 <h1>Danh Sách Sảnh Cưới</h1>
-
+                {loading? (
+      <div className="overlay">
+        <Spinner animation="border" />
+      </div>
+    ) : null}
 
                 <Form className="filter d-flex" onSubmit={handleSearch}>
                     <Form.Control

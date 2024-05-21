@@ -1,75 +1,87 @@
-import './ListMenu.scss'
+import './ListMenu.scss';
 import { BsCartCheck } from 'react-icons/bs';
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Col, Form, Modal, Row } from 'react-bootstrap';
+import { Button, Card, Col, Form, Modal, Spinner, Row } from 'react-bootstrap';
 import Apis, { endpoint } from '../../../config/Apis';
 import { Link } from 'react-router-dom';
 
-
-
 const ListMenu = () => {
-
+    const [loading, setLoading] = useState(true);
+    const [menus, setMenus] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [searchResult, setSearchResult] = useState([]);
+    const [selectedService, setSelectedService] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const loadMenus = async () => {
             try {
-                let e = endpoint[`menu`];
-
-                let res = await Apis.get(e)
-                setMenus(res.data);
-
+                setLoading(true);
+                const menuEndpoint = endpoint[`menu`];
+                const categoryEndpoint = endpoint[`category`];
+                let menuRes = await Apis.get(menuEndpoint);
+                let categoryRes = await Apis.get(categoryEndpoint);
+                setMenus(menuRes.data);
+                setCategories(categoryRes.data);
+                setLoading(false);
             } catch (error) {
+                setLoading(false);
                 console.error(error);
-
             }
-        }
+        };
         loadMenus();
     }, []);
 
-    const [menu, setMenus] = useState([])
-    // ======
-    const [searchResult, setSearchResult] = useState([]);
-
     const handleSearch = (e) => {
-        e.preventDefault(); // Ngăn chặn sự kiện gửi form mặc định
-
-        // Lấy giá trị từ input tìm kiếm
+        e.preventDefault();
         const searchKeyword = e.target.kw.value.toLowerCase();
-
-        // Sử dụng hàm filter để tìm kiếm trong danh sách menu
-        const searchResults = menu.filter(item =>
+        const searchResults = menus.filter(item =>
             item.name.toLowerCase().includes(searchKeyword)
         );
-
-        // Cập nhật trạng thái searchResult với kết quả tìm kiếm
         setSearchResult(searchResults);
     };
+
+    const handleCategoryChange = async (e) => {
+        const categoryId = e.target.value;
+        setSelectedCategory(categoryId);
+        if (categoryId) {
+            setLoading(true);
+            try {
+                let res = await Apis.get(`${endpoint[`menu`]}/byCategory/${categoryId}`);
+                setMenus(res.data);
+                setLoading(false);
+            } catch (error) {
+                setLoading(false);
+                console.error(error);
+            }
+        } else {
+            // Reload all menus if no category is selected
+            const res = await Apis.get(endpoint[`menu`]);
+            setMenus(res.data);
+        }
+    };
+
     function formatPrice(price) {
         const formattedPrice = price.toLocaleString("vi-VN", {
-          style: "currency",
-          currency: "VND"
+            style: "currency",
+            currency: "VND"
         });
         return formattedPrice;
-      }
+    }
 
-      const [selectedService, setSelectedService] = useState(null);
+    const openModal = () => setShowModal(true);
+    const closeModal = () => setShowModal(false);
 
-      const [showModal, setShowModal] = useState(false);
-  
-      // mở modal
-      const openModal = () => {
-          console.log('Opening modal with:', selectedService);
-          setShowModal(true);
-      };
-      const closeModal = () => {
-          setShowModal(false);
-      };
     return (
-
         <>
-            <div className='tilte'>
+               <div className='tilte'>
                 <h1>Danh Sách Thực Đơn</h1>
-
+                {loading? (
+      <div className="overlay">
+        <Spinner animation="border" />
+      </div>
+    ) : null}
 
                 <Form className="filter d-flex" onSubmit={handleSearch}>
                     <Form.Control
@@ -81,8 +93,13 @@ const ListMenu = () => {
                     />
                     <Button type='submit'>Tìm</Button>
                 </Form>
+                <Form.Select style={{width:'20%'}} aria-label="Chọn thể loại" onChange={handleCategoryChange}>
+                    <option value="">Tất cả</option>
+                    {categories.map(category => (
+                        <option key={category.categoryId} value={category.categoryId}>{category.name}</option>
+                    ))}
+                </Form.Select>
             </div>
-
             <Modal show={showModal} onHide={closeModal} size="sm">
                 <Modal.Header closeButton>
                     <Modal.Title>Chi tiết dịch vụ</Modal.Title>
@@ -90,33 +107,30 @@ const ListMenu = () => {
                 <Modal.Body>
                     {selectedService && (
                         <div>
-                            <img src={selectedService.image} className="custom-img"></img>
+                            <img src={selectedService.image} className="custom-img" alt={selectedService.name} />
                             <h3>{selectedService.name}</h3>
                             <p>Giá thực đơn: {formatPrice(selectedService.price)}</p>
                             <p>Mô tả: {selectedService.description}</p>
-                            {/* Add more service details as needed */}
                         </div>
                     )}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={closeModal}>
-                        Đóng
-                    </Button>
+                    <Button variant="secondary" onClick={closeModal}>Đóng</Button>
                 </Modal.Footer>
             </Modal>
 
             <Row className='listmenu'>
                 {searchResult.length > 0 ? (
                     searchResult.map(menuItem => (
-                        <Col xs={12} md={3} className='mt-3'>
+                        <Col xs={12} md={3} className='mt-3' key={menuItem.menuId}>
                             <Card className='card' style={{ width: '18rem' }}>
-                                <Card.Img variant="top" src={menuItem.image} className="custom-img" />
+                                <Card.Img variant="top" src={menuItem.image} className="custom-img" alt={menuItem.name} />
                                 <Card.Body>
                                     <Card.Title>{menuItem.name}</Card.Title>
-                                    <Card.Text>
-                                    Giá món ăn: {formatPrice(menuItem.price)}
-                                    </Card.Text>
-                                    <Link to="/bill"><Button variant="primary"><BsCartCheck />Đặt Đơn</Button></Link>
+                                    <Card.Text>Giá món ăn: {formatPrice(menuItem.price)}</Card.Text>
+                                    <Link to="/bill">
+                                        <Button variant="primary"><BsCartCheck /> Đặt Đơn</Button>
+                                    </Link>
                                     <Button
                                         className='btndetail'
                                         variant="primary"
@@ -132,16 +146,16 @@ const ListMenu = () => {
                         </Col>
                     ))
                 ) : (
-                    menu.map(menuItem => (
-                        <Col xs={12} md={3} className='mt-3'>
+                    menus.map(menuItem => (
+                        <Col xs={12} md={3} className='mt-3' key={menuItem.menuId}>
                             <Card className='card' style={{ width: '18rem' }}>
-                                <Card.Img variant="top" src={menuItem.image} className="custom-img" />
+                                <Card.Img variant="top" src={menuItem.image} className="custom-img" alt={menuItem.name} />
                                 <Card.Body>
-                                <Card.Title>{menuItem.name}</Card.Title>
-                                    <Card.Text>
-                                    Giá món ăn: {formatPrice(menuItem.price)}
-                                    </Card.Text>
-                                    <Link to="/bill"><Button variant="primary"><BsCartCheck />Đặt Đơn</Button></Link>
+                                    <Card.Title>{menuItem.name}</Card.Title>
+                                    <Card.Text>Giá món ăn: {formatPrice(menuItem.price)}</Card.Text>
+                                    <Link to="/bill">
+                                        <Button variant="primary"><BsCartCheck /> Đặt Đơn</Button>
+                                    </Link>
                                     <Button
                                         className='btndetail'
                                         variant="primary"
@@ -159,6 +173,7 @@ const ListMenu = () => {
                 )}
             </Row>
         </>
-    )
-}
+    );
+};
+
 export default ListMenu;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Col, Row, Modal, Form } from 'react-bootstrap';
+import { Button, Card, Col, Row, Modal, Form ,Spinner} from 'react-bootstrap';
 import './ListBranch.scss';
 import StarRating from '../../Context/Rating';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -19,7 +19,7 @@ const ListBranch = () => {
     const [branchId, setBranchId] = useState(0);
     const [branchName, setBranchName] = useState('');
     const [currentModalBranchId, setCurrentModalBranchId] = useState(null); // State để lưu branchId của modal hiện tại
-
+    const [loading, setLoading] = useState(true);
     const openModal = (branchId, branchName) => {
         // Gán branchId của modal hiện tại vào state
         setCurrentModalBranchId(branchId);
@@ -41,12 +41,15 @@ const ListBranch = () => {
         return formattedDate;
     }
     useEffect(() => {
+        setLoading(true); 
         fetch('https://localhost:7296/api/ApiBranch')
             .then((response) => response.json())
             .then((data) => {
                 setBranches(data);
+                setLoading(false); 
             })
             .catch((error) => {
+                setLoading(false); 
                 console.error('Lỗi khi tải danh sách chi nhánh:', error);
             });
     }, []);
@@ -150,9 +153,14 @@ const ListBranch = () => {
 
     return (
         <>
+
          <div className='tilte'>
                 <h1>Danh Sách Chi Nhánh</h1>
-
+   {loading? (
+      <div className="overlay">
+        <Spinner animation="border" />
+      </div>
+    ) : null}
 
                 <Form className="filter d-flex" >
                     <Form.Control

@@ -14,6 +14,7 @@ import Profile from "./component/page/Profile/Profile";
 import { AuthProvider } from "./component/Context/AuthProvider";
 import Feedback from "react-bootstrap/esm/Feedback";
 import History from "./component/page/History/History";
+import Payment from "./component/page/Payment/Payment";
 
 
 
@@ -42,6 +43,7 @@ const App = () => {
             <Route path="/login/register" element={<Register />} />
             <Route path="/feedback" element={<Feedback />} />
             <Route path="/history" element={<History/> } />
+            <Route path="/payment-success" element={<Payment/> } />
           </Routes>
           <Footer />
         </BrowserRouter>
