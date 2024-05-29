@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Col, Row, Modal, Form ,Spinner} from 'react-bootstrap';
+import { Button, Card, Col, Row, Modal, Form, Spinner } from 'react-bootstrap';
 import './ListBranch.scss';
 import StarRating from '../../Context/Rating';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -41,15 +41,15 @@ const ListBranch = () => {
         return formattedDate;
     }
     useEffect(() => {
-        setLoading(true); 
+        setLoading(true);
         fetch('https://localhost:7296/api/ApiBranch')
             .then((response) => response.json())
             .then((data) => {
                 setBranches(data);
-                setLoading(false); 
+                setLoading(false);
             })
             .catch((error) => {
-                setLoading(false); 
+                setLoading(false);
                 console.error('Lỗi khi tải danh sách chi nhánh:', error);
             });
     }, []);
@@ -70,7 +70,7 @@ const ListBranch = () => {
 
         const starArray = [];
 
-      
+
         // một ngôi sao
         for (let i = 0; i < fullStars; i++) {
             starArray.push(<FontAwesomeIcon key={i} icon={faStar} style={{ color: 'gold' }} />);
@@ -154,13 +154,13 @@ const ListBranch = () => {
     return (
         <>
 
-         <div className='tilte'>
+            <div className='tilte'>
                 <h1>Danh Sách Chi Nhánh</h1>
-   {loading? (
-      <div className="overlay">
-        <Spinner animation="border" />
-      </div>
-    ) : null}
+                {loading ? (
+                    <div className="overlay">
+                        <Spinner animation="border" />
+                    </div>
+                ) : null}
 
                 <Form className="filter d-flex" >
                     <Form.Control
@@ -173,7 +173,7 @@ const ListBranch = () => {
                     <Button type='submit'>Tìm</Button>
                 </Form>
             </div>
-            <Row style={{marginTop:'-7px'}} className="branch">
+            <Row style={{ marginTop: '-7px' }} className="branch">
                 {branches.map((branch) => (
                     <Col xs={12} md={3} key={branch.branchId}>
                         <Card className="branch-card">
@@ -191,15 +191,15 @@ const ListBranch = () => {
                                     Xem phản hồi
                                 </button>
                                 <Button
-                                        className='btndetail'
-                                        variant="primary"
-                                        onClick={() => {
-                                            setSelectedService(branch);
-                                            openModalBranch();
-                                        }}
-                                    >
-                                        Xem Chi Tiết
-                                    </Button>
+                                    className='btndetail'
+                                    variant="primary"
+                                    onClick={() => {
+                                        setSelectedService(branch);
+                                        openModalBranch();
+                                    }}
+                                >
+                                    Xem Chi Tiết
+                                </Button>
                             </Card.Body>
                         </Card>
                     </Col>
@@ -221,7 +221,7 @@ const ListBranch = () => {
                     )}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button style={{float:'right'}} variant="secondary" onClick={closeModalBranch}>
+                    <Button style={{ float: 'right' }} variant="secondary" onClick={closeModalBranch}>
                         Đóng
                     </Button>
                 </Modal.Footer>
@@ -304,3 +304,4 @@ const ListBranch = () => {
 };
 
 export default ListBranch;
+//helloo 
