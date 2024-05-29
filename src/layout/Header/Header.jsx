@@ -8,7 +8,7 @@ import { BsClipboardFill, BsFillPersonFill } from 'react-icons/bs';
 import { useAuth } from "../../component/Context/AuthProvider";
 
 const Header = () => {
-    const { token, firstName, email, logout , login} = useAuth();
+    const { token, firstName, email, logout , login, avatar} = useAuth(); // lưu trạng thái hoạt động
     const [userInfo, setUserInfo] = useState(null);
     const navigate = useNavigate(); // Sử dụng useNavigate
 
@@ -19,8 +19,9 @@ const Header = () => {
             const decodedToken = jwt_decode(tokenFromCookie);
             const email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'];
             const firstName = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
+            const avatar = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/country'];
 
-            login(tokenFromCookie, firstName, email);
+            login(tokenFromCookie, firstName, email, avatar);
         }
     }, [login]);
 
@@ -56,6 +57,7 @@ const Header = () => {
                         {token? (
                             <>
                                 <li className="nav-link ">{email}</li>
+                                <img style={{width:'50px', height:'50px', marginTop:'-10px', borderRadius:'50%'}} src={avatar}></img>
                                 <button onClick={handleLogout} className="nav-link text-black">Đăng Xuất</button>
                             </>
                         ) : (

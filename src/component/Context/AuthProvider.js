@@ -7,12 +7,14 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [firstName, setFirstName] = useState(null);
+  const [avatar, setAvatar] = useState(null);
   const [email, setEmail] = useState(null);
   const [id, setId] = useState(null);
-  const login = (token, firstName, email) => {
+  const login = (token, firstName, email, avatar) => {
     setToken(token);
     setFirstName(firstName);
     setEmail(email); // Cập nhật email
+    setAvatar(avatar); // Cập nhật email
   };
   const logout = () => {
     // Xóa token khỏi cookie
@@ -30,10 +32,11 @@ export function AuthProvider({ children }) {
     setToken(null);
     setFirstName(null);
     setEmail(null);
+    setAvatar(null);
   };
 
   return (
-    <AuthContext.Provider value={{ token, setToken, firstName, setFirstName, email, setEmail, logout, login, id, setId }}>
+    <AuthContext.Provider value={{ token, setToken, firstName, setFirstName, email, setEmail, avatar, setAvatar, logout, login, id, setId }}>
       {children}
     </AuthContext.Provider>
   );
