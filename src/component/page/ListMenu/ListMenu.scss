@@ -9,6 +9,7 @@
 
     .btndetail {
         margin-left: 10px;
+        border-radius: 13px;
     }
 
     .custom-img {
@@ -21,17 +22,28 @@
 
 .tilte {
     margin-top: 150px;
-    display: flex;
+    // display: flex;
     justify-content: center;
     align-items: center;
+    padding: 2px 2px;
+    background-color:rgb(241, 241, 241);
 
     h1 {
-        font-weight: 750;
+    display: flex;
+// margin-left: 730px;
+        font-weight: 700;
+    text-align: center;
+
     }
 }
 
 .filter {
     width: 500px;
-    margin-left: 33.3%;
+    margin-left: 37.5%;
+
+}
+.filter1 {
+    width: 500px;
+    margin-left: 750px;
 
 }

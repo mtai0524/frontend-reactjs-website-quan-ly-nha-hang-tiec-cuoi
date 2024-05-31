@@ -31,37 +31,44 @@ const Register = () => {
 
     const validateForm = () => {
         const error = {};
-
+    
         if (isEmptyValue(formValue.firstName)) {
-            error["firstName"] = "First Name is required";
+            error["firstName"] = "First Name is required.";
         }
-
+    
         if (isEmptyValue(formValue.lastName)) {
-            error["lastName"] = "Last Name is required";
+            error["lastName"] = "Last Name is required.";
         }
-
+        if (!formValue.avatar) {
+            error["avatar"] = "Avatar is required.";
+        }
         if (isEmptyValue(formValue.email)) {
-            error["email"] = "Email is required";
+            error["email"] = "Email is required.";
         } else if (!isEmailVaild(formValue.email)) {
-            error["email"] = "Email is invalid";
+            error["email"] = "Email is invalid.";
         }
-
+    
         if (isEmptyValue(formValue.password)) {
-            error["password"] = "Password is required";
+            error["password"] = "Password is required.";
         }
-
+    
         if (isEmptyValue(formValue.confirmPassword)) {
-            error["confirmPassword"] = "Confirm Password is required";
-        } else if (formValue.confirmPassword !== formValue.password) {
-            error["confirmPassword"] = "Passwords do not match";
+            error["confirmPassword"] = "Confirm Password is required.";
+        } else if (formValue.confirmPassword!== formValue.password) {
+            error["confirmPassword"] = "Passwords do not match.";
         }
+    
+        // Enhanced validation for phone number
         if (isEmptyValue(formValue.phoneNumber)) {
-            error["phoneNumber"] = "Phone is required";
+            error["phoneNumber"] = "Phone Number is required.";
+        } else if (!/^(\+84|\d{10})$/.test(formValue.phoneNumber)) {
+            error["phoneNumber"] = "Invalid phone number format. Please enter a valid Vietnamese phone number.";
         }
+    
         setformError(error);
         return Object.keys(error).length === 0;
     };
-
+    
     //được sử dụng để cập nhật trạng thái của một thành phần (component)
     //  trong ứng dụng React khi người dùng tương tác với nó, chẳng hạn như khi họ nhập dữ liệu vào một trường nhập liệu (input field).
     const handleChange = (event) => {
@@ -108,12 +115,12 @@ const Register = () => {
 
             }
             else {
+                validateForm();
                 toast.error('Đăng ký thất bại. Vui lòng kiểm tra lại thông tin đăng ký.');
                 console.log("form invalue")
             }
         } catch (error) {
             console.error('Lỗi khi đăng ký:', error);
-            // Xử lý khi xảy ra lỗi
         }
     };
 

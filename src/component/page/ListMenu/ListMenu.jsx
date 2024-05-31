@@ -1,5 +1,6 @@
 import './ListMenu.scss';
 import { BsCartCheck } from 'react-icons/bs';
+import { MdDescription } from "react-icons/md";
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Col, Form, Modal, Spinner, Row } from 'react-bootstrap';
 import Apis, { endpoint } from '../../../config/Apis';
@@ -75,8 +76,8 @@ const ListMenu = () => {
 
     return (
         <>
-               <div className='tilte'>
-                <h1>Danh Sách Thực Đơn</h1>
+               <div className='tilte '>
+                <h1 className='text-gradient'>DANH SÁCH THỰC ĐƠN</h1>
                 {loading? (
       <div className="overlay">
         <Spinner animation="border" />
@@ -93,8 +94,9 @@ const ListMenu = () => {
                     />
                     <Button type='submit'>Tìm</Button>
                 </Form>
-                <Form.Select style={{width:'20%'}} aria-label="Chọn thể loại" onChange={handleCategoryChange}>
-                    <option value="">Tất cả</option>
+                <Form.Select className='filter1 d-flex' style={{width:'20%'}} aria-label="Chọn thể loại" onChange={handleCategoryChange}>
+                    <option value="">Lọc món ăn</option>
+                   
                     {categories.map(category => (
                         <option key={category.categoryId} value={category.categoryId}>{category.name}</option>
                     ))}
@@ -125,7 +127,7 @@ const ListMenu = () => {
                         <Col xs={12} md={3} className='mt-3' key={menuItem.menuId}>
                             <Card className='card' style={{ width: '18rem' }}>
                                 <Card.Img variant="top" src={menuItem.image} className="custom-img" alt={menuItem.name} />
-                                <Card.Body>
+                                <Card.Body >
                                     <Card.Title>{menuItem.name}</Card.Title>
                                     <Card.Text>Giá món ăn: {formatPrice(menuItem.price)}</Card.Text>
                                     <Link to="/bill">
@@ -151,12 +153,14 @@ const ListMenu = () => {
                             <Card className='card' style={{ width: '18rem' }}>
                                 <Card.Img variant="top" src={menuItem.image} className="custom-img" alt={menuItem.name} />
                                 <Card.Body>
-                                    <Card.Title>{menuItem.name}</Card.Title>
-                                    <Card.Text>Giá món ăn: {formatPrice(menuItem.price)}</Card.Text>
-                                    <Link to="/bill">
+                                    <Card.Title style={{ fontWeight: 'bold', textAlign: 'center' }}>{menuItem.name}</Card.Title>
+                                    <hr></hr>
+                                    <h4 className='detail'>
+                                    <Card.Text style={{ fontWeight: 'bold',fontSize:'19px', marginTop:'15px' }}>{formatPrice(menuItem.price)}</Card.Text>
+                                    {/* <Link to="/bill">
                                         <Button variant="primary"><BsCartCheck /> Đặt Đơn</Button>
-                                    </Link>
-                                    <Button
+                                    </Link> */}
+                                    <Button style={{padding: '10px 15px',fontWeight: 'bold', textAlign: 'center',border:'black' }}
                                         className='btndetail'
                                         variant="primary"
                                         onClick={() => {
@@ -164,8 +168,11 @@ const ListMenu = () => {
                                             openModal();
                                         }}
                                     >
-                                        Xem Chi Tiết
+                                       
+                                        Chi Tiết
+                                         <MdDescription style={{ marginTop: '-5px',marginLeft:'6px' }} />
                                     </Button>
+                                    </h4>
                                 </Card.Body>
                             </Card>
                         </Col>

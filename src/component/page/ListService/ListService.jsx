@@ -78,7 +78,7 @@ const ListService = () => {
     return (
         <>
             <div className='tilte'>
-                <h1>Danh Sách Dịch Vụ</h1>
+                <h1 className='text-gradient'>DANH SÁCH DỊCH VỤ</h1>
                 {loading ? (
                     <div className="overlay">
                         <Spinner animation="border" />
@@ -93,9 +93,9 @@ const ListService = () => {
                         className="me-2"
                         aria-label="Search"
                     />
-                    <Button type='submit'>Tìm</Button>
+                    <Button type='submit' >Tìm</Button>
                 </Form>
-                <Form.Select style={{ width: '20%' }} aria-label="Chọn thể loại" onChange={handleCategoryChange}>
+                <Form.Select className='filter1 d-flex' style={{ width: '20%' }} aria-label="Chọn thể loại" onChange={handleCategoryChange}>
                     <option value="">Tất cả</option>
                     {categories.map(category => (
                         <option key={category.categoryId} value={category.categoryId}>{category.name}</option>
@@ -105,7 +105,7 @@ const ListService = () => {
 
             <Modal show={showModal} onHide={closeModal} size="sm">
                 <Modal.Header closeButton>
-                    <Modal.Title>Chi tiết dịch vụ</Modal.Title>
+                    <Modal.Title >Chi tiết dịch vụ</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {selectedService && (
@@ -129,10 +129,10 @@ const ListService = () => {
                             <Card className='card' style={{ width: '18rem' }}>
                                 <Card.Img variant="top" src={serviceItem.image} className="custom-img" alt={serviceItem.name} />
                                 <Card.Body>
-                                    <Card.Title>{serviceItem.name}</Card.Title>
+                                    <Card.Title >{serviceItem.name}</Card.Title>
                                     <Card.Text>Giá dịch vụ: {formatPrice(serviceItem.price)}</Card.Text>
                                     <Link to="/bill">
-                                        <Button variant="primary"><BsCartCheck /> Đặt Đơn</Button>
+                                        <Button variant="primary" ><BsCartCheck /> Đặt Đơn</Button>
                                     </Link>
                                     <Button
                                         className='btndetail'
@@ -157,7 +157,9 @@ const ListService = () => {
                                     <Card.Title>{serviceItem.name}</Card.Title>
                                     <Card.Text>Giá dịch vụ: {formatPrice(serviceItem.price)}</Card.Text>
                                     <Link to="/bill">
-                                        <Button variant="primary"><BsCartCheck /> Đặt Đơn</Button>
+                                    <Button className='btndetail' variant="primary" style={{ background: 'linear-gradient(90deg, #FE8E5C 0%, #F5576C 100%)', border: 'white', fontWeight: 'bold' }}>
+                                            <BsCartCheck style={{marginBottom:'5px'}} />Đặt Đơn
+                                        </Button>
                                     </Link>
                                     <Button
                                         className='btndetail'
@@ -166,6 +168,7 @@ const ListService = () => {
                                             setSelectedService(serviceItem);
                                             openModal();
                                         }}
+                                        style={{ background: 'linear-gradient(90deg, #FE8E5C 0%, #F5576C 100%)', border: 'white', fontWeight: 'bold' }}
                                     >
                                         Xem Chi Tiết
                                     </Button>

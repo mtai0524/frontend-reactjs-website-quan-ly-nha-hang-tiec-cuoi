@@ -32,11 +32,6 @@ const Menu = () => {
                 <span className='text-gradient'>__Thực Đơn__</span>
                 <h1>THỰC ĐƠN ĐÁP ỨNG</h1>
                 <Link to="/listmenu"><Button>Xem Danh Sách Thực Đơn</Button></Link>
-                <li className='menu__chosselist'>
-                    <Button variant="outline-primary">Sáng </Button>
-                    <Button variant="outline-secondary" >Trưa</Button>
-                    <Button variant="outline-success">Tối</Button>
-                </li>
 
                 <ul className='menu__list'>{
                     food.map(item => {

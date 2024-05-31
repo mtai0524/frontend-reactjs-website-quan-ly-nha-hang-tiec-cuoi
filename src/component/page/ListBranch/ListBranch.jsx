@@ -8,6 +8,7 @@ import Cookies from 'js-cookie';
 import jwt_decode from 'jwt-decode';
 import Rating from 'react-rating';
 import { ToastContainer, toast } from 'react-toastify';
+import { FaMapMarkerAlt, FaPhone,FaComment } from "react-icons/fa";
 
 const ListBranch = () => {
     const [branches, setBranches] = useState([]);
@@ -154,8 +155,8 @@ const ListBranch = () => {
     return (
         <>
 
-            <div className='tilte'>
-                <h1>Danh Sách Chi Nhánh</h1>
+            <div className='tilte' style={{maxWidth:'100%'}}>
+                <h1 className='text-gradient' style={{ fontWeight: 'bold' }}>DANH SÁCH CHI NHÁNH</h1>
                 {loading ? (
                     <div className="overlay">
                         <Spinner animation="border" />
@@ -170,42 +171,51 @@ const ListBranch = () => {
                         className="me-2"
                         aria-label="Search"
                     />
-                    <Button type='submit'>Tìm</Button>
+                    <Button style={{maxWidth:'100%'}} type='submit' >Tìm</Button>
                 </Form>
             </div>
             <Row style={{ marginTop: '-7px' }} className="branch">
                 {branches.map((branch) => (
                     <Col xs={12} md={3} key={branch.branchId}>
-                        <Card className="branch-card">
-                            <div className="image-container">
-                                <Card.Img variant="top" src={branch.image} className="fixed-height-image" />
-                            </div>
-                            <Card.Body>
-                                <Card.Title className="branch-name">{branch.name}</Card.Title>
-                                <Card.Text className="branch-info">
-                                    <span>Địa chỉ: {branch.address}</span>
-                                    <span>Số điện thoại: {branch.phone}</span>
-                                </Card.Text>
-                                <button onClick={() => openModal(branch.branchId, branch.name)} className='btn btn-success'>
+                        <Card className="branch-card" style={{ width: '18rem',maxWidth:'100%' }}>
+                            <Card.Img variant="top" src={branch.image} className="custom-img" />
 
-                                    Xem phản hồi
-                                </button>
-                                <Button
-                                    className='btndetail'
-                                    variant="primary"
-                                    onClick={() => {
-                                        setSelectedService(branch);
-                                        openModalBranch();
-                                    }}
-                                >
-                                    Xem Chi Tiết
-                                </Button>
+                            <Card.Body style={{background:'rgb(245, 244, 244)'}}>
+                                <Card.Title style={{ fontWeight: 'bold', textAlign: 'center' }} >{branch.name}</Card.Title>
+                                <Card.Text style={{ fontWeight: 'bold' }} >
+                                    <FaMapMarkerAlt style={{ marginBottom: '5px' }} />
+                                    {branch.address}
+
+                                    <hr></hr>
+
+                                    {branch.description}
+
+                                </Card.Text>
+                                <h4 className='detail' style={{ maxWidth:'100%' }}>
+                               
+                                    <Button style={{padding: '10px 20px',fontWeight: 'bold', textAlign: 'center',border:'black',maxWidth:'100%' }} onClick={() => openModal(branch.branchId, branch.name)} className='btn btn-success '>
+                                    
+                                       Phản hồi
+                                    </Button>
+                                    <Button
+                                    style={{fontWeight: 'bold', textAlign: 'center',padding: '10px 20px',maxWidth:'100%'}}
+                                        className='btndetail'
+                                        variant="primary"
+                                        onClick={() => {
+                                            setSelectedService(branch);
+                                            openModalBranch();
+                                        }}
+                                    >
+                                        Chi Tiết
+                                    </Button>
+                                </h4>
+
                             </Card.Body>
                         </Card>
                     </Col>
                 ))}
             </Row>
-            <Modal show={showModalBranch} onHide={closeModalBranch} size="sm">
+            <Modal show={showModalBranch} onHide={closeModalBranch} style={{textAlign:'center'}}>
                 <Modal.Header closeButton>
                     <Modal.Title>Chi tiết chi nhánh</Modal.Title>
                 </Modal.Header>

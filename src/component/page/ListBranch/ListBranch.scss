@@ -48,6 +48,7 @@
   
   .image-container {
     height: 200px;
+    width: 100%;
     overflow: hidden; /* Đảm bảo hình ảnh không tràn ra ngoài div cha */
   }
 /* ListBranch.scss */
@@ -137,6 +138,19 @@
 
 .button-container {
   margin-left: 20px; /* Điều chỉnh khoảng cách giữa rating và nút */
+}
+.detail{
+  display: flex;
+  justify-content: space-between;
+    width: 100%;
+    margin: 2rem auto 0;
+    background:rgb(202, 201, 201);
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    padding: 10px 15px;
+}
+.blame{
+  margin-top: 50px;
 }
 
 

@@ -4,6 +4,7 @@ import { Button, Card, Col, Form, Modal, Row, Spinner } from 'react-bootstrap';
 import Apis, { endpoint } from '../../../config/Apis';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import DatePicker from 'react-datepicker';
 
 
 const ListMenu = () => {
@@ -54,7 +55,7 @@ const ListMenu = () => {
     const [bookedHalls, setBookedHalls] = useState([]);
     const fetchBookedHalls = async () => {
         try {
-            setLoading(true); 
+            setLoading(true);
             const response = await fetch(`https://localhost:7296/api/invoice/booked-hall`);
             if (response.ok) {
                 const data = await response.json();
@@ -63,10 +64,10 @@ const ListMenu = () => {
                 data.sort((a, b) => new Date(a.bookingDate) - new Date(b.bookingDate));
 
                 setBookedHalls(data);
-                setLoading(false); 
+                setLoading(false);
 
             } else {
-                setLoading(false); 
+                setLoading(false);
                 console.error("Lỗi khi lấy danh sách sảnh đã đặt");
             }
         } catch (error) {
@@ -89,16 +90,35 @@ const ListMenu = () => {
     const closeModal = () => {
         setShowModal(false);
     };
+
+    const [selectedDate, setSelectedDate] = useState(null);
+
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+    };
+
+    const filteredHalls = bookedHalls.filter((hall) => {
+        if (!selectedDate) {
+            return true;
+        }
+        const bookingDate = new Date(hall.bookingDate);
+        return (
+            bookingDate.getFullYear() === selectedDate.getFullYear() &&
+            bookingDate.getMonth() === selectedDate.getMonth() &&
+            bookingDate.getDate() === selectedDate.getDate()
+        );
+    });
+
     return (
         <>
 
             <div className='tilte'>
                 <h1>Danh Sách Sảnh Cưới</h1>
-                {loading? (
-      <div className="overlay">
-        <Spinner animation="border" />
-      </div>
-    ) : null}
+                {loading ? (
+                    <div className="overlay">
+                        <Spinner animation="border" />
+                    </div>
+                ) : null}
 
                 <Form className="filter d-flex" onSubmit={handleSearch}>
                     <Form.Control
@@ -157,7 +177,11 @@ const ListMenu = () => {
                                     <Card.Text>
                                         Giá sảnh cưới: {formatPrice(hallItem.price)}
                                     </Card.Text>
-                                    <Link to="/bill"><Button variant="primary"><BsCartCheck />Đặt Đơn</Button></Link>
+                                    <Link to="/bill" >
+                                        <Button className='btndetail' variant="primary" style={{ background: 'linear-gradient(90deg, #FE8E5C 0%, #F5576C 100%)', border: 'white', fontWeight: 'bold' }}>
+                                            <BsCartCheck style={{marginBottom:'5px'}} />Đặt Đơn
+                                        </Button>
+                                    </Link>
                                     <Button
                                         className='btndetail'
                                         variant="primary"
@@ -165,6 +189,7 @@ const ListMenu = () => {
                                             setSelectedService(hallItem);
                                             openModal();
                                         }}
+                                        style={{ background: 'linear-gradient(90deg, #FE8E5C 0%, #F5576C 100%)', border: 'white', fontWeight: 'bold' }}
                                     >
                                         Xem Chi Tiết
                                     </Button>
@@ -174,7 +199,7 @@ const ListMenu = () => {
                     ))
                 )}
             </Row>
-            <Modal show={showModal} onHide={closeModal} size="sm">
+            <Modal show={showModal} onHide={closeModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Chi tiết dịch vụ</Modal.Title>
                 </Modal.Header>
@@ -195,21 +220,41 @@ const ListMenu = () => {
                 </Modal.Footer>
             </Modal>
 
-            <div className='tilte'>
-                <h1>Danh sách sảnh đã có người đặt</h1>
-            </div>
-            <div style={{ marginTop: '20px', marginRight: '20px', marginLeft: '20px' }} className="row">
-                {bookedHalls.map((hall) => (
-                    <div key={hall.HallId} className="col-md-3 mb-3">
-                        <div className="card">
-                            <div className="card-body">
-                                <h5 className="card-title">Chi nhánh: {hall.branchName}</h5>
-                                <h5 className="card-title">Sảnh: {hall.hallName}</h5>
-                                <p className="card-text">Ngày đặt: {format(new Date(hall.bookingDate), 'dd/MM/yyyy')}</p>
+            <div className="container mt-4">
+                <div className="title text-center mb-4">
+                    <h1>Danh sách sảnh đã có người đặt</h1>
+                </div>
+                <div className="row mb-4">
+                    <div className="col-md-12">
+                        <label htmlFor="selectedDate" className="form-label">Chọn ngày:</label>
+                        <DatePicker
+                            selected={selectedDate}
+                            onChange={handleDateChange}
+                            dateFormat="dd/MM/yyyy"
+                            className="form-control"
+                            placeholderText="Chọn ngày"
+                            isClearable
+                        />
+                    </div>
+                </div>
+                <div className="row">
+                    {filteredHalls.map((hall) => (
+                        <div key={hall.HallId} className="col-md-4 mb-4">
+                            <div className="card shadow-sm">
+                                <div className="card-header bg-primary text-white" style={{ background: 'linear-gradient(90deg, #FE8E5C 0%, #F5576C 100%)' }}>
+                                    <h5 className="mb-0" style={{ textAlign: 'center' }} >{hall.hallName}</h5>
+                                </div>
+                                <div className="card-body">
+                                    <h6 className="card-subtitle mb-2 text-muted">Chi nhánh: {hall.branchName}</h6>
+                                    <p className="card-text">Ngày đặt: {format(new Date(hall.bookingDate), 'dd/MM/yyyy')}</p>
+                                </div>
+                                <div className="card-footer text-muted">
+                                    ID: {hall.HallId}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </>
     )

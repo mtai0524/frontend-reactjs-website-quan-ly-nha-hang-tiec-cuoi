@@ -37,6 +37,40 @@ const Bill = () => {
         const phoneRegex = /^[0-9]{10}$/;
         return phoneRegex.test(phone);
     };
+    useEffect(() => {
+        const slideTrigger = document.getElementById('slide-trigger');
+        const contentElement = document.querySelector('.content');
+        const closeIcon = document.querySelector('.close-icon');
+      
+        const handleSlideTriggerClick = function () {
+          contentElement.classList.toggle('active');
+          console.log("toggle ne");
+        };
+      
+        const handleCloseIconClick = function () {
+          contentElement.classList.remove('active');
+        };
+      
+        // const handleWindowClick = function (event) {
+        //   if (!event.target.closest('.content') && event.target !== slideTrigger) {
+        //     contentElement.classList.remove('active');
+        //   }
+        // };
+      
+        slideTrigger.addEventListener('click', handleSlideTriggerClick);
+        closeIcon.addEventListener('click', handleCloseIconClick);
+        // window.addEventListener('click', handleWindowClick);
+      
+        // Cleanup function to remove the event listeners when the component unmounts
+        return () => {
+          slideTrigger.removeEventListener('click', handleSlideTriggerClick);
+          closeIcon.removeEventListener('click', handleCloseIconClick);
+        //   window.removeEventListener('click', handleWindowClick);
+        };
+      }, []);
+    
+
+   
 
     useEffect(() => {
         fetch('https://localhost:7296/api/service')
@@ -589,8 +623,8 @@ const Bill = () => {
     });
     return (
         <div className="bill">
-            <div className="bill-page">
-                <div className="bill-form-container">
+            <div className="bill-page"  style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+                <div className="bill-form-container display-flex justify-content-center align-items-center">
                     <h1 className="title">Đơn Hàng</h1>
                     <form onSubmit={handleFormSubmit}>
                         <Accordion>
@@ -611,7 +645,7 @@ const Bill = () => {
                                                 <Card.Text>
                                                     SDT: {branch.phone}
                                                 </Card.Text>
-                                                <Button variant="primary">Go somewhere</Button>
+                                               
                                                 <div className="form-check">
                                                     <input
                                                         className="form-check-input"
@@ -646,7 +680,7 @@ const Bill = () => {
                                                 <Card.Text>
                                                     Thuộc chi nhánh: {hall.branchName}
                                                 </Card.Text>
-                                                <Button variant="primary">Go somewhere</Button>
+                                               
                                                 <div className="form-check">
                                                     <input
                                                         className="form-check-input"
@@ -662,6 +696,7 @@ const Bill = () => {
                                     ))}
                                 </Accordion.Body>
                             </Accordion.Item>
+                            <h2 style={{textAlign:'center',marginTop:'15px'}}>Thực đơn</h2>
 
                             {Object.entries(categorizedMenus).map(([categoryName, categoryMenus]) => (
                                 <Accordion.Item key={categoryName} eventKey={categoryName}>
@@ -676,7 +711,7 @@ const Bill = () => {
                                                     <Card.Text>{menu.categoryName}</Card.Text>
                                                     <Card.Text>{formatPrice(menu.price)}</Card.Text>
 
-                                                    <Button variant="primary">Go somewhere</Button>
+                                                    
                                                     <div className="form-check">
                                                         <input
                                                             className="form-check-input"
@@ -694,6 +729,8 @@ const Bill = () => {
                                 </Accordion.Item>
                             ))}
 
+<h2 style={{textAlign:'center',marginTop:'15px'}}>Dịch vụ</h2>
+
                             {Object.entries(categorizedServices).map(([categoryName, categoryServices]) => (
                                 <Accordion.Item key={categoryName} eventKey={categoryName}>
                                     <Accordion.Header>{categoryName}</Accordion.Header>
@@ -706,7 +743,7 @@ const Bill = () => {
                                                     <Card.Text>{formatPrice(service.price)}</Card.Text>
 
                                                     <Card.Text>{service.description}</Card.Text>
-                                                    <Button variant="primary">Chọn dịch vụ</Button>
+                                                    
                                                     <div className="form-check">
                                                         <input
                                                             className="form-check-input"
@@ -806,6 +843,7 @@ const Bill = () => {
                                 ))}
                             </div>
                         </div>
+
                         <button style={{ marginTop: '20px' }} className='btn btn-success' variant="primary" type="submit">Xác nhận đặt nhà hàng</button>
                         <button style={{ float: 'right', marginTop: '20px' }} type='button' onClick={() => openModal()} className='btn btn-secondary'>
                             Xem danh sách sảnh đã được đặt trước
@@ -849,8 +887,18 @@ const Bill = () => {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-                <div className="selected-items">
-                    <div className="selected-items-content" style={{ overflowY: 'auto', maxHeight: '800px' }}>
+                <Button id="slide-trigger" style={{ position: 'absolute', bottom: '0', right: '0' }} >
+      Xem đơn hàng
+    </Button>
+
+                    <div class="content" style={{ zIndex:'1000000000000', marginTop:'100px', position: 'fixed', backgroundColor: 'yellow', overflow: 'auto', maxHeight: '100%' }}>
+
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+        <div >
+        <div className="selected-items-content" style={{ overflowY: 'auto' }}>
                         {selectedBranch && (
                             <div>
                                 <h2>Chi nhánh đã chọn:</h2>
@@ -930,13 +978,10 @@ const Bill = () => {
                             'Chưa chọn dịch vụ'
                         )}
                     </div>
-
-
-                    <div className="total-row">
-                        <h5 className="total-label">Tổng tiền cần thanh toán: {formatPrice(calculateTotalPrice())}</h5>
-                        <span className="total-amount"></span>
-                    </div>
-                </div>
+        </div>
+        
+    </div>
+                   
 
             </div >
         </div >

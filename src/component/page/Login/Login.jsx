@@ -5,8 +5,9 @@ import Cookies from "js-cookie";
 import jwt_decode from 'jwt-decode';
 import { useAuth } from "../../Context/AuthProvider";
 import { ToastContainer, toast } from 'react-toastify';
-
 const Login = () => {
+    const [isLoading, setIsLoading] = useState(false);
+
     const { setToken, setFirstName, setEmail, setId } = useAuth();
     const nav = useNavigate();
     const [formData, setFormData] = useState({
@@ -50,7 +51,8 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
+        setIsLoading(true); // Bắt đầu hiển thị spinner
+    
         try {
             const response = await fetch('https://localhost:7296/api/account/SignIn', {
                 method: 'POST',
@@ -59,18 +61,18 @@ const Login = () => {
                 },
                 body: JSON.stringify(formData),
             });
-
+    
             if (response.ok) {
                 const data = await response.json();
                 const token = data.token;
                 Cookies.set('token_user', token, { expires: 7 });
-
+    
                 const decodedToken = jwt_decode(token);
                 const email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'];
                 const firstName = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
                 const id = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
                 handleLoginSuccess(token, firstName, email, id);
-
+    
             } else {
                 toast.error('Đăng nhập thất bại!', {
                     position: 'top-right',
@@ -81,11 +83,15 @@ const Login = () => {
                     draggable: true,
                 });
                 console.error('Đăng nhập không thành công.');
+                setIsLoading(false); // Kết thúc hiển thị spinner
             }
         } catch (error) {
             console.error('Lỗi khi đăng nhập:', error);
+        } finally {
+            setIsLoading(false); // Kết thúc hiển thị spinner
         }
     };
+    
 
     return (
         <div className="login container col-xl-10 col-xxl-8 px-4 py-5 mt-4">
@@ -122,8 +128,12 @@ const Login = () => {
                                 <input type="checkbox" defaultValue="remember-me" /> Remember me
                             </label>
                         </div>
-                        <button className="w-100 btn btn-lg btn-primary" type="submit">
-                            Đăng nhập
+                        <button className="w-100 btn btn-lg btn-primary" type="submit" disabled={isLoading}>
+                            {isLoading ? (
+                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            ) : (
+                                "Đăng nhập"
+                            )}
                         </button>
                         <Link to="register">
                             <button className="w-100 btn btn-lg btn-primary mt-3 custom-button" type="button">
