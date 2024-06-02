@@ -34,7 +34,7 @@ const Header = () => {
     return (
         <Navbar expand="lg" className="bg-body-tertiary fixed-top">
             <Container>
-                <Navbar.Brand className="nav__logo text-gradient" href="/">Food.</Navbar.Brand>
+                <Link style={{marginRight:'6px'}} className="nav__logo text-gradient" to="/">Food.</Link>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">

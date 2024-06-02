@@ -28,11 +28,8 @@ const Login = () => {
     const redirectHome = () => {
         nav('/');
     };
-    const handleLoginSuccess = (token, firstName, email, id) => {
+    const handleLoginSuccess = (token) => {
         setToken(token);
-        setFirstName(firstName);
-        setEmail(email);
-        setId(id);
         toast.success('Đăng nhập thành công!', {
             position: 'top-right',
             autoClose: 3000,
@@ -67,11 +64,8 @@ const Login = () => {
                 const token = data.token;
                 Cookies.set('token_user', token, { expires: 7 });
     
-                const decodedToken = jwt_decode(token);
-                const email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'];
-                const firstName = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
-                const id = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
-                handleLoginSuccess(token, firstName, email, id);
+               
+                handleLoginSuccess(token);
     
             } else {
                 toast.error('Đăng nhập thất bại!', {

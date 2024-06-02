@@ -25,6 +25,8 @@ const Bill = () => {
     const [categorizedServices, setCategorizedServices] = useState({});
     const [fullName, setFullName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [selectedValue, setSelectedValue] = useState('');
+
     const [note, setNote] = useState('');
     const [phoneValid, setPhoneValid] = useState(true);
     const [isDuplicateInvoice, setIsDuplicateInvoice] = useState(false);
@@ -358,7 +360,6 @@ const Bill = () => {
                 draggable: true,
             });
             sendOrderData();
-            demoPayment();
         } else {
             toast.error('Chi nhánh hoặc sảnh chưa được chọn á !', {
                 position: 'top-right',
@@ -552,6 +553,7 @@ const Bill = () => {
             CodeId: codeId
         })),
         TotalBeforeDiscount: totalBeforeDiscount,
+        TimeHall : selectedValue,
     };
 
     const sendOrderData = () => {
@@ -621,6 +623,30 @@ const Bill = () => {
         const formattedDate = format(new Date(hall.bookingDate), 'dd/MM/yyyy');
         return formattedDate.includes(searchDate);
     });
+
+    const [timeOfDayList, setTimeOfDayList] = useState([]);
+    useEffect(() => {
+        if (selectedHallIdDo) {
+          setLoading(true);
+          fetch(`https://localhost:7296/api/time/get-hall-id?hallId=${selectedHallIdDo}`)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then((data) => {
+              setTimeOfDayList(data);
+            })
+            .catch((error) => {
+            });
+        }
+      }, [selectedHallIdDo]);
+
+      const handleSelectChange = (event) => {
+          const selectedValue = event.target.value;
+          setSelectedValue(selectedValue);
+      };
     return (
         <div className="bill">
             <div className="bill-page"  style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
@@ -807,6 +833,37 @@ const Bill = () => {
                                     placeholderText="Chọn ngày" // Văn bản mặc định
                                 />
                             </div>
+                            <div className="mb-2 mt-3">
+            <label htmlFor="selectTimeOfDay">Chọn ca:  </label>
+            <select
+                style={{border:'1px solid #d4d4d4',marginLeft:'8px',borderRadius:'2px', padding:'9px'}}
+                id="selectTimeOfDay"
+                onChange={handleSelectChange}
+                value={selectedValue}
+            >
+                <option value="">Chọn ca</option>
+                {timeOfDayList.map((timeOfDay) => (
+                    <React.Fragment key={timeOfDay.id}>
+                        {timeOfDay.morning && (
+                            <option value={`Ca sáng: ${timeOfDay.morning}`}>
+                                Buổi sáng: {timeOfDay.morning}
+                            </option>
+                        )}
+                        {timeOfDay.afternoon && (
+                            <option value={`Ca chiều: ${timeOfDay.afternoon}`}>
+                                Buổi chiều: {timeOfDay.afternoon}
+                            </option>
+                        )}
+                        {timeOfDay.dinner && (
+                            <option value={`Ca tối: ${timeOfDay.dinner}`}>
+                                Buổi tối: {timeOfDay.dinner}
+                            </option>
+                        )}
+                    </React.Fragment>
+                ))}
+            </select>
+        </div>
+
 
                         </Accordion>
                         <div>
@@ -891,7 +948,7 @@ const Bill = () => {
       Xem đơn hàng
     </Button>
 
-                    <div class="content" style={{ zIndex:'1000000000000', marginTop:'100px', position: 'fixed', backgroundColor: 'yellow', overflow: 'auto', maxHeight: '100%' }}>
+                    <div class="content" style={{ zIndex:'1000000000000', marginTop:'60px', position: 'fixed', backgroundColor: 'yellow', overflow: 'auto', maxHeight: '100%' }}>
 
                     <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18" />
