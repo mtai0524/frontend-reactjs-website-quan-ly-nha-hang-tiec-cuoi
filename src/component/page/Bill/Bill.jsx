@@ -191,7 +191,8 @@ const Bill = () => {
 
     const demoPayment = async (e) => {
         try {
-            const amount = "9999999900"; 
+            // var chiahai = totalBeforeDiscount /2 ; // thanh toan dat coc
+            const amount = totalBeforeDiscount.toString() + "00" ; 
             const response = await fetch(`https://localhost:7296/api/Payment?amount=${amount}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch payment URL');
@@ -360,6 +361,7 @@ const Bill = () => {
                 draggable: true,
             });
             sendOrderData();
+            demoPayment();
         } else {
             toast.error('Chi nhánh hoặc sảnh chưa được chọn á !', {
                 position: 'top-right',
@@ -944,7 +946,7 @@ const Bill = () => {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-                <Button id="slide-trigger" style={{ position: 'absolute', bottom: '0', right: '0' }} >
+                <Button id="slide-trigger" style={{ position: 'fixed', bottom: '80px', right: '0' }} >
       Xem đơn hàng
     </Button>
 

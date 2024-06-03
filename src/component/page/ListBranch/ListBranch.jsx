@@ -249,11 +249,9 @@ const ListBranch = () => {
                                     <p className="email">{feedback.id.email}</p>
                                     <p className="feedback-date">{formatDate(feedback.feedbackDate)}</p>
 
-                                    <div className="content">
-                                        <textarea
-                                            style={{ width: '100%' }}
-                                        >{feedback.content}</textarea>
-                                    </div>
+                                        <div
+                                            style={{ width: '100%'}}
+                                        >{feedback.content}</div>
                                     <p className="rating">
                                         <Rating
                                             initialRating={feedback.rating} // Sử dụng giá trị rating từ dữ liệu
@@ -270,9 +268,9 @@ const ListBranch = () => {
                     </div>
 
                     {/* Vùng nhập phản hồi */}
+                    <h4 style={{textAlign:'left',left:'0'}}>Nhập phản hồi của bạn</h4>
+
                     <div className="feedback-input">
-                        <div className="content">
-                            <h4>Nhập phản hồi của bạn</h4>
                             <textarea
                                 placeholder="Nhập phản hồi của bạn..."
                                 rows="4"
@@ -280,7 +278,6 @@ const ListBranch = () => {
                                 onChange={(e) => setContent(e.target.value)}
                                 style={{ width: '100%' }}
                             ></textarea>
-                        </div>
 
                         <div className="rating-button-container">
                             <div className="rating">

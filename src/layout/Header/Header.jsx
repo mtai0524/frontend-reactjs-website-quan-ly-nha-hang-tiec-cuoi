@@ -7,7 +7,7 @@ import jwt_decode from 'jwt-decode';
 import axios from 'axios';
 import { BsClipboardFill, BsFillPersonFill,BsCartCheck } from 'react-icons/bs';
 import { useAuth } from "../../component/Context/AuthProvider";
-
+import { MdRoomService } from "react-icons/md";
 const Header = () => {
     const { token, firstName, email, logout, login, avatar } = useAuth(); // lưu trạng thái hoạt động
     const [userInfo, setUserInfo] = useState(null);
@@ -45,8 +45,9 @@ const Header = () => {
                         <Link className="nav-link text-black me-3 fw-bold mt-1" to="/listservice">Dịch Vụ</Link>
                         {token ? (
                             <>
-                                <span className="nav-link text-black me-3 mt-1">{email}</span>
-                                <img style={{ width: '40px', height: '40px', marginTop: '5px', borderRadius: '50%' }} src={avatar} alt="avatar" className="me-3 mt-1" />
+                            <span style={{color:'#FE8E5C'}} className="nav-link text-black me-3 mt-1"><Link style={{textDecoration:'none', color:'#F5576C'}} className="fw-bold mt-1"  to="/profile" >{email}</Link></span>
+                            <Link style={{textDecoration:'none', color:'#F5576C'}} className=" mt-1"  to="/profile" ><img style={{ width: '40px', height: '40px', marginTop: '5px', borderRadius: '50%' }} src={avatar} alt="avatar" className="me-3 mt-1" /></Link>
+                                
                                 <button style={{width:'100px',marginLeft:'-6px'}} onClick={handleLogout} className="nav-link text-black me-3 fw-bold mt-1">Đăng Xuất</button>
                             </>
                         ) : (
@@ -59,6 +60,9 @@ const Header = () => {
                         </Link>
                         <Link to='/history' className="nav-link text-black fw-bold mt-1">
                             <BsClipboardFill className='header' />
+                        </Link>
+                        <Link to='/bill' style={{marginLeft:'15px'}} className="nav-link text-black fw-bold mt-1">
+                            <MdRoomService className='header' />
                         </Link>
                     </Nav>
                 </Navbar.Collapse>
