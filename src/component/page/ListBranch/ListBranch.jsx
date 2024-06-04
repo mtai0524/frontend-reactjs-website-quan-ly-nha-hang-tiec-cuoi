@@ -188,9 +188,10 @@ const ListBranch = () => {
 
                                     <hr></hr>
 
-                                    {branch.description}
+                                   
 
                                 </Card.Text>
+                                {branch.description}
                                 <h4 className='detail' style={{ maxWidth:'100%' }}>
                                
                                     <Button style={{padding: '10px 20px',fontWeight: 'bold', textAlign: 'center',border:'black',maxWidth:'100%' }} onClick={() => openModal(branch.branchId, branch.name)} className='btn btn-success '>
@@ -244,9 +245,9 @@ const ListBranch = () => {
                     <div className="feedback-list-container">
                         {feedbackData.map((feedback) => (
                             <div key={feedback.feedbackId} className="feedback-item">
-                                <Card.Img className="avatar" variant="top" src={feedback.id.avatar} />
+                                <Card.Img className="avatar" variant="top" src={feedback.user.avatar} />
                                 <div className="email-info">
-                                    <p className="email">{feedback.id.email}</p>
+                                    <p className="email">{feedback.user.email}</p>
                                     <p className="feedback-date">{formatDate(feedback.feedbackDate)}</p>
 
                                         <div

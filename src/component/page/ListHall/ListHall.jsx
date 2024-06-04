@@ -148,7 +148,11 @@ const ListMenu = () => {
                                     <Card.Text>
                                         {formatPrice(hallItem.price)}
                                     </Card.Text>
-                                    <Link to="/bill"><Button variant="primary"><BsCartCheck />Đặt Đơn</Button></Link>
+                                    <Link to="/bill" >
+                                        <Button className='btndetail' variant="primary" style={{ background: 'linear-gradient(90deg, #FE8E5C 0%, #F5576C 100%)', border: 'white', fontWeight: 'bold' }}>
+                                            <BsCartCheck style={{marginBottom:'5px'}} />Đặt Đơn
+                                        </Button>
+                                    </Link>
                                     <Button
                                         className='btndetail'
                                         variant="primary"
@@ -156,6 +160,7 @@ const ListMenu = () => {
                                             setSelectedService(hallItem);
                                             openModal();
                                         }}
+                                        style={{ background: 'linear-gradient(90deg, #FE8E5C 0%, #F5576C 100%)', border: 'white', fontWeight: 'bold' }}
                                     >
                                         Xem Chi Tiết
                                     </Button>
@@ -199,9 +204,9 @@ const ListMenu = () => {
                     ))
                 )}
             </Row>
-            <Modal show={showModal} onHide={closeModal}>
+            <Modal show={showModal} onHide={closeModal} style={{textAlign:'center'}}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Chi tiết dịch vụ</Modal.Title>
+                    <Modal.Title>Chi tiết sảnh cưới</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {selectedService && (
@@ -248,9 +253,7 @@ const ListMenu = () => {
                                     <h6 className="card-subtitle mb-2 text-muted">Chi nhánh: {hall.branchName}</h6>
                                     <p className="card-text">Ngày đặt: {format(new Date(hall.bookingDate), 'dd/MM/yyyy')}</p>
                                 </div>
-                                <div className="card-footer text-muted">
-                                    ID: {hall.HallId}
-                                </div>
+                              
                             </div>
                         </div>
                     ))}

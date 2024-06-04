@@ -78,7 +78,7 @@ const History = () => {
   };
   const demoPayment = async (e) => {
     try {
-        const amount = "9999999900"; 
+        const amount = selectedInvoice.totalBeforeDiscount.toString()+"00";
         const response = await fetch(`https://localhost:7296/api/Payment?amount=${amount}`);
         if (!response.ok) {
             throw new Error('Failed to fetch payment URL');

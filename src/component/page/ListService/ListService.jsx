@@ -103,7 +103,7 @@ const ListService = () => {
                 </Form.Select>
             </div>
 
-            <Modal show={showModal} onHide={closeModal} size="sm">
+            <Modal show={showModal} onHide={closeModal} style={{textAlign:'center'}}>
                 <Modal.Header closeButton>
                     <Modal.Title >Chi tiết dịch vụ</Modal.Title>
                 </Modal.Header>

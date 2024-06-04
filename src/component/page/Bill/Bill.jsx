@@ -926,19 +926,22 @@ const Bill = () => {
                                 className="form-control"
                             />
                         </div>
-                        <div style={{ marginTop: '20px', marginRight: '20px', marginLeft: '20px' }} className="row">
-                            {filteredHalls.map((hall) => (
-                                <div key={hall.HallId} className="col-md-3 mb-3">
-                                    <div className="card">
-                                        <div className="card-body">
-                                            <h5 className="card-title">Chi nhánh: {hall.branchName}</h5>
-                                            <h5 className="card-title">Sảnh: {hall.hallName}</h5>
-                                            <p className="card-text">Ngày đặt: {format(new Date(hall.bookingDate), 'dd/MM/yyyy')}</p>
-                                        </div>
-                                    </div>
+                        <div className="row">
+                    {filteredHalls.map((hall) => (
+                        <div key={hall.HallId} className="col-md-4 mb-4">
+                            <div className="card shadow-sm">
+                                <div className="card-header bg-primary text-white" style={{ background: 'linear-gradient(90deg, #FE8E5C 0%, #F5576C 100%)' }}>
+                                    <h5 className="mb-0" style={{ textAlign: 'center' }} >{hall.hallName}</h5>
                                 </div>
-                            ))}
+                                <div className="card-body">
+                                    <h6 className="card-subtitle mb-2 text-muted">Chi nhánh: {hall.branchName}</h6>
+                                    <p className="card-text">Ngày đặt: {format(new Date(hall.bookingDate), 'dd/MM/yyyy')}</p>
+                                </div>
+                              
+                            </div>
                         </div>
+                    ))}
+                </div>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => setShowModal(false)}>
@@ -960,7 +963,7 @@ const Bill = () => {
         <div className="selected-items-content" style={{ overflowY: 'auto' }}>
                         {selectedBranch && (
                             <div>
-                                <h2>Chi nhánh đã chọn:</h2>
+                                <h3 style={{fontWeight:'bold'}}>Chi nhánh đã chọn:</h3>
                                 <div className="center-content">
                                     <img
                                         src={selectedBranch.image}
@@ -975,7 +978,7 @@ const Bill = () => {
 
                         {selectedHalls.length > 0 && (
                             <div>
-                                <h2>Sảnh cưới đã chọn:</h2>
+                                <h3 style={{fontWeight:'bold'}}>Sảnh cưới đã chọn:</h3>
                                 <div className="center-content">
                                     {selectedHalls.map((hall, index) => (
                                         <div key={index}>
@@ -993,7 +996,7 @@ const Bill = () => {
                             </div>
                         )}
 
-                        <h2>Danh sách món ăn đã chọn:</h2>
+                        <h3 style={{fontWeight:'bold'}}>Danh sách món ăn đã chọn:</h3>
                         {selectedMenus.length > 0 ? (
                             <div className="selected-menus">
                                 {selectedMenus.map((menuId, index) => {
@@ -1014,7 +1017,7 @@ const Bill = () => {
                             </div>
                         ) : 'Chưa chọn món ăn'}
 
-                        <h2>Dịch vụ đã chọn:</h2>
+                        <h3 >Dịch vụ đã chọn:</h3>
                         {selectedServices.length > 0 ? (
                             <div className="selected-menus">
                                 {selectedServices.map(serviceId => {

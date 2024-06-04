@@ -102,9 +102,9 @@ const ListMenu = () => {
                     ))}
                 </Form.Select>
             </div>
-            <Modal show={showModal} onHide={closeModal} size="sm">
+            <Modal show={showModal} onHide={closeModal} style={{textAlign:'center'}}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Chi tiết dịch vụ</Modal.Title>
+                    <Modal.Title>Chi tiết thực đơn</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {selectedService && (
@@ -129,11 +129,13 @@ const ListMenu = () => {
                                 <Card.Img variant="top" src={menuItem.image} className="custom-img" alt={menuItem.name} />
                                 <Card.Body >
                                     <Card.Title>{menuItem.name}</Card.Title>
-                                    <Card.Text>Giá món ăn: {formatPrice(menuItem.price)}</Card.Text>
-                                    <Link to="/bill">
+                                    <hr></hr>
+                                    <h4 className='detail'>
+                                    <Card.Text style={{ fontWeight: 'bold',fontSize:'19px', marginTop:'15px' }}>{formatPrice(menuItem.price)}</Card.Text>
+                                    {/* <Link to="/bill">
                                         <Button variant="primary"><BsCartCheck /> Đặt Đơn</Button>
-                                    </Link>
-                                    <Button
+                                    </Link> */}
+                                    <Button style={{padding: '10px 15px',fontWeight: 'bold', textAlign: 'center',border:'black' }}
                                         className='btndetail'
                                         variant="primary"
                                         onClick={() => {
@@ -141,8 +143,11 @@ const ListMenu = () => {
                                             openModal();
                                         }}
                                     >
-                                        Xem Chi Tiết
+                                       
+                                        Chi Tiết
+                                         <MdDescription style={{ marginTop: '-5px',marginLeft:'6px' }} />
                                     </Button>
+                                    </h4>
                                 </Card.Body>
                             </Card>
                         </Col>
