@@ -8,7 +8,12 @@ import { useCookies } from 'react-cookie';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
-
+import { faL } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import moment from 'moment-timezone';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 const Bill = () => {
     const [cookies] = useCookies(['token_user']);
     const [branchs, setBranchs] = useState([]);
@@ -34,23 +39,59 @@ const Bill = () => {
     const [selectedCodes, setSelectedCodes] = useState([]);
     const [discount, setDiscount] = useState(0);
     const [loading, setLoading] = useState(true);
+
+    const [cost, setCost] = useState(0);
+    const [numberOfTables, setNumberOfTables] = useState(0);
+
+    const handleSliderChange = (value) => {
+      setCost(value);
+      console.log(cost);
+    };
+
+    const [showModalSuggest, setShowModalSuggest] = useState(false);
+
+    const openModalSuggest = () => {
+        setShowModalSuggest(true);
+      };
+    
+      const closeModalSuggest = () => {
+        setShowModalSuggest(false);
+      };
+
     // sdt phải đủ 10 số
     const isPhoneNumberValid = (phone) => {
         const phoneRegex = /^[0-9]{10}$/;
         return phoneRegex.test(phone);
     };
+
+    useEffect(() => {
+        var getLocalOpenBill = localStorage.getItem("openBill"); 
+        console.log("getLocalOpenBill", getLocalOpenBill);
+        const contentElement = document.querySelector('.content');
+        if(getLocalOpenBill){
+            contentElement.classList.add('active');
+        }
+      }, []);
+
     useEffect(() => {
         const slideTrigger = document.getElementById('slide-trigger');
         const contentElement = document.querySelector('.content');
         const closeIcon = document.querySelector('.close-icon');
       
         const handleSlideTriggerClick = function () {
-          contentElement.classList.toggle('active');
-          console.log("toggle ne");
+            const isActive = contentElement.classList.toggle('active');
+        
+            if (isActive) {
+                localStorage.setItem("openBill", "true"); 
+            } else {
+                localStorage.removeItem("openBill");
+            }
+        
+            console.log("toggle ne");
         };
-      
         const handleCloseIconClick = function () {
           contentElement.classList.remove('active');
+          localStorage.removeItem("openBill");
         };
       
         // const handleWindowClick = function (event) {
@@ -72,38 +113,39 @@ const Bill = () => {
       }, []);
     
 
-   
-
-    useEffect(() => {
-        fetch('https://localhost:7296/api/service')
-            .then(response => response.json())
-            .then(data => {
-                setServices(data);
-
-                // Nhóm dịch vụ vào từng danh mục
-                const categorized = data.reduce((categories, service) => {
-                    if (!categories[service.categoryName]) {
-                        categories[service.categoryName] = [];
-                    }
-                    categories[service.categoryName].push(service);
-                    return categories;
-                }, {});
-
-                setCategorizedServices(categorized);
-            })
-            .catch(error => console.error('Error fetching service data:', error));
-    }, []);
-
-    const handleServiceCheckboxChange = (serviceId) => {
-        if (selectedServices.includes(serviceId)) {
-            // Nếu đã chọn, loại bỏ dịch vụ khỏi danh sách
-            setSelectedServices(selectedServices.filter(id => id !== serviceId));
-        } else {
-            // Nếu chưa chọn, thêm dịch vụ vào danh sách
-            setSelectedServices([...selectedServices, serviceId]);
+      useEffect(() => {
+        const storedFullName = localStorage.getItem('fullName');
+        if (storedFullName) {
+            setFullName(storedFullName);
         }
-    };
-
+        const storedPhone = localStorage.getItem('phoneNumber');
+        if (storedPhone) {
+            setPhoneNumber(storedPhone);
+        }
+        const storedNote = localStorage.getItem('note');
+        if (storedNote) {
+            setNote(storedNote);
+        }
+    }, []);
+   
+    const handleFullNameChange = (e) => {
+        const value = e.target.value;
+        setFullName(value);
+        localStorage.setItem('fullName', value);
+      };
+      
+      const handlePhoneNumberChange = (e) => {
+        const value = e.target.value;
+        setPhoneNumber(value);
+        localStorage.setItem('phoneNumber', value);
+      };
+      
+      const handleNoteChange = (e) => {
+        const value = e.target.value;
+        setNote(value);
+        localStorage.setItem('note', value);
+      };
+      
 
     useEffect(() => {
         const handleScroll = () => {
@@ -134,44 +176,60 @@ const Bill = () => {
             .catch(error => console.error('Error fetching hall data:', error));
     }, []);
 
+
+   
+    useEffect(() => {
+        const savedSelectedBranchId = localStorage.getItem('selectedBranchId');
+        if (savedSelectedBranchId) {
+            setSelectedBranchId(JSON.parse(savedSelectedBranchId));
+        }
+        const savedSelectedHallId = localStorage.getItem('selectedHallId');
+        if (savedSelectedHallId) {
+            setSelectedHallId(JSON.parse(savedSelectedHallId));
+        }
+        const savedSelectedHalls = localStorage.getItem('selectedHalls');
+        if (savedSelectedHalls) {
+            setSelectedHalls(JSON.parse(savedSelectedHalls));
+        }
+    }, []);
+
     const handleBranchCheckboxChange = (branchId) => {
         setSelectedBranchId(branchId);
         setSelectedHallId(null); // Đặt hội trường về null khi thay đổi chi nhánh
         setSelectedHallIndex(null); // Đặt lại lựa chọn của hall khi chọn branch khác
         setSelectedHalls([]); // Xóa danh sách hội trường đã chọn
-
-        if (selectedItems.includes(branchId)) {
-            setSelectedItems(selectedItems.filter(item => item !== branchId));
-
-        } else {
-            setSelectedItems([...selectedItems, branchId]);
-            toast.success(`Đã chọn chi nhánh: ${branchs.find(branch => branch.branchId === branchId).name}`, {
-                position: 'top-right',
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-        }
+    
+        localStorage.setItem('selectedBranchId', JSON.stringify(branchId));
+        toast.success(`Đã chọn chi nhánh: ${branchs.find(branch => branch.branchId === branchId).name}`, {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
     };
+   
+
+   
 
     const handleHallCheckboxChange = (hallId) => {
         setSelectedHallId(hallId);
 
-        // Lấy thông tin hội trường đã chọn
         const selectedHall = halls.find(hall => hall.hallId === hallId);
 
         if (selectedHall) {
-            // Kiểm tra xem hội trường đã chọn có trùng với bất kỳ hội trường nào trong danh sách selectedHalls không
             const isHallSelected = selectedHalls.some(hall => hall.hallId === selectedHall.hallId);
-
+    
             if (isHallSelected) {
-                // Nếu trùng, loại bỏ khỏi danh sách
-                setSelectedHalls(selectedHalls.filter(hall => hall.hallId !== selectedHall.hallId));
+                const updatedHalls = selectedHalls.filter(hall => hall.hallId !== selectedHall.hallId);
+                setSelectedHalls(updatedHalls);
             } else {
-                // Nếu không trùng, thêm vào danh sách
-                setSelectedHalls([selectedHall]);
+                const updatedHalls = [selectedHall];
+                setSelectedHalls(updatedHalls);
+                localStorage.setItem('selectedHalls', JSON.stringify(updatedHalls));
+    
+                localStorage.setItem('selectedHallId', JSON.stringify(hallId));
                 toast.success(`Đã chọn sảnh: ${selectedHall.name}`, {
                     position: 'top-right',
                     autoClose: 3000,
@@ -183,30 +241,70 @@ const Bill = () => {
             }
         }
     };
-    const [paymentUrl, setPaymentUrl] = useState('');
-
     const selectedBranch = branchs.find(branch => branch.branchId === selectedBranchId);
     const selectedItemHall = halls.filter(hall => hall.branchName === selectedBranch?.name);
 
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [isProcessingPaymentWallet, setIsProcessingPaymentWallet] = useState(false);
+    const [isCheckOrder, setIsCheckOrder] = useState(false);
 
     const demoPayment = async (e) => {
+        setIsProcessing(true);
         try {
             // var chiahai = totalBeforeDiscount /2 ; // thanh toan dat coc
-            const amount = totalBeforeDiscount.toString() + "00" ; 
+            const amount =  total + "00" ; 
             const response = await fetch(`https://localhost:7296/api/Payment?amount=${amount}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch payment URL');
             }
-            const paymentUrl = await response.text(); // URL thanh toán từ API
-            window.location.href = paymentUrl; // Chuyển hướng người dùng đến URL thanh toán
+            if (checkOrder === true) {
+                toast.info('Đang chuyển đến trang thanh toán', {
+                  position: 'top-right',
+                  autoClose: 3000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                });
+              
+                setTimeout(async () => {
+                  try {
+                    const amount = (total + "00").toString();
+                    const response = await fetch(`https://localhost:7296/api/Payment?amount=${amount}`);
+                    if (!response.ok) {
+                      throw new Error('Failed to fetch payment URL');
+                    }
+                    const paymentUrl = await response.text();
+                    window.location.href = paymentUrl; 
+                  } catch (error) {
+                    console.error('Error creating payment URL: ', error);
+                  }
+                }, 2000); 
+              }
+              
+            else{
+
+                toast.error('Vui lòng kiểm tra đơn hàng!', {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                  });
+                setIsProcessing(false);
+
+            }
+           
         } catch (error) {
             console.error('Error creating payment URL: ', error);
         }
     }
     
+    const [checkOrder, setCheckOrder] = useState(false);
+
     
-    const handleFormSubmit = async (e) => {
-        e.preventDefault();
+    const handleFormSubmit = async () => {
 
         // Kiểm tra token_user trong cookie
         const tokenFromCookie = Cookies.get('token_user');
@@ -226,6 +324,9 @@ const Bill = () => {
                 pauseOnHover: true,
                 draggable: true,
             });
+            setCheckOrder(false);
+            setIsCheckOrder(false);
+
             return;
         }
         const currentDate = new Date();
@@ -241,6 +342,10 @@ const Bill = () => {
                 pauseOnHover: true,
                 draggable: true,
             });
+            setCheckOrder(false);
+            setIsCheckOrder(false);
+
+
             return;
         }
         if (selectedBranch && selectedHalls.length > 0) {
@@ -254,6 +359,10 @@ const Bill = () => {
                     pauseOnHover: true,
                     draggable: true,
                 });
+                setCheckOrder(false);
+                setIsCheckOrder(false);
+ 
+
                 return;
             }
 
@@ -271,6 +380,10 @@ const Bill = () => {
                     pauseOnHover: true,
                     draggable: true,
                 });
+                setCheckOrder(false);
+                setIsCheckOrder(false);
+
+
                 return;
             }
 
@@ -285,6 +398,10 @@ const Bill = () => {
                     pauseOnHover: true,
                     draggable: true,
                 });
+
+            setCheckOrder(false);
+            setIsCheckOrder(false);
+
                 return;
             }
 
@@ -297,13 +414,16 @@ const Bill = () => {
                     pauseOnHover: true,
                     draggable: true,
                 });
+            setCheckOrder(false);
+            setIsCheckOrder(false);
+
                 setPhoneValid(false);
                 return;
             }
 
 
             const duplicateCheckRequest = {
-                AttendanceDate: selectedDate,
+                AttendanceDate: moment(selectedDate).format('YYYY-MM-DD'),
                 BranchId: selectedBranch ? selectedBranch.branchId : null, // ID của chi nhánh đã chọn
                 HallId: selectedHallIdDo,
             };
@@ -327,6 +447,10 @@ const Bill = () => {
                     pauseOnHover: true,
                     draggable: true,
                 });
+            setCheckOrder(false);
+            setIsCheckOrder(false);
+
+
                 return;
 
             }
@@ -351,8 +475,8 @@ const Bill = () => {
             }).join(', '));
 
             // Gửi đơn hàng
-            console.log('orderData:', orderData);
-            toast.success('Đặt nhà hàng thành công gòi á !', {
+            console.log('orderData:', orderDataPaymentWallet);
+            toast.success('Thông tin đặt hàng hợp lệ !', {
                 position: 'top-right',
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -360,10 +484,80 @@ const Bill = () => {
                 pauseOnHover: true,
                 draggable: true,
             });
-            sendOrderData();
-            demoPayment();
+            // sendOrderData();
+            setCheckOrder(true);
+            setIsCheckOrder(true);
+            saveOrderDataToLocalStorage();
         } else {
-            toast.error('Chi nhánh hoặc sảnh chưa được chọn á !', {
+            toast.error('Chi nhánh hoặc sảnh chưa được chọn !', {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            setCheckOrder(false);
+            setIsCheckOrder(false);
+
+        }
+    };
+
+
+
+    useEffect(() => {
+        fetch('https://localhost:7296/api/service')
+            .then(response => response.json())
+            .then(data => {
+                setServices(data);
+
+                // Nhóm dịch vụ vào từng danh mục
+                const categorized = data.reduce((categories, service) => {
+                    if (!categories[service.categoryName]) {
+                        categories[service.categoryName] = [];
+                    }
+                    categories[service.categoryName].push(service);
+                    return categories;
+                }, {});
+
+                setCategorizedServices(categorized);
+
+                // Nạp danh sách đã chọn từ localStorage (nếu có)
+                const storedSelectedServices = JSON.parse(localStorage.getItem('selectedServices'));
+                if (storedSelectedServices) {
+                    setSelectedServices(storedSelectedServices);
+                }
+            })
+            .catch(error => console.error('Error fetching service data:', error));
+    }, []);
+
+    // Xử lý thay đổi checkbox của dịch vụ
+    const handleServiceCheckboxChange = (serviceId) => {
+        if (selectedServices.includes(serviceId)) {
+            // Nếu đã chọn, loại bỏ dịch vụ khỏi danh sách
+            const updatedServices = selectedServices.filter(id => id !== serviceId);
+            setSelectedServices(updatedServices);
+            localStorage.setItem('selectedServices', JSON.stringify(updatedServices));
+
+            // Hiển thị toast thông báo hủy dịch vụ
+            const selectedService = services.find(service => service.serviceId === serviceId);
+            toast.error(`Đã hủy dịch vụ: ${selectedService.name}`, {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        } else {
+            // Nếu chưa chọn, thêm dịch vụ vào danh sách
+            const updatedServices = [...selectedServices, serviceId];
+            setSelectedServices(updatedServices);
+            localStorage.setItem('selectedServices', JSON.stringify(updatedServices));
+
+            // Hiển thị toast thông báo đã chọn dịch vụ
+            const selectedService = services.find(service => service.serviceId === serviceId);
+            toast.success(`Đã chọn dịch vụ: ${selectedService.name}`, {
                 position: 'top-right',
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -376,15 +570,26 @@ const Bill = () => {
 
 
 
+
+
     const [menus, setMenus] = useState([]);
     const [selectedMenus, setSelectedMenus] = useState([]);
     // Tải dữ liệu từ API khi component được render
     useEffect(() => {
         fetch('https://localhost:7296/api/menu')
             .then(response => response.json())
-            .then(data => setMenus(data))
+            .then(data => {
+                setMenus(data);
+
+                // Nạp danh sách đã chọn từ localStorage
+                const storedSelectedMenus = JSON.parse(localStorage.getItem('selectedMenus'));
+                if (storedSelectedMenus) {
+                    setSelectedMenus(storedSelectedMenus);
+                }
+            })
             .catch(error => console.error('Error fetching data:', error));
     }, []);
+
     // Sử dụng reduce để nhóm món ăn vào từng danh mục
     const categorizedMenus = menus.reduce((categories, menu) => {
         if (!categories[menu.categoryName]) {
@@ -396,10 +601,13 @@ const Bill = () => {
 
     const handleMenuCheckboxChange = (menuId) => {
         const selectedMenu = menus.find(menu => menu.menuId === menuId);
-
+    
         if (selectedMenus.includes(menuId)) {
             // Nếu đã chọn, loại bỏ món ăn khỏi danh sách
-            setSelectedMenus(selectedMenus.filter(id => id !== menuId));
+            const updatedMenus = selectedMenus.filter(id => id !== menuId);
+            setSelectedMenus(updatedMenus);
+            localStorage.setItem('selectedMenus', JSON.stringify(updatedMenus));
+    
             toast.error(`Đã hủy món: ${selectedMenu.name}`, {
                 position: 'top-right',
                 autoClose: 3000,
@@ -410,7 +618,10 @@ const Bill = () => {
             });
         } else {
             // Nếu chưa chọn, thêm món ăn vào danh sách
-            setSelectedMenus([...selectedMenus, menuId]);
+            const updatedMenus = [...selectedMenus, menuId];
+            setSelectedMenus(updatedMenus);
+            localStorage.setItem('selectedMenus', JSON.stringify(updatedMenus));
+    
             toast.success(`Đã chọn món: ${selectedMenu.name}`, {
                 position: 'top-right',
                 autoClose: 3000,
@@ -421,6 +632,7 @@ const Bill = () => {
             });
         }
     };
+    
     useEffect(() => {
         const fetchPromoCodes = async () => {
             try {
@@ -525,57 +737,141 @@ const Bill = () => {
     // Lấy ID của sảnh (hall) đã chọn
     const selectedHallIdDo = selectedHalls.length > 0 ? selectedHalls[0].hallId : null;
 
-    const [selectedDate, setSelectedDate] = useState(new Date()); // Khởi tạo giá trị mặc định
+    const [selectedDate, setSelectedDate] = useState(new Date()); 
+
+    useEffect(() => {
+        const storedDate = localStorage.getItem('selectedDate');
+        let selectedDate = null;
+        if (storedDate) {
+            selectedDate = moment(storedDate, 'YYYY-MM-DD').toDate();
+        }
+        
+        // Đặt ngày đã lấy từ localStorage vào state
+        setSelectedDate(selectedDate);
+    }, []);
 
     const handleDateChange = (date) => {
-        setSelectedDate(date); // Cập nhật giá trị ngày khi người dùng chọn
+        if (date) {
+            const localDate = moment(date).tz('Asia/Ho_Chi_Minh').startOf('day');
+            setSelectedDate(localDate.toDate());
+            console.log('Ngày đã chọn:', localDate.format('DD/MM/YYYY'));
+    
+            // Lưu ngày đã chọn vào localStorage
+            localStorage.setItem('selectedDate', localDate.format('YYYY-MM-DD'));
+        } else {
+            setSelectedDate(null);
+            localStorage.removeItem('selectedDate');
+        }
     };
+    
 
     const total = calculateTotalPrice();
-    const orderData = {
-        UserId: id, // Thay bằng ID người dùng đang đăng nhập
-        BranchId: selectedBranch ? selectedBranch.branchId : null, // ID của chi nhánh đã chọn
-        HallId: selectedHallIdDo, // ID của sảnh đã chọn
+    const orderDataPaymentWallet = {
+        UserId: id, 
+        BranchId: selectedBranch ? selectedBranch.branchId : null, 
+        HallId: selectedHallIdDo, 
         OrderMenus: selectedMenus.map(menuId => ({
-            Price: 0, // Thêm giá trị theo đúng yêu cầu của OrderMenuRequest
-            Quantity: 0, // Thêm giá trị theo đúng yêu cầu của OrderMenuRequest
+            Quantity: 0, 
             MenuID: menuId
-        })), // Danh sách các món ăn đã chọn dưới dạng danh sách OrderMenuRequest // Danh sách ID của các món ăn đã chọn
+        })),
         OrderServices: selectedServices.map(serviceId => ({
-            Price: 0, // Thêm giá trị theo đúng yêu cầu của OrderMenuRequest
-            Quantity: 0, // Thêm giá trị theo đúng yêu cầu của OrderMenuRequest
+            Price: 0, 
+            Quantity: 0,
             ServiceID: serviceId
-        })), // Danh sách các món ăn đã chọn dưới dạng danh sách OrderMenuRequest // Danh sách ID của các món ăn đã chọn
-        AttendanceDate: selectedDate,
-        Total: total, // tổng tiền cần thanh toán
+        })),
+        AttendanceDate: moment(selectedDate).format('YYYY-MM-DD'),
+        Total: total, // tổng tiền cần thanh toán sau khi dùng mã giảm
         FullName: fullName,
         PhoneNumber: phoneNumber,
         Note: note,
         InvoiceCodeRequest: selectedCodes.map(codeId => ({
             CodeId: codeId
         })),
-        TotalBeforeDiscount: totalBeforeDiscount,
+        TotalBeforeDiscount: totalBeforeDiscount, // tiền gốc khi chưa dùng mã giảm
         TimeHall : selectedValue,
+        PaymentWallet : true,
     };
 
+
+    const saveOrderDataToLocalStorage = () => {
+        const orderData = {
+            UserId: id, // ID người dùng đang đăng nhập
+            BranchId: selectedBranch ? selectedBranch.branchId : null, // ID chi nhánh đã chọn
+            HallId: selectedHallIdDo, // ID của sảnh đã chọn
+            OrderMenus: selectedMenus.map(menuId => ({
+                Price: 0,
+                Quantity: 0,
+                MenuID: menuId
+            })),
+            OrderServices: selectedServices.map(serviceId => ({
+                Price: 0, 
+                Quantity: 0,
+                ServiceID: serviceId
+            })),
+            AttendanceDate: moment(selectedDate).format('YYYY-MM-DD'),
+            Total: total, // tổng tiền cần thanh toán
+            FullName: fullName,
+            PhoneNumber: phoneNumber,
+            Note: note,
+            InvoiceCodeRequest: selectedCodes.map(codeId => ({
+                CodeId: codeId
+            })),
+            TotalBeforeDiscount: totalBeforeDiscount,
+            TimeHall : selectedValue,
+        };
+    
+        localStorage.setItem('orderData', JSON.stringify(orderData));
+    };
+    
+
+
     const sendOrderData = () => {
+        setIsProcessingPaymentWallet(true);
         fetch('https://localhost:7296/api/invoice', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(orderData),
+            body: JSON.stringify(orderDataPaymentWallet),
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 console.log('Đã gửi đơn hàng thành công:', data);
-                // Thực hiện xử lý hoặc hiển thị thông báo tùy ý sau khi gửi đơn hàng thành công.
+                toast.success('Thanh toán thành công!', {
+                    position: 'top-right',
+                    autoClose: 1000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                afterPaymentCoint();
+                closeModalPaymentCoin();
+                setIsProcessingPaymentWallet(false);
+                setIsCheckOrder(false);
+                setCheckOrder(false);
             })
             .catch(error => {
                 console.error('Lỗi khi gửi đơn hàng:', error);
-                // Xử lý lỗi hoặc hiển thị thông báo lỗi nếu có.
+                toast.error('Thanh toán thất bại. Vui lòng thử lại sau.', {
+                    position: 'top-right',
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                setIsProcessingPaymentWallet(false);
+                setIsCheckOrder(false);
+                setCheckOrder(false);
             });
     };
+    
     function formatPrice(price) {
         const formattedPrice = price.toLocaleString("vi-VN", {
             style: "currency",
@@ -608,7 +904,18 @@ const Bill = () => {
         fetchBookedHalls();
     }, []);
     
+    const [showModalConfirmOrder, setShowModalConfirmOrder] = useState(false);
+
+    const openModalConfirmOrder = () => {
+        setShowModalConfirmOrder(true);
+    };
+    const closeModalConfirmOrder = () => {
+        setShowModalConfirmOrder(false);
+        setCheckOrder(false);
+        setIsCheckOrder(false);
+      };
     const [showModal, setShowModal] = useState(false);
+
 
     // mở modal
     const openModal = () => {
@@ -645,85 +952,245 @@ const Bill = () => {
         }
       }, [selectedHallIdDo]);
 
-      const handleSelectChange = (event) => {
-          const selectedValue = event.target.value;
-          setSelectedValue(selectedValue);
+      useEffect(() => {
+        const storedSelectedValue = localStorage.getItem('selectedValue');
+        if (storedSelectedValue) {
+            setSelectedValue(storedSelectedValue);
+        }
+    }, []);
+
+      const handleSelectChange = (e) => {
+        const value = e.target.value;
+        setSelectedValue(value);
+        localStorage.setItem('selectedValue', value);
+    };
+
+
+
+    const [branches, setBranches] = useState([]);
+    const [selectedAddress, setSelectedAddress] = useState('');
+    const [selectedBranchIdSuggest, setSelectedBranchIdSuggest] = useState(null);
+    const [selectedHallIdSuggest, setSelectedHallIdSuggest] = useState(null);
+    const [weddingHalls, setWeddingHalls] = useState([]);
+    const [refresh, setRefresh] = useState(false);
+    useEffect(() => {
+        fetch('https://localhost:7296/api/ApiBranch')
+        .then(response => response.json())
+        .then(data => setBranches(data))
+        .catch(error => console.error('Lỗi khi tải danh sách chi nhánh:', error));
+        fetchWallet();
+
+    }, []);
+
+     useEffect(() => {
+        if (selectedBranchIdSuggest) {
+            fetch(`https://localhost:7296/api/get-hall-by-branchid/${selectedBranchIdSuggest}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => setWeddingHalls(data))
+                .catch(error => console.error('Lỗi khi tải danh sách sảnh cưới:', error));
+        } else {
+            setWeddingHalls([]);
+        }
+    }, [selectedBranchIdSuggest]);
+
+    const uniqueAddresses = [...new Set(branches.map(branch => branch.address))];
+
+    const filteredBranches = selectedAddress
+        ? branches.filter(branch => branch.address === selectedAddress)
+        : [];
+
+    const handleAddressChange = (event) => {
+        setSelectedAddress(event.target.value);
+        setSelectedBranchIdSuggest(null); // Reset selected branch when address changes
+    };
+
+    const handleCheckboxChange = (branchId) => {
+        setSelectedBranchIdSuggest(branchId); 
+
+        setSelectedHallId(null);
+        setSelectedHallIndex(null); 
+        setSelectedHalls([]);
+        setSelectedHallIdSuggest([]);
+    };
+
+    const handleHallSuggestCheckboxChange = (hallId) => {
+        setSelectedHallIdSuggest(hallId); // Update selected branch id
+        console.log("selectedHallIdSuggest:" ,selectedHallIdSuggest);
+    };
+    
+ 
+
+    const handleNumberOfTablesChange = (event) => {
+        setNumberOfTables(event.target.value);
+    };
+
+    const handleReset = () => {
+        setCost(0);
+
+        fetch(`https://localhost:7296/api/get-hall-by-branchid/${selectedBranchIdSuggest}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => setWeddingHalls(data))
+                .catch(error => console.error('Lỗi khi tải danh sách sảnh cưới:', error));
+    };
+    const submitSuggest = () => { // lọc
+        if (selectedBranchIdSuggest  && cost !== null) {
+            const apiUrl = `https://localhost:7296/api/getsuggesthall/${selectedBranchIdSuggest}/${numberOfTables}/${cost}`;
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => setWeddingHalls(data))
+                .catch(error => console.error('Error fetching wedding halls:', error));
+        }
+    }
+
+    const acceptSuggest = () => { // chấp nhận gợi ý
+        if(selectedBranchIdSuggest && selectedHallIdSuggest != null) {
+            setSelectedBranchId(selectedBranchIdSuggest);
+            localStorage.setItem("selectedBranchId", selectedBranchIdSuggest);
+
+            setSelectedHallId(selectedHallIdSuggest);
+            localStorage.setItem("selectedHallId", selectedHallIdSuggest);
+            const selectedHall = halls.find(hall => hall.hallId === selectedHallIdSuggest);
+
+            if (selectedHall) {
+        
+                
+                    const updatedHalls = [selectedHall];
+                    setSelectedHalls(updatedHalls);
+                    localStorage.setItem('selectedHalls', JSON.stringify(updatedHalls));
+        
+            }
+        }
+    }
+    const [wallet, setWallet] = useState(null);
+
+    const [showModalPaymentWallet, setShowModalPaymentWallet] = useState(false);
+
+    const openModalPaymentCoin = () => {
+        if(checkOrder){
+            setShowModalPaymentWallet(true);
+            fetchWallet();
+            afterPaymentCoint();
+        }
+        else{
+            toast.error('Vui lòng kiểm tra đơn hàng!', {
+                position: 'top-right',
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
+       
+    }
+    const closeModalPaymentCoin = () => {
+        fetchWallet();
+        setShowModalPaymentWallet(false);
+    }
+   
+    const fetchWallet = async () => {
+        try {
+          const response = await fetch(`https://localhost:7296/api/wallet/${id}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch wallet info');
+          }
+          const data = await response.json();
+          setWallet(data);
+        } catch (error) {
+          console.error('Error fetching wallet info:', error);
+        }
       };
+
+    const [paymentCoin, setPaymentCoin] = useState([]);
+    function afterPaymentCoint () {
+            var coin = wallet.coin;
+            var orderTolal = total;
+            setPaymentCoin(coin - orderTolal);
+    }  
+
+
+    const handlePaymentWalletOrderData = () => {
+        sendOrderData();
+      };
+
+
     return (
         <div className="bill">
             <div className="bill-page"  style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
                 <div className="bill-form-container display-flex justify-content-center align-items-center">
                     <h1 className="title">Đơn Hàng</h1>
-                    <form onSubmit={handleFormSubmit}>
-                        <Accordion>
-                            <Accordion.Item eventKey="0">
-                                <Accordion.Header>Chi Nhánh</Accordion.Header>
-                                <Accordion.Body className='body'>
-                                    {branchs.map((branch, index) => (
-                                        <Card key={index} style={{ width: '18rem' }}>
-                                            <Card.Img className="image-fixed-height" variant="top" src={branch.image} />
-                                            <Card.Body>
-                                                <Card.Title>{branch.name}</Card.Title>
-                                                <Card.Text>
-                                                    Mô tả: {branch.description}
-                                                </Card.Text>
-                                                <Card.Text>
-                                                    Địa chỉ: {branch.address}
-                                                </Card.Text>
-                                                <Card.Text>
-                                                    SDT: {branch.phone}
-                                                </Card.Text>
-                                               
-                                                <div className="form-check">
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="checkbox"
-                                                        value=""
-                                                        id={`flexCheckDefault-${index}`}
-                                                        checked={branch.branchId === selectedBranchId}
-                                                        onChange={() => handleBranchCheckboxChange(branch.branchId)}
-                                                    />
-                                                </div>
-                                            </Card.Body>
-                                        </Card>
-                                    ))}
-                                </Accordion.Body>
-                            </Accordion.Item>
+                    <form >
+                    <Accordion>
+                        <Accordion.Item eventKey="0">
+                            <Accordion.Header>Chi Nhánh</Accordion.Header>
+                            <Accordion.Body className='body'>
+                                {branchs.map((branch, index) => (
+                                    <Card key={index} style={{ width: '18rem' }}>
+                                        <Card.Img className="image-fixed-height" variant="top" src={branch.image} />
+                                        <Card.Body>
+                                            <Card.Title>{branch.name}</Card.Title>
+                                            <Card.Text>
+                                                Mô tả: {branch.description}
+                                            </Card.Text>
+                                            <Card.Text>
+                                                Địa chỉ: {branch.address}
+                                            </Card.Text>
+                                            <Card.Text>
+                                                SDT: {branch.phone}
+                                            </Card.Text>
+                                            <div className="form-check">
+                                                <input
+                                                    className="form-check-input"
+                                                    type="checkbox"
+                                                    value=""
+                                                    id={`flexCheckDefault-${index}`}
+                                                    checked={branch.branchId === selectedBranchId}
+                                                    onChange={() => handleBranchCheckboxChange(branch.branchId)}
+                                                />
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
+                                ))}
+                            </Accordion.Body>
+                        </Accordion.Item>
 
                             {/* =================Sảnh Cưới=========== */}
                             <Accordion.Item eventKey="1">
-                                <Accordion.Header>Sảnh Cưới</Accordion.Header>
-                                <Accordion.Body className='body'>
-                                    {selectedItemHall.map((hall, index) => (
-                                        <Card key={index} style={{ width: '18rem' }}>
-                                            <Card.Img className='image-fixed-height' variant="top" src={hall.image} />
-                                            <Card.Body>
-                                                <Card.Title>{hall.name}</Card.Title>
-
-
-                                                <Card.Text>Sức chứa: {hall.capacity}</Card.Text>
-                                                <Card.Text>
-                                                    Giá sảnh: {formatPrice(hall.price)}
-                                                </Card.Text>
-                                                <Card.Text>
-                                                    Thuộc chi nhánh: {hall.branchName}
-                                                </Card.Text>
-                                               
-                                                <div className="form-check">
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="checkbox"
-                                                        value=""
-                                                        id={`flexCheckHall-${index}`}
-                                                        checked={hall.hallId === selectedHallId}
-                                                        onChange={() => handleHallCheckboxChange(hall.hallId)}
-                                                    />
-                                                </div>
-                                            </Card.Body>
-                                        </Card>
-                                    ))}
-                                </Accordion.Body>
-                            </Accordion.Item>
+                    <Accordion.Header>Sảnh Cưới</Accordion.Header>
+                    <Accordion.Body className='body'>
+                        {selectedItemHall.map((hall, index) => (
+                            <Card key={index} style={{ width: '18rem' }}>
+                                <Card.Img className='image-fixed-height' variant="top" src={hall.image} />
+                                <Card.Body>
+                                    <Card.Title>{hall.name}</Card.Title>
+                                    <Card.Text>Sức chứa: {hall.capacity}</Card.Text>
+                                    <Card.Text>Giá sảnh: {formatPrice(hall.price)}</Card.Text>
+                                    <Card.Text>Thuộc chi nhánh: {hall.branchName}</Card.Text>
+                                    <div className="form-check">
+                                        <input
+                                            className="form-check-input"
+                                            type="checkbox"
+                                            value=""
+                                            id={`flexCheckHall-${index}`}
+                                            checked={hall.hallId === selectedHallId}
+                                            onChange={() => handleHallCheckboxChange(hall.hallId)}
+                                        />
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        ))}
+                    </Accordion.Body>
+                </Accordion.Item>
                             <h2 style={{textAlign:'center',marginTop:'15px'}}>Thực đơn</h2>
 
                             {Object.entries(categorizedMenus).map(([categoryName, categoryMenus]) => (
@@ -795,7 +1262,7 @@ const Bill = () => {
                                     className="form-control"
                                     type="text"
                                     value={fullName}
-                                    onChange={(e) => setFullName(e.target.value)}
+                                    onChange={handleFullNameChange}
                                     placeholder="Họ và tên"
                                 />
                             </div>
@@ -806,7 +1273,7 @@ const Bill = () => {
                                     className="form-control"
                                     type="tel"
                                     value={phoneNumber}
-                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    onChange={handlePhoneNumberChange}
                                     placeholder="Số điện thoại"
                                 />
                             </div>
@@ -816,7 +1283,7 @@ const Bill = () => {
                                 <textarea
                                     className="form-control"
                                     value={note}
-                                    onChange={(e) => setNote(e.target.value)}
+                                    onChange={handleNoteChange}
                                     placeholder="Ghi chú nếu có"
                                 />
                             </div>
@@ -834,37 +1301,37 @@ const Bill = () => {
                                     dropdownMode="select" // Chế độ dropdown
                                     placeholderText="Chọn ngày" // Văn bản mặc định
                                 />
-                            </div>
+                            </div>          
                             <div className="mb-2 mt-3">
-            <label htmlFor="selectTimeOfDay">Chọn ca:  </label>
-            <select
-                style={{border:'1px solid #d4d4d4',marginLeft:'8px',borderRadius:'2px', padding:'9px'}}
-                id="selectTimeOfDay"
-                onChange={handleSelectChange}
-                value={selectedValue}
-            >
-                <option value="">Chọn ca</option>
-                {timeOfDayList.map((timeOfDay) => (
-                    <React.Fragment key={timeOfDay.id}>
-                        {timeOfDay.morning && (
-                            <option value={`Ca sáng: ${timeOfDay.morning}`}>
-                                Buổi sáng: {timeOfDay.morning}
-                            </option>
-                        )}
-                        {timeOfDay.afternoon && (
-                            <option value={`Ca chiều: ${timeOfDay.afternoon}`}>
-                                Buổi chiều: {timeOfDay.afternoon}
-                            </option>
-                        )}
-                        {timeOfDay.dinner && (
-                            <option value={`Ca tối: ${timeOfDay.dinner}`}>
-                                Buổi tối: {timeOfDay.dinner}
-                            </option>
-                        )}
-                    </React.Fragment>
-                ))}
-            </select>
-        </div>
+                                <label htmlFor="selectTimeOfDay">Chọn ca:  </label>
+                                <select
+                                    style={{border:'1px solid #d4d4d4',marginLeft:'8px',borderRadius:'2px', padding:'9px'}}
+                                    id="selectTimeOfDay"
+                                    onChange={handleSelectChange}
+                                    value={selectedValue}
+                                >
+                                <option value="">Chọn ca</option>
+                                {timeOfDayList.map((timeOfDay) => (
+                                    <React.Fragment key={timeOfDay.id}>
+                                        {timeOfDay.morning && (
+                                            <option value={`Ca sáng: ${timeOfDay.morning}`}>
+                                                Buổi sáng: {timeOfDay.morning}
+                                            </option>
+                                        )}
+                                        {timeOfDay.afternoon && (
+                                            <option value={`Ca chiều: ${timeOfDay.afternoon}`}>
+                                                Buổi chiều: {timeOfDay.afternoon}
+                                            </option>
+                                        )}
+                                        {timeOfDay.dinner && (
+                                            <option value={`Ca tối: ${timeOfDay.dinner}`}>
+                                                Buổi tối: {timeOfDay.dinner}
+                                            </option>
+                                        )}
+                                    </React.Fragment>
+                                ))}
+                                </select>
+                            </div>
 
 
                         </Accordion>
@@ -903,7 +1370,7 @@ const Bill = () => {
                             </div>
                         </div>
 
-                        <button style={{ marginTop: '20px' }} className='btn btn-success' variant="primary" type="submit">Xác nhận đặt nhà hàng</button>
+                        <button type='button' style={{ marginTop: '20px' }} className='btn btn-success' onClick={() => openModalConfirmOrder()}  >Xác nhận đặt nhà hàng</button>
                         <button style={{ float: 'right', marginTop: '20px' }} type='button' onClick={() => openModal()} className='btn btn-secondary'>
                             Xem danh sách sảnh đã được đặt trước
                         </button>
@@ -911,7 +1378,7 @@ const Bill = () => {
 
                 </div>
 
-                <Modal show={showModal} onHide={() => setShowModal(false)} size="xl" dialogClassName="modal-100w">
+                <Modal scrollable show={showModal} onHide={() => setShowModal(false)} size="xl" dialogClassName="modal-100w">
                     <Modal.Header closeButton>
                         <Modal.Title>Danh sách sảnh đã có người đặt</Modal.Title>
                     </Modal.Header>
@@ -953,7 +1420,7 @@ const Bill = () => {
       Xem đơn hàng
     </Button>
 
-                    <div class="content" style={{ zIndex:'1000000000000', marginTop:'60px', position: 'fixed', backgroundColor: 'yellow', overflow: 'auto', maxHeight: '100%' }}>
+                    <div class="content" style={{ zIndex:'1000000000000', marginTop:'60px', position: 'fixed', backgroundColor: 'white', overflow: 'auto', maxHeight: '100%' , borderRadius:'4px' ,border:'5px solid black'}}>
 
                     <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18" />
@@ -977,24 +1444,24 @@ const Bill = () => {
                         )}
 
                         {selectedHalls.length > 0 && (
-                            <div>
-                                <h3 style={{fontWeight:'bold'}}>Sảnh cưới đã chọn:</h3>
-                                <div className="center-content">
-                                    {selectedHalls.map((hall, index) => (
-                                        <div key={index}>
-                                            <img
-                                                src={hall.image}
-                                                alt={hall.name}
-                                                style={{ width: '100%', height: '250px' }}
-                                            />
-                                            <h3><b>{hall.name}</b></h3>
-                                            <h3><b>{formatPrice(hall.price)}</b></h3>
-                                        </div>
-                                    ))}
-                                </div>
-                                <hr />
+                <div>
+                    <h3 style={{ fontWeight: 'bold' }}>Sảnh cưới đã chọn:</h3>
+                    <div className="center-content">
+                        {selectedHalls.map((hall, index) => (
+                            <div key={index}>
+                                <img
+                                    src={hall.image}
+                                    alt={hall.name}
+                                    style={{ width: '100%', height: '250px' }}
+                                />
+                                <h3><b>{hall.name}</b></h3>
+                                <h3><b>{formatPrice(hall.price)}</b></h3>
                             </div>
-                        )}
+                        ))}
+                    </div>
+                    <hr />
+                </div>
+            )}
 
                         <h3 style={{fontWeight:'bold'}}>Danh sách món ăn đã chọn:</h3>
                         {selectedMenus.length > 0 ? (
@@ -1016,8 +1483,8 @@ const Bill = () => {
                                 })}
                             </div>
                         ) : 'Chưa chọn món ăn'}
-
-                        <h3 >Dịch vụ đã chọn:</h3>
+                        <hr></hr>
+                        <h3 style={{fontWeight:'bold'}}>Dịch vụ đã chọn:</h3>
                         {selectedServices.length > 0 ? (
                             <div className="selected-menus">
                                 {selectedServices.map(serviceId => {
@@ -1040,16 +1507,251 @@ const Bill = () => {
                             'Chưa chọn dịch vụ'
                         )}
                     </div>
+                    <div style={{marginTop:'20px'}} className="total-row">
+                        <h3 style={{textAlign:'center'}}>Tổng tiền cần thanh toán <h3 style={{textAlign:'center',color:'red'}}>{formatPrice(calculateTotalPrice())}</h3></h3>
+                        <span className="total-amount"></span>
+                    </div>
         </div>
         
     </div>
-                   
 
+    <Modal scrollable size="lg" centered show={showModalConfirmOrder} onHide={closeModalConfirmOrder}  >
+    <Modal.Header closeButton>
+        <Modal.Title>Xác nhận đặt hàng</Modal.Title>
+    </Modal.Header>
+    <Modal.Body >
+    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+    <div >
+    <Button
+        onClick={handleFormSubmit}
+        style={{ border: "1px solid transparent",backgroundColor: isCheckOrder ? '#5cb85c' : "blue", color: isCheckOrder ? 'white' : 'white' }}
+        >
+        {isCheckOrder ? (
+            <>
+                <FontAwesomeIcon icon={faCheckCircle} className="me-2" />
+                <span>Kiểm tra thành công</span>
+            </>
+        ) : (
+            'Kiểm tra đơn hàng'
+        )}
+    </Button>
+    </div>
+    <div style={{ width: '40%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <Button onClick={demoPayment} disabled={isProcessing} >
+        {isProcessing ? (
+          <>
+            <div className="spinner-border spinner-border-sm" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <span className="ms-2">Thanh toán...</span>
+          </>
+        ) : (
+          'Thanh toán online'
+        )}
+      </Button>
+      <Button onClick={openModalPaymentCoin}>Thanh toán bằng wallet coin</Button>
+    </div>
+    </div>
+   
+
+     </Modal.Body>
+    <Modal.Footer>
+    </Modal.Footer>
+    </Modal>
+
+
+
+
+    <Modal scrollable size="lg" centered show={showModalPaymentWallet} onHide={closeModalPaymentCoin}>
+    <Modal.Header closeButton>
+        <Modal.Title>Thanh toán bằng wallet coin</Modal.Title>
+    </Modal.Header>
+    <Modal.Body style={{height:'200px'}} >
+    {wallet && (
+                    <h2>Số coin trong wallet: <b style={{color:'red'}}>{formatPrice(wallet.coin)}</b></h2>
+                )}
+        <h2>Đơn hàng có giá trị : {formatPrice(total)}</h2>
+<h2>Số coin sau khi thanh toán: {formatPrice(paymentCoin)}</h2>
+     </Modal.Body>
+    <Modal.Footer>
+<button onClick={closeModalPaymentCoin} className='btn btn-secondary'>Đóng</button>
+<Button className='btn btn-primary' onClick={handlePaymentWalletOrderData} disabled={isProcessingPaymentWallet} >
+        {isProcessingPaymentWallet ? (
+          <>
+            <div className="spinner-border spinner-border-sm" role="status">
+              <span className="visually-hidden">Đang thanh toán...</span>
+            </div>
+            <span className="ms-2">Thanh toán...</span>
+          </>
+        ) : (
+          'Xác nhận thanh toán'
+        )}
+      </Button>
+
+    </Modal.Footer>
+    </Modal>
+
+
+                   
+    <Button onClick={openModalSuggest} style={{ padding: '10px', position: 'fixed', bottom: '200px', right: '0' }}>
+        Gợi ý nhà hàng
+      </Button>
+
+      <Modal scrollable size="xl" centered show={showModalSuggest} onHide={closeModalSuggest}>
+        <Modal.Header closeButton>
+          <Modal.Title>Gợi ý nhà hàng</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <label htmlFor="addressSelect">Chọn địa điểm:</label>
+            <select
+              id="addressSelect"
+              value={selectedAddress}
+              onChange={handleAddressChange}
+              className="form-control"
+            >
+              <option value="" disabled>
+                -- Chọn địa điểm --
+              </option>
+              {uniqueAddresses.map((address, index) => (
+                <option key={index} value={address}>
+                  {address}
+                </option>
+              ))}
+            </select>
+              
+            {selectedAddress && (
+                <>
+
+              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
+                {filteredBranches.map((branch, index) => (
+                  <div
+                    style={{ padding: '10px', border: '3px solid black', width: '45%', margin: '10px', position: 'relative' }}
+                    key={index}
+                  >
+                    <h4 style={{ textAlign: 'center' }}>{branch.name}</h4>
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
+                      <img
+                        src={branch.image}
+                        style={{ border: '2px solid black', borderRadius: '4px', width: '200px', height: 'auto' }}
+                        alt="chi nhanh"
+                      />
+                    </div>
+                    <p>Địa chỉ: {branch.address}</p>
+                    <div className="form-check" style={{ position: 'absolute', top: '10px', left: '10px' }}>
+                      <input
+                        style={{ color: 'black', border: '2px solid black' }}
+                        className="form-check-input custom-checkbox"
+                        type="checkbox"
+                        checked={branch.branchId === selectedBranchIdSuggest}
+                        onChange={() => handleCheckboxChange(branch.branchId)}
+                        value=""
+                        id={`flexCheckBranchSuggest-${index}`}
+                      />
+                    </div>
+                  </div>
+                ))}
+            </div>
+                <div >
+                {selectedBranchIdSuggest && (
+                  <div style={{ marginTop: '20px' }}>
+                    <h5>Danh sách sảnh cưới:</h5>
+                    <div style={{display:'flex', flexFlow:'row' }}>
+
+                    {weddingHalls.length > 0 ? (
+                      weddingHalls.map((hall, index) => (
+                            <div key={index} style={{width:'50%',padding: '10px', border: '1px solid gray', marginBottom: '10px',margin:'20px' , position:'relative'}}>
+                            <h6 style={{textAlign:'center'}}>{hall.name}</h6>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
+                      <img
+                        src={hall.image}
+                        style={{ border: '2px solid black', borderRadius: '4px', width: '200px', height: '150px' }}
+                        alt="chi nhanh"
+                      />
+                    </div>
+                            <p>Giá: {formatPrice(hall.price)}</p>
+                            <p>Số lượng bàn: {hall.capacity}</p>
+                            <div className="form-check" style={{ position: 'absolute', top: '10px', left: '10px' }}>
+                      <input
+                        style={{ color: 'black', border: '2px solid black' }}
+                        className="form-check-input custom-checkbox"
+                        type="checkbox"
+                        checked={hall.hallId === selectedHallIdSuggest}
+                        onChange={() => handleHallSuggestCheckboxChange(hall.hallId)}
+                        value=""
+                        id={`flexCheckHallSuggest-${index}`}
+                      />
+                    </div>
+                            </div>
+                            
+                      ))
+                    ) : (
+                      <p>Không có sảnh nào cho chi nhánh này.</p>
+                    )}
+                    
+                    </div>
+
+                  </div>
+                )}
+                <hr></hr>
+                <h5>Nhập tìm kiếm về số lượng bàn và chi phí</h5>
+
+                <div style={{ display: 'flex', flexFlow: 'row', justifyContent:'center',gap:'20px', marginBottom: '10px',marginTop:'20px' }}>
+                <div style={{ width: '20%', border: '2px solid black' }} class="form-floating mb-3">
+                    <input type="number" class="form-control" id="floatingInput" placeholder="Số lượng bàn" onChange={handleNumberOfTablesChange}></input>
+                    <label for="floatingInput">Số lượng bàn</label>
+                </div>
+               
+                    <div style={{ width: '50%', display: 'flex', alignItems: 'center', paddingLeft: '10px', position: 'relative' }}>
+                    <label htmlFor="costSlider" style={{ position: 'absolute', top: '-6px', left: '10px' }}>
+                        Chọn chi phí:
+                    </label>
+                    <Slider
+                        id="costSlider"
+                        min={0}
+                        max={100000000} 
+                        step={100000} 
+                        value={cost}
+                        onChange={handleSliderChange}
+                        style={{ flexGrow: 1, marginRight: '10px' }}
+                    />
+                    <input
+                        style={{ width: '60%', border: '2px solid black' }}
+                        className="form-control"
+                        placeholder="Chi phí"
+                        value={formatPrice(cost)} 
+                        readOnly
+                    />
+                    <button style={{margin:'20px',width:'10%'}} className='btn btn-primary' onClick={submitSuggest}>Lọc</button>
+                    <button style={{width:'190px'}} className='btn btn-danger' onClick={handleReset}>Xóa lọc</button>
+
+                    </div>
+
+
+
+                </div>
+                <div style={{display:'flex', justifyContent:'center'}}>
+                    <button style={{width:'50%'}} className='btn btn-dark' onClick={acceptSuggest}>Chấp nhận gợi ý từ nhà hàng</button>
+
+                </div>
+
+              </div>
+
+              </>
+
+            )}
+
+          </div>
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
+      </Modal>
             </div >
         </div >
 
     );
+    
 };
+
 
 export default Bill;
 

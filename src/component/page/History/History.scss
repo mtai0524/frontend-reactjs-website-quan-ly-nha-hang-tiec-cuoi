@@ -48,3 +48,27 @@
     z-index: 1001; /* Đặt z-index cao hơn để spinner hiển thị trên overlay */
   }
   
+  /* For screens larger than 1200px */
+@media (min-width: 1200px) {
+    .invoice-card {
+      flex: 0 0 calc(33.33% - 20px); /* 3 cards per row with gap */
+      max-width: calc(33.33% - 20px); /* Ensure cards don't exceed this width */
+    }
+  }
+  
+  /* For screens between 768px and 1200px */
+  @media (max-width: 1200px) {
+    .invoice-card {
+      flex: 0 0 calc(50% - 20px); /* 2 cards per row with gap */
+      max-width: calc(50% - 20px); /* Ensure cards don't exceed this width */
+    }
+  }
+  
+  /* For screens up to 768px (mobile screens) */
+  @media (max-width: 768px) {
+    .invoice-card {
+      flex: 0 0 calc(100% - 20px); /* 1 card per row with gap */
+      max-width: calc(100% - 20px); /* Ensure cards don't exceed this width */
+    }
+  }
+  

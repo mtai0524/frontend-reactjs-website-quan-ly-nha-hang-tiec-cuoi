@@ -20,66 +20,87 @@ const Profile = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false); 
+    const [wallet, setWallet] = useState(null);
+  const [error, setError] = useState(null);
     useEffect(() => {
-        setLoading(true);
-
         const tokenFromCookie = Cookies.get('token_user');
         let decodedToken = null;
-
+    
         if (tokenFromCookie) {
-            decodedToken = jwt_decode(tokenFromCookie);
-            setIsLoggedIn(true);
+          decodedToken = jwt_decode(tokenFromCookie);
+          setIsLoggedIn(true);
         }
-
+    
         if (!decodedToken) {
-            setIsLoggedIn(false);
-            setLoading(false);
-
+          setIsLoggedIn(false);
+          setLoading(false);
+          return;
         }
-
-        if (isLoggedIn) {
-            setId(decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']);
-            setFirstName(decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']);
-            setLastName(decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname']);
-            setEmail(decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']);
-            setPhoneNumber(decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone']);
-
-            if (id!== '') {
-                async function getAvatar() {
-                    try {
-                        const response = await axios.get(`https://localhost:7296/api/account/GetAvatar?id=${id}`);
-                        setAvatar(response.data.avatar);
-                        setLoading(false);
-                    } catch (error) {
-                        setLoading(false);
-                        console.error('Error:', error);
-                    }
-                }
-                async function getInfo() {
-                    try {
-                        const response = await axios.get(`https://localhost:7296/api/account/GetInFoUserById?id=${id}`);
-                        setFirstName(response.data.firstName);
-                        setPhoneNumber(response.data.phone);
-                        setLastName(response.data.lastName);
-          
-                        setLoading(false);
-
-                    } catch (error) {
-                        setLoading(false);
-                        console.error('Error:', error);
-                    }
-                }
-                getAvatar();
-                getInfo();
+    
+        const userId = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+        setId(userId);
+        setFirstName(decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']);
+        setLastName(decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname']);
+        setEmail(decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']);
+        setPhoneNumber(decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone']);
+    
+        if (userId !== '') {
+          const fetchAvatar = async () => {
+            try {
+              const response = await fetch(`https://localhost:7296/api/account/GetAvatar?id=${userId}`);
+              if (!response.ok) {
+                throw new Error('Failed to fetch avatar');
+              }
+              const data = await response.json();
+              setAvatar(data.avatar);
+            } catch (error) {
+              console.error('Error fetching avatar:', error);
+              setError(error.message);
             }
+          };
+    
+          const fetchInfo = async () => {
+            try {
+              const response = await fetch(`https://localhost:7296/api/account/GetInFoUserById?id=${userId}`);
+              if (!response.ok) {
+                throw new Error('Failed to fetch user info');
+              }
+              const data = await response.json();
+              setFirstName(data.firstName);
+              setPhoneNumber(data.phone);
+              setLastName(data.lastName);
+            } catch (error) {
+              console.error('Error fetching user info:', error);
+              setError(error.message);
+            }
+          };
+    
+          const fetchWallet = async () => {
+            try {
+              const response = await fetch(`https://localhost:7296/api/wallet/${userId}`);
+              if (!response.ok) {
+                throw new Error('Failed to fetch wallet info');
+              }
+              const data = await response.json();
+              setWallet(data);
+            } catch (error) {
+              console.error('Error fetching wallet info:', error);
+              setError(error.message);
+            }
+          };
+    
+          fetchAvatar();
+          fetchInfo();
+          fetchWallet();
         }
-    }, [id, isLoggedIn]); 
+    
+        setLoading(false);
+      }, [id]);
 
     const openModal = () => setShowModal(true);
     const closeModal = () => setShowModal(false);
 
     const handleSubmit = async () => {
-        // Prepare the data to send to the server
         const profileData = {
             firstName: firstName,
             lastName: lastName,
@@ -145,6 +166,13 @@ const Profile = () => {
             // Bạn có thể thêm logic xử lý tệp ở đây, ví dụ: tải lên máy chủ
         }
     };
+    function formatPrice(price) {
+        const formattedPrice = price.toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND"
+        });
+        return formattedPrice;
+    }
 
     return (
         <div className="profile">
@@ -153,23 +181,23 @@ const Profile = () => {
                     <Spinner animation="border" />
                 </div>
             ) : isLoggedIn ? (
-                <div className="container emp-profile" style={{ borderRadius: '8px', boxShadow: '9px 4px 7px -5px rgba(0,0,0,0.47)', boxShadow: '-0.6rem 0.6rem 0 rgba(29, 30, 28, 0.26)', border: '3px solid black', marginBottom: '7px' }}>
+                <div className="container emp-profile" style={{ borderRadius: '8px', border: '3px solid black', marginBottom: '7px' }}>
                     <form method="">
                         <div className="profile_avatar">
                             <div className="col-md-4">
-                                <h5>Avatar</h5>
+                                <h5>Ảnh đại diện</h5>
                                 <img src={avatar} alt="avatar" />
                             </div>
                             <div className="profile_detail">
                                 <div>
                                     <label htmlFor="first-name" className="form-label">
-                                        <b>First Name</b>
+                                        <b>Tên</b>
                                     </label>
                                     <p>{firstName}</p>
                                 </div>
                                 <div>
                                     <label htmlFor="last-name" className="form-label">
-                                        <b>Last Name</b>
+                                        <b>Họ</b>
                                     </label>
                                     <p>{lastName}</p>
                                 </div>
@@ -181,10 +209,18 @@ const Profile = () => {
                                 </div>
                                 <div>
                                     <label htmlFor="phone-number" className="form-label">
-                                        <b>Phone number</b>
+                                        <b>Số điện thoại</b>
                                     </label>
                                     <p>{phoneNumber}</p>
                                 </div>
+                                {wallet && (
+                                    <div>
+                                    <label htmlFor="wallet" className="form-label">
+                                        <b>Ví điện tử</b>
+                                    </label>
+                                    <p>Coin: <b style={{color:'red'}}>{formatPrice(wallet.coin)}</b></p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="col-md-6">
@@ -197,32 +233,32 @@ const Profile = () => {
                     </form>
                 </div>
             ) : (
-                <div className="container emp-profile" style={{boxShadow: '9px 4px 7px -5px rgba(0,0,0,0.47)', boxShadow: '-0.6rem 0.6rem 0 rgba(29, 30, 28, 0.26)', border: '3px solid black'}}>
+                <div className="container emp-profile" style={{  border: '3px solid black'}}>
                     <p style={{textAlign:'center', verticalAlign:'center', marginTop:'10px'}}>Người dùng chưa đăng nhập.</p>
                 </div>
             )}
-            <Modal show={showModal} onHide={closeModal} backdrop="true" keyboard={false} style={{boxShadow: '9px 4px 7px -5px rgba(0,0,0,0.47)', boxShadow: '-0.6rem 0.6rem 0 rgba(29, 30, 28, 0.26)', border: '3px solid black'}}>
+            <Modal show={showModal} onHide={closeModal} backdrop="true" keyboard={false} style={{ border: '3px solid black'}}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Edit Profile</Modal.Title>
+                    <Modal.Title>Cập nhật thông tin</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form>
                         <div className="form-group">
-                            <label htmlFor="firstName">First Name</label>
+                            <label htmlFor="firstName">Tên</label>
                             <input type="text" className="form-control" id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="lastName">Last Name</label>
+                            <label htmlFor="lastName">Họ</label>
                             <input type="text" className="form-control" id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} />
                         </div>
                     
                         <div className="form-group">
-                            <label htmlFor="phoneNumber">Phone Number</label>
+                            <label htmlFor="phoneNumber">Số điện thoại</label>
                             <input type="tel" className="form-control" id="phoneNumber" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
                         </div>
                         <div className='mb-2'>
                         <label htmlFor="avatar" className="form-label">
-                            Avatar
+                            Ảnh đại diện
                         </label>
                         <input
                             id="avatar"

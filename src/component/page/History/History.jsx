@@ -3,6 +3,8 @@ import { Button, Card, Modal, Table ,Spinner} from 'react-bootstrap';
 import { format } from 'date-fns';
 import Cookies from 'js-cookie';
 import jwt_decode from 'jwt-decode';
+import { ToastContainer, toast } from 'react-toastify';
+
 import './History.scss';
 const History = () => {
   const [invoices, setInvoices] = useState([]);
@@ -122,23 +124,24 @@ const History = () => {
     ) : null}
       <div style={{ marginTop: '50px', display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
         {invoices.map((invoice) => (
-          <div style={{ display: 'flex', flex: '0 0 30%', margin: '10px' }} className="invoice-card" key={invoice.invoiceID} onClick={() => openModal(invoice)}>
-            <Card style={{ backgroundColor: invoice.orderStatus === 'Đã hủy đơn hàng' ? '#dbdbdb' : 'transparent', width: '100%', boxShadow: '-0.6rem 0.6rem 0 rgba(29, 30, 28, 0.26)', borderRadius: '8px', border: '3px solid black' }}>
+          <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }} className="invoice-card" key={invoice.invoiceID} onClick={() => openModal(invoice)}>
+            <Card style={{ backgroundColor: invoice.orderStatus === 'Đã hủy đơn hàng' ? '#dbdbdb' : 'transparent', width: '90%',  borderRadius: '8px', border: '3px solid black' }}>
               <Card.Body>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <h5>Invoice ID: {invoice.invoiceID}</h5>
+                  <h5>Mã hóa đơn: {invoice.invoiceID}</h5>
                   <h8 style={{ color: 'red', fontWeight: 'bolder' }}>{invoice.orderStatus}</h8>
                 </div>
                 <p>Họ và tên: {invoice.fullName}</p>
                 <p>Số điện thoại: {invoice.phoneNumber}</p>
                 <p>Chi nhánh: {invoice.branch.name}</p>
                 <p>Sảnh cưới: {invoice.hall.name}</p>
-                <p>Thòi gian đã đặt: {format(new Date(invoice.invoiceDate), 'dd/MM/yyyy')}</p>
+                <p>Thời gian đã đặt: {format(new Date(invoice.invoiceDate), 'dd/MM/yyyy')}</p>
                 <p>Ngày tham dự: {format(new Date(invoice.attendanceDate), 'dd/MM/yyyy')}</p>
                 <p>Tổng tiền thanh toán: <span className="price">{formatPrice(invoice.total)}</span></p>
                 <p>
   {invoice.paymentStatus === false && <span style={{ color: 'red' }}>Chưa thanh toán</span>}
-  {invoice.paymentStatus === true && <span style={{ color: 'white', backgroundColor:'green', padding:'10px', borderRadius:'6px' }}> <i style={{marginRight:'5px', fontWeight:'900'}} className="checkmark">✓</i>  Đã thanh toán</span>}
+          
+  {invoice.paymentStatus === true && <span style={{ color: 'white', backgroundColor:'green', padding:'10px', borderRadius:'6px' }}> <i style={{marginRight:'5px', fontWeight:'900'}} className="checkmark">✓</i> {invoice.paymentWallet ? 'Đã thanh toán bằng ví' : 'Đã thanh toán online'}</span>}
 </p>
               </Card.Body>
             </Card>
@@ -147,16 +150,18 @@ const History = () => {
       </div>
 
       {/* Modal */}
-      <Modal show={showModal} onHide={closeModal}>
+      <Modal scrollable size="lg" centered show={showModal} onHide={closeModal} >
         <Modal.Header closeButton>
           <Modal.Title>Chi tiết hóa đơn</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body >
           {selectedInvoice && (
             <div>
-              <h5>Invoice ID: {selectedInvoice.invoiceID}</h5>
+              <h5>Mã hóa đơn: {selectedInvoice.invoiceID}</h5>
               <p>Họ và tên: {selectedInvoice.fullName}</p>
               <p>Số điện thoại: {selectedInvoice.phoneNumber}</p>
+              <p>Ghi chú: {selectedInvoice.note}</p>
+
               <p>Chi nhánh: {selectedInvoice.branch.name}</p>
               <p>Thòi gian đã đặt: {format(new Date(selectedInvoice.invoiceDate), 'dd/MM/yyyy')}</p>
               <p>Ngày tham dự: {format(new Date(selectedInvoice.attendanceDate), 'dd/MM/yyyy')}</p>
@@ -165,24 +170,25 @@ const History = () => {
               <Table striped bordered hover>
                 <thead>
                   <tr>
-                    <th>Hình</th>
-                    <th>Tên</th>
+                    <th style={{ width: '150px'}}>Hình</th>
+                    <th  style={{ width: '300px'}}>Tên</th>
                     <th>Giá</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr key={selectedInvoice.hall.id}>
-                    <td style={{ maxWidth: '74px' }}>
-                      <img
-                        style={{
-                          borderRadius: '7px',
-                          maxWidth: '100px',
-                          maxHeight: '100px',
-                          objectFit: 'cover'
-                        }}
-                        src={selectedInvoice.hall.image}
-                      />
-                    </td>
+                  <td style={{ width: '150px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  <img
+    style={{
+      borderRadius: '7px',
+      maxWidth: '120px',
+      maxHeight: '120px',
+      objectFit: 'cover'
+    }}
+    src={selectedInvoice.hall.image}
+  />
+</td>
+
                     <td>{selectedInvoice.hall.name}</td>
                     <td><span className="price">{formatPrice(selectedInvoice.hall.price)}</span></td>
                   </tr>
@@ -194,20 +200,20 @@ const History = () => {
               <Table striped bordered hover>
                 <thead>
                   <tr>
-                    <th>Hình</th>
-                    <th>Tên</th>
+                    <th style={{ width: '150px'}}>Hình</th>
+                    <th  style={{ width: '300px'}}>Tên</th>
                     <th>Giá</th>
                   </tr>
                 </thead>
                 <tbody>
                   {selectedInvoice.orderMenus.map((orderMenu) => (
                     <tr key={orderMenu.orderMenuId}>
-                      <td style={{ maxWidth: '100px' }}>
+                      <td style={{ width: '150px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <img
                           style={{
                             borderRadius: '7px',
-                            maxWidth: '100px',
-                            maxHeight: '100px',
+                            maxWidth: '120px',
+                            maxHeight: '120px',
                             objectFit: 'cover'
                           }}
                           src={orderMenu.menuEntity.image}
@@ -225,20 +231,21 @@ const History = () => {
               <Table striped bordered hover>
                 <thead>
                   <tr>
-                    <th>Hình</th>
-                    <th>Tên</th>
+                    <th style={{ width: '150px'}}>Hình</th>
+                    <th  style={{ width: '300px'}}>Tên</th>
+
                     <th>Giá</th>
                   </tr>
                 </thead>
                 <tbody>
                   {selectedInvoice.orderServices.map((orderService) => (
                     <tr key={orderService.orderServiceId}>
-                      <td style={{ maxWidth: '100px' }}>
+                    <td style={{ width: '150px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <img
                           style={{
                             borderRadius: '7px',
-                            maxWidth: '100px',
-                            maxHeight: '100px',
+                            maxWidth: '120px',
+                            maxHeight: '120px',
                             objectFit: 'cover'
                           }}
                           src={orderService.serviceEntity.image}
@@ -272,8 +279,16 @@ const History = () => {
             if (selectedInvoice.orderStatus === 'Đã hủy đơn hàng') {
               alert("Đơn hàng đã bị hủy trước đó");
             }
-            else if (window.confirm("Xác nhận hủy đơn hàng?")) {
+            else if (window.confirm("Xác nhận hủy đơn hàng?\n\nSố tiền đối với đơn hàng đã thanh toán sẽ được hoàn về dạng coin trong phần thông tin cá nhân")) {
               cancelInvoice(selectedInvoice.invoiceID);
+              toast.success(`Đã hoàn tiền về dạng coin`, {
+              position: 'top-right',
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+        });
             }
           }}>
             Hủy đơn

@@ -240,3 +240,20 @@ html {
     margin: 0;
     overflow-x: hidden;
 }
+
+.custom-checkbox {
+    /* Customize the appearance of the checkbox */
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    border: 2px solid black;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .custom-checkbox:checked {
+    background-color: black; /* Change to desired color */
+    border-color: black; /* Optional: change border color when checked */
+  }
+  
+  

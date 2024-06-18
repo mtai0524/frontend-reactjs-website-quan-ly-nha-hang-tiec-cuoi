@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Payment = () => {
+  const [orderSent, setOrderSent] = useState(false); // State để kiểm tra xem đơn hàng đã được gửi chưa
+  const [loading, setLoading] = useState(true); // State để quản lý trạng thái loading
+  const [error, setError] = useState(false); // State để quản lý trạng thái lỗi
+
   // Định nghĩa các đối tượng style trực tiếp
   const cardStyle = {
     background: 'white',
@@ -9,15 +13,14 @@ const Payment = () => {
     boxShadow: '0 2px 3px #C8D0D8',
     display: 'inline-block',
     margin: '0 auto',
-boxShadow: '9px 4px 7px -5px rgba(0,0,0,0.47)',
-boxShadow: '-0.6rem 0.6rem 0 rgba(29, 30, 28, 0.26)',
-border: '3px solid black',
-    marginBottom:'7px',
+    border: '5px solid black',
+    marginBottom: '7px',
+    textAlign: 'center'
   };
 
   const checkmarkStyle = {
     display: 'flex',
-justifyContent:'center',
+    justifyContent: 'center',
     borderRadius: '200px',
     height: '200px',
     width: '200px',
@@ -32,14 +35,83 @@ justifyContent:'center',
     marginLeft: '-15px'
   };
 
+  const errorIconStyle = {
+    color: '#D9534F',
+    fontSize: '100px',
+    lineHeight: '200px',
+    marginLeft: '-15px'
+  };
+
+  useEffect(() => {
+    if (!orderSent) { // Kiểm tra xem đơn hàng đã được gửi chưa
+      const timer = setTimeout(() => {
+        sendOrderData();
+      }, 5000);
+
+      // Cleanup function to clear the timeout if the component unmounts before the timeout finishes
+      return () => clearTimeout(timer);
+    }
+  }, [orderSent]); // Chạy useEffect khi orderSent thay đổi
+
+  const sendOrderData = () => {
+    const storedOrderData = localStorage.getItem('orderData');
+    if (storedOrderData) {
+      const orderData = JSON.parse(storedOrderData);
+
+      fetch('https://localhost:7296/api/invoice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Đã gửi đơn hàng thành công:', data);
+          setOrderSent(true); // Cập nhật state khi gửi đơn hàng thành công
+          setLoading(false); // Cập nhật state để ẩn loading
+          localStorage.removeItem('orderData'); // Xóa dữ liệu đơn hàng trong localStorage
+        })
+        .catch(error => {
+          console.error('Lỗi khi gửi đơn hàng:', error);
+          setLoading(false); // Cập nhật state để ẩn loading ngay cả khi gặp lỗi
+          setError(true); // Cập nhật state để hiển thị lỗi
+          localStorage.removeItem('orderData'); // Xóa dữ liệu đơn hàng trong localStorage ngay cả khi gặp lỗi
+        });
+    } else {
+      console.error('Không có dữ liệu đơn hàng trong localStorage');
+      setLoading(false); // Cập nhật state để ẩn loading ngay cả khi không có dữ liệu
+      setError(true); // Cập nhật state để hiển thị lỗi
+    }
+  };
+
   return (
-    <div style={{display:"flex", justifyContent:"center", alignItems:"center",height:"90vh", marginTop:"100px"}}>
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "90vh", marginTop: "100px" }}>
       <div style={cardStyle}>
-        <div style={checkmarkStyle}>
-          <i className="checkmark" style={iconStyle}>✓</i>
-        </div>
-        <h1>Thành công</h1>
-        <p>Cảm ơn đã thanh toán<br/>chúc một ngày tốt lành!</p>
+        {loading ? (
+          <div>
+            <div className="spinner-border" role="status">
+              <span className="sr-only"></span>
+            </div>
+            <h3>Đang xử lý thanh toán, vui lòng đợi...</h3>
+          </div>
+        ) : error ? (
+          <>
+            <div style={checkmarkStyle}>
+              <i className="checkmark" style={errorIconStyle}>✗</i>
+            </div>
+            <h1>Thanh toán thất bại</h1>
+            <h4>Đã xảy ra lỗi, vui lòng thử lại.</h4>
+          </>
+        ) : (
+          <>
+            <div style={checkmarkStyle}>
+              <i className="checkmark" style={iconStyle}>✓</i>
+            </div>
+            <h1>Thành công</h1>
+            <h4>Cảm ơn đã thanh toán<br />chúc một ngày tốt lành!</h4>
+          </>
+        )}
       </div>
     </div>
   );
