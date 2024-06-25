@@ -242,7 +242,7 @@ html {
 }
 
 .custom-checkbox {
-    /* Customize the appearance of the checkbox */
+    
     appearance: none;
     width: 30px;
     height: 30px;
@@ -252,8 +252,8 @@ html {
   }
   
   .custom-checkbox:checked {
-    background-color: black; /* Change to desired color */
-    border-color: black; /* Optional: change border color when checked */
+    background-color: black;
+    border-color: black;
   }
   
   

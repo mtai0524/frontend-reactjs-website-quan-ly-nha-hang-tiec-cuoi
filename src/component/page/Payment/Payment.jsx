@@ -43,15 +43,56 @@ const Payment = () => {
   };
 
   useEffect(() => {
-    if (!orderSent) { // Kiểm tra xem đơn hàng đã được gửi chưa
+    if (!orderSent) { 
       const timer = setTimeout(() => {
+      const storedInvoiceId = localStorage.getItem('invoiceId');
+      if(storedInvoiceId != null){
+        paymentCompelete();
+      }
+      else{
         sendOrderData();
+      }
       }, 5000);
 
-      // Cleanup function to clear the timeout if the component unmounts before the timeout finishes
+      
       return () => clearTimeout(timer);
     }
-  }, [orderSent]); // Chạy useEffect khi orderSent thay đổi
+  }, [orderSent]);
+
+
+  const paymentCompelete = () => {
+    const storedInvoiceId = localStorage.getItem('invoiceId');
+
+    if (storedInvoiceId) {
+      const invoiceId = JSON.parse(storedInvoiceId);
+
+      fetch(`https://localhost:7296/api/invoice/repayment-compelete/${invoiceId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(invoiceId),
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Đã gửi đơn hàng thành công:', data);
+          setOrderSent(true); // Cập nhật state khi gửi đơn hàng thành công
+          setLoading(false); // Cập nhật state để ẩn loading
+          localStorage.removeItem('invoiceId'); // Xóa dữ liệu đơn hàng trong localStorage
+        })
+        .catch(error => {
+          console.error('Lỗi khi gửi đơn hàng:', error);
+          setLoading(false); //  ẩn loading khi gặp lỗi
+          setError(true); // Cập nhật state để hiển thị lỗi
+          localStorage.removeItem('invoiceId'); // Xóa dữ liệu đơn hàng trong localStorage khi gặp lỗi
+        });
+    } else {
+      console.error('Không có dữ liệu đơn hàng trong localStorage');
+      setLoading(false); // Cập nhật state để ẩn loading ngay cả khi không có dữ liệu
+      setError(true); // Cập nhật state để hiển thị lỗi
+    }
+  };
+
 
   const sendOrderData = () => {
     const storedOrderData = localStorage.getItem('orderData');
@@ -74,9 +115,9 @@ const Payment = () => {
         })
         .catch(error => {
           console.error('Lỗi khi gửi đơn hàng:', error);
-          setLoading(false); // Cập nhật state để ẩn loading ngay cả khi gặp lỗi
+          setLoading(false); //  ẩn loading khi gặp lỗi
           setError(true); // Cập nhật state để hiển thị lỗi
-          localStorage.removeItem('orderData'); // Xóa dữ liệu đơn hàng trong localStorage ngay cả khi gặp lỗi
+          localStorage.removeItem('orderData'); // Xóa dữ liệu đơn hàng trong localStorage khi gặp lỗi
         });
     } else {
       console.error('Không có dữ liệu đơn hàng trong localStorage');

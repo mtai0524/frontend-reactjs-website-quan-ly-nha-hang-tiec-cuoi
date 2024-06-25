@@ -207,20 +207,21 @@ const Profile = () => {
                                     </label>
                                     <p>{email}</p>
                                 </div>
-                                <div>
+                                <div style={{width:'200px'}}>
                                     <label htmlFor="phone-number" className="form-label">
                                         <b>Số điện thoại</b>
                                     </label>
-                                    <p>{phoneNumber}</p>
+                                    <p>{phoneNumber ? phoneNumber : "Chưa nhập số điện thoại"}</p>
                                 </div>
-                                {wallet && (
-                                    <div>
+                                <div>
                                     <label htmlFor="wallet" className="form-label">
                                         <b>Ví điện tử</b>
                                     </label>
-                                    <p>Coin: <b style={{color:'red'}}>{formatPrice(wallet.coin)}</b></p>
-                                    </div>
-                                )}
+                                    {wallet ? (
+                                        <p>Coin: <b style={{color:'red'}}>{wallet.coin ? formatPrice(wallet.coin) : "0đ"}</b></p>
+                                    ) :  <p>Coin: <b style={{color:'red'}}>Chưa có ví</b></p>}
+                                </div>
+
                             </div>
                         </div>
                         <div className="col-md-6">

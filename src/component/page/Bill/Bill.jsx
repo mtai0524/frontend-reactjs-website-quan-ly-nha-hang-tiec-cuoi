@@ -8,7 +8,7 @@ import { useCookies } from 'react-cookie';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
-import { faL } from '@fortawesome/free-solid-svg-icons';
+import { faL, faWallet } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment-timezone';
@@ -249,14 +249,9 @@ const Bill = () => {
     const [isCheckOrder, setIsCheckOrder] = useState(false);
 
     const demoPayment = async (e) => {
+        localStorage.removeItem('invoiceId');
         setIsProcessing(true);
         try {
-            // var chiahai = totalBeforeDiscount /2 ; // thanh toan dat coc
-            const amount =  total + "00" ; 
-            const response = await fetch(`https://localhost:7296/api/Payment?amount=${amount}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch payment URL');
-            }
             if (checkOrder === true) {
                 toast.info('Đang chuyển đến trang thanh toán', {
                   position: 'top-right',
@@ -269,7 +264,8 @@ const Bill = () => {
               
                 setTimeout(async () => {
                   try {
-                    const amount = (total + "00").toString();
+                    var payDeposit = total /2 ; // thanh toan dat coc
+                    const amount = (payDeposit + "00").toString();
                     const response = await fetch(`https://localhost:7296/api/Payment?amount=${amount}`);
                     if (!response.ok) {
                       throw new Error('Failed to fetch payment URL');
@@ -390,7 +386,7 @@ const Bill = () => {
 
             if (!fullName || !phoneNumber) {
                 // Kiểm tra xem các trường dữ liệu đã nhập đủ hay chưa
-                toast.error('Vui lòng điền đầy đủ thông tin nha!', {
+                toast.error('Vui lòng điền đầy đủ thông tin!', {
                     position: 'top-right',
                     autoClose: 3000,
                     hideProgressBar: false,
@@ -484,6 +480,7 @@ const Bill = () => {
                 pauseOnHover: true,
                 draggable: true,
             });
+
             // sendOrderData();
             setCheckOrder(true);
             setIsCheckOrder(true);
@@ -639,7 +636,15 @@ const Bill = () => {
                 const response = await fetch('https://localhost:7296/api/invoice/promo-code');
                 if (response.ok) {
                     const data = await response.json();
-                    setPromoCodes(data);
+                    // Lọc danh sách mã giảm giá để chỉ hiển thị những mã còn hiệu lực
+                    const validPromoCodes = data.filter(promoCode => {
+                        // Giả sử promoCode có trường 'expiryDate' biểu diễn thời gian hết hạn
+                        // Chuyển đổi cả hai thời điểm sang dạng Date để so sánh
+                        const currentDate = new Date();
+                        const expiryDate = new Date(promoCode.expirationDate);
+                        return expiryDate > currentDate; // Trả về true nếu mã giảm giá chưa hết hạn
+                    });
+                    setPromoCodes(validPromoCodes);
                 } else {
                     console.error('Lỗi khi lấy danh sách mã giảm giá:', response.statusText);
                 }
@@ -647,17 +652,17 @@ const Bill = () => {
                 console.error('Lỗi khi lấy danh sách mã giảm giá:', error);
             }
         };
-
+    
         // GET mỗi 5 giây
         const interval = setInterval(fetchPromoCodes, 5000);
-
+    
         // Dừng polling khi component unmount
         return () => clearInterval(interval);
-
+    
         // Khởi tạo ban đầu
         fetchPromoCodes();
     }, []);
-
+    
 
     // Xử lý sự kiện khi người dùng chọn hoặc bỏ chọn mã giảm giá
     const handleCodeSelection = (codeId) => {
@@ -790,6 +795,7 @@ const Bill = () => {
         TotalBeforeDiscount: totalBeforeDiscount, // tiền gốc khi chưa dùng mã giảm
         TimeHall : selectedValue,
         PaymentWallet : true,
+        DepositPayment: total / 2,
     };
 
 
@@ -809,7 +815,7 @@ const Bill = () => {
                 ServiceID: serviceId
             })),
             AttendanceDate: moment(selectedDate).format('YYYY-MM-DD'),
-            Total: total, // tổng tiền cần thanh toán
+            Total: total , // tổng tiền cần thanh toán đặt cọc sau khi có dùng mã giảm
             FullName: fullName,
             PhoneNumber: phoneNumber,
             Note: note,
@@ -818,6 +824,7 @@ const Bill = () => {
             })),
             TotalBeforeDiscount: totalBeforeDiscount,
             TimeHall : selectedValue,
+            DepositPayment: total / 2,
         };
     
         localStorage.setItem('orderData', JSON.stringify(orderData));
@@ -1063,7 +1070,14 @@ const Bill = () => {
 
             if (selectedHall) {
         
-                
+                toast.info('Đã lưu đơn hàng dựa theo gợi ý khách hàng.', {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
                     const updatedHalls = [selectedHall];
                     setSelectedHalls(updatedHalls);
                     localStorage.setItem('selectedHalls', JSON.stringify(updatedHalls));
@@ -1113,9 +1127,18 @@ const Bill = () => {
 
     const [paymentCoin, setPaymentCoin] = useState([]);
     function afterPaymentCoint () {
-            var coin = wallet.coin;
-            var orderTolal = total;
-            setPaymentCoin(coin - orderTolal);
+        if(wallet != null){
+
+            var coin = wallet.coin ;
+            var orderTolal = total / 2;
+            if((coin - orderTolal) < 0){
+                setPaymentCoin("Không đủ số dư");
+            }
+            else{
+                setPaymentCoin(coin - orderTolal);
+            }
+        }
+
     }  
 
 
@@ -1536,8 +1559,12 @@ const Bill = () => {
         )}
     </Button>
     </div>
-    <div style={{ width: '40%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <Button onClick={demoPayment} disabled={isProcessing} >
+    <div style={{ width: '40%', display: 'flex', flexDirection: 'column',justifyContent:'center', gap: '10px' }}>
+    <div style={{ width: '100%', border:'1px solid gray',backgroundColor:'#f4f4f4',padding:'10px',borderRadius:'7px' ,display: 'flex', flexDirection: 'column',justifyContent:'center', gap: '10px' }}>
+
+    <h4 style={{textAlign:'center'}}>Đặt cọc 50%</h4>
+      <Button className='btn btn-success' onClick={demoPayment} disabled={isProcessing} >
+      
         {isProcessing ? (
           <>
             <div className="spinner-border spinner-border-sm" role="status">
@@ -1546,16 +1573,20 @@ const Bill = () => {
             <span className="ms-2">Thanh toán...</span>
           </>
         ) : (
-          'Thanh toán online'
+           'Thanh toán online'
         )}
       </Button>
-      <Button onClick={openModalPaymentCoin}>Thanh toán bằng wallet coin</Button>
+      <Button className='btn btn-dark' onClick={openModalPaymentCoin}> <FontAwesomeIcon icon={faWallet} className="me-2" />Thanh toán bằng wallet coin</Button>
+    </div>
+
     </div>
     </div>
    
 
      </Modal.Body>
-    <Modal.Footer>
+    <Modal.Footer> 
+<button onClick={closeModalConfirmOrder} className='btn btn-secondary'>Đóng</button>
+
     </Modal.Footer>
     </Modal>
 
@@ -1567,11 +1598,14 @@ const Bill = () => {
         <Modal.Title>Thanh toán bằng wallet coin</Modal.Title>
     </Modal.Header>
     <Modal.Body style={{height:'200px'}} >
-    {wallet && (
-                    <h2>Số coin trong wallet: <b style={{color:'red'}}>{formatPrice(wallet.coin)}</b></h2>
-                )}
-        <h2>Đơn hàng có giá trị : {formatPrice(total)}</h2>
-<h2>Số coin sau khi thanh toán: {formatPrice(paymentCoin)}</h2>
+    {wallet ? (
+        <>
+            <h2>Số coin trong wallet: <b style={{color:'red'}}>{wallet.coin ? formatPrice(wallet.coin) : "0đ"}</b></h2>
+            <h2>Đơn hàng có giá trị : {formatPrice(total / 2)}</h2>
+            <h2>Số coin sau khi thanh toán: {formatPrice(paymentCoin)}</h2>
+        </>
+                ): <h2><b style={{color:'red'}}>Không thể thanh toán do không có wallet</b></h2>}
+        
      </Modal.Body>
     <Modal.Footer>
 <button onClick={closeModalPaymentCoin} className='btn btn-secondary'>Đóng</button>
