@@ -422,6 +422,7 @@ const Bill = () => {
                 AttendanceDate: moment(selectedDate).format('YYYY-MM-DD'),
                 BranchId: selectedBranch ? selectedBranch.branchId : null, // ID của chi nhánh đã chọn
                 HallId: selectedHallIdDo,
+                TimeHall : selectedValue,
             };
 
             const response = await fetch('https://localhost:7296/api/invoice/checked', {
@@ -449,6 +450,17 @@ const Bill = () => {
 
                 return;
 
+            }
+            if(selectedValue === ""){
+                toast.error('Chưa chọn buổi đến tham gia sảnh cưới', {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                return;
             }
             for (const promoCodeId of selectedCodes) {
                 const usePromoCodeResponse = await fetch(`https://localhost:7296/api/invoice/use-promo-code?codeId=${promoCodeId}`, {
@@ -480,7 +492,7 @@ const Bill = () => {
                 pauseOnHover: true,
                 draggable: true,
             });
-
+console.log('selectedValue', selectedValue);
             // sendOrderData();
             setCheckOrder(true);
             setIsCheckOrder(true);
@@ -966,10 +978,53 @@ const Bill = () => {
         }
     }, []);
 
-      const handleSelectChange = (e) => {
+    
+      const handleSelectChange = async (e) => {
         const value = e.target.value;
         setSelectedValue(value);
         localStorage.setItem('selectedValue', value);
+
+        const duplicateCheckRequest = {
+            AttendanceDate: moment(selectedDate).format('YYYY-MM-DD'),
+            BranchId: selectedBranch ? selectedBranch.branchId : null, // ID của chi nhánh đã chọn
+            HallId: selectedHallIdDo,
+            TimeHall : value,
+        };
+        const response = await fetch('https://localhost:7296/api/invoice/checked', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(duplicateCheckRequest),
+        });
+        if (response.status === 400) {
+            // Hóa đơn trùng lặp
+            const data = await response.json();
+            setIsDuplicateInvoice(true);
+            toast.error(data.message, {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            
+        setCheckOrder(false);
+        setIsCheckOrder(false);
+
+
+        }
+        else{
+            toast.success('Chọn buổi đến tham dự thành công', {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
     };
 
 
@@ -1013,7 +1068,7 @@ const Bill = () => {
 
     const handleAddressChange = (event) => {
         setSelectedAddress(event.target.value);
-        setSelectedBranchIdSuggest(null); // Reset selected branch when address changes
+        setSelectedBranchIdSuggest(null);
     };
 
     const handleCheckboxChange = (branchId) => {
@@ -1026,7 +1081,7 @@ const Bill = () => {
     };
 
     const handleHallSuggestCheckboxChange = (hallId) => {
-        setSelectedHallIdSuggest(hallId); // Update selected branch id
+        setSelectedHallIdSuggest(hallId); 
         console.log("selectedHallIdSuggest:" ,selectedHallIdSuggest);
     };
     
@@ -1333,7 +1388,9 @@ const Bill = () => {
                                     onChange={handleSelectChange}
                                     value={selectedValue}
                                 >
-                                <option value="">Chọn ca</option>
+                                <option value="" disabled>
+                                    -- Chọn ca --
+                                </option>
                                 {timeOfDayList.map((timeOfDay) => (
                                     <React.Fragment key={timeOfDay.id}>
                                         {timeOfDay.morning && (

@@ -308,6 +308,7 @@ const History = () => {
                         <p>Sảnh cưới: {invoice.hall.name}</p>
                         <p>Thời gian đã đặt: {format(new Date(invoice.invoiceDate), 'dd/MM/yyyy')}</p>
                         <p>Ngày tham dự: {format(new Date(invoice.attendanceDate), 'dd/MM/yyyy')}</p>
+                        <p>{invoice.timeHall}</p>
                         <p>Tổng tiền cần thanh toán: <span className="price">{formatPrice(invoice.total)}</span></p>
                         <p>Tổng tiền đã đặt cọc: <span className="price">{ invoice.depositPayment? formatPrice(invoice.depositPayment) : 'Chưa đặt cọc'}</span></p>
                         <p>
@@ -342,6 +343,7 @@ const History = () => {
               <p>Thòi gian đã đặt: {format(new Date(selectedInvoice.invoiceDate), 'dd/MM/yyyy')}</p>
               <p>Ngày tham dự: {format(new Date(selectedInvoice.attendanceDate), 'dd/MM/yyyy')}</p>
               <p>Sảnh cưới: {selectedInvoice.hall.name}</p>
+              <p>{selectedInvoice.timeHall}</p>
 
               <Table striped bordered hover>
                 <thead>
