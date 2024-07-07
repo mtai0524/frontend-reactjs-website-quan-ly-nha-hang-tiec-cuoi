@@ -8,7 +8,7 @@
 
 //   useEffect(() => {
 //     // Fetch data from the API
-//     fetch('https://localhost:7296/api/hall')
+//     fetch('https://webapi-netcore.azurewebsites.net/api/hall')
 //       .then((response) => response.json())
 //       .then((data) => setHallData(data));
 //   }, []);

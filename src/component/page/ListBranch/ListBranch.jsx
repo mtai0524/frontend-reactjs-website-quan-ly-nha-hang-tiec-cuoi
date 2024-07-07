@@ -43,7 +43,7 @@ const ListBranch = () => {
     }
     useEffect(() => {
         setLoading(true);
-        fetch('https://localhost:7296/api/ApiBranch')
+        fetch('https://webapi-netcore.azurewebsites.net/api/ApiBranch')
             .then((response) => response.json())
             .then((data) => {
                 setBranches(data);
@@ -55,7 +55,7 @@ const ListBranch = () => {
             });
     }, []);
     const fetchFeedbacksByBranch = (branchId) => {
-        fetch(`https://localhost:7296/api/feedback/${branchId}`)
+        fetch(`https://webapi-netcore.azurewebsites.net/api/feedback/${branchId}`)
             .then((response) => response.json())
             .then((data) => {
                 setFeedbackData(data);
@@ -105,7 +105,7 @@ const ListBranch = () => {
             branchId: currentModalBranchId, // Lấy branchId từ state
         };
 
-        fetch('https://localhost:7296/api/feedback', {
+        fetch('https://webapi-netcore.azurewebsites.net/api/feedback', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

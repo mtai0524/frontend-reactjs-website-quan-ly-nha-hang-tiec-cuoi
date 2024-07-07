@@ -47,7 +47,7 @@ const Profile = () => {
         if (userId !== '') {
           const fetchAvatar = async () => {
             try {
-              const response = await fetch(`https://localhost:7296/api/account/GetAvatar?id=${userId}`);
+              const response = await fetch(`https://webapi-netcore.azurewebsites.net/api/account/GetAvatar?id=${userId}`);
               if (!response.ok) {
                 throw new Error('Failed to fetch avatar');
               }
@@ -61,7 +61,7 @@ const Profile = () => {
     
           const fetchInfo = async () => {
             try {
-              const response = await fetch(`https://localhost:7296/api/account/GetInFoUserById?id=${userId}`);
+              const response = await fetch(`https://webapi-netcore.azurewebsites.net/api/account/GetInFoUserById?id=${userId}`);
               if (!response.ok) {
                 throw new Error('Failed to fetch user info');
               }
@@ -77,7 +77,7 @@ const Profile = () => {
     
           const fetchWallet = async () => {
             try {
-              const response = await fetch(`https://localhost:7296/api/wallet/${userId}`);
+              const response = await fetch(`https://webapi-netcore.azurewebsites.net/api/wallet/${userId}`);
               if (!response.ok) {
                 throw new Error('Failed to fetch wallet info');
               }
@@ -110,7 +110,7 @@ const Profile = () => {
         };
         try {
             // Send the updated profile information to the server using fetch
-            const response = await fetch('https://localhost:7296/api/account/Update', {
+            const response = await fetch('https://webapi-netcore.azurewebsites.net/api/account/Update', {
                 method: 'POST', // Specify the method
                 headers: {
                     'Content-Type': 'application/json', // Set the content type to JSON

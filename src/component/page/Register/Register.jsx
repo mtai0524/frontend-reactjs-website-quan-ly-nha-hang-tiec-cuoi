@@ -100,7 +100,7 @@ const Register = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch('https://localhost:7296/api/account/SignUp', {
+            const response = await fetch('https://webapi-netcore.azurewebsites.net/api/account/SignUp', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

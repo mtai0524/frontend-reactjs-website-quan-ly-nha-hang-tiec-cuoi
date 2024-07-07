@@ -51,7 +51,7 @@ const Login = () => {
         setIsLoading(true); // Bắt đầu hiển thị spinner
     
         try {
-            const response = await fetch('https://localhost:7296/api/account/SignIn', {
+            const response = await fetch('https://webapi-netcore.azurewebsites.net/api/account/SignIn', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

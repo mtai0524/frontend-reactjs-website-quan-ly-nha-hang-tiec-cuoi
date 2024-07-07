@@ -66,7 +66,7 @@ const Payment = () => {
     if (storedInvoiceId) {
       const invoiceId = JSON.parse(storedInvoiceId);
 
-      fetch(`https://localhost:7296/api/invoice/repayment-compelete/${invoiceId}`, {
+      fetch(`https://webapi-netcore.azurewebsites.net/api/invoice/repayment-compelete/${invoiceId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ const Payment = () => {
     if (storedOrderData) {
       const orderData = JSON.parse(storedOrderData);
 
-      fetch('https://localhost:7296/api/invoice', {
+      fetch('https://webapi-netcore.azurewebsites.net/api/invoice', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

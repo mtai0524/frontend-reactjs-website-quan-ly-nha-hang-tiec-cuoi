@@ -163,14 +163,14 @@ const Bill = () => {
     };
     // Tải dữ liệu từ API khi component được render
     useEffect(() => {
-        fetch('https://localhost:7296/api/ApiBranch')
+        fetch('https://webapi-netcore.azurewebsites.net/api/ApiBranch')
             .then(response => response.json())
             .then(data => setBranchs(data))
             .catch(error => console.error('Error fetching branch data:', error));
     }, []);
 
     useEffect(() => {
-        fetch('https://localhost:7296/api/hall')
+        fetch('https://webapi-netcore.azurewebsites.net/api/hall')
             .then(response => response.json())
             .then(data => setHalls(data))
             .catch(error => console.error('Error fetching hall data:', error));
@@ -266,7 +266,7 @@ const Bill = () => {
                   try {
                     var payDeposit = total /2 ; // thanh toan dat coc
                     const amount = (payDeposit + "00").toString();
-                    const response = await fetch(`https://localhost:7296/api/Payment?amount=${amount}`);
+                    const response = await fetch(`https://webapi-netcore.azurewebsites.net/api/Payment?amount=${amount}`);
                     if (!response.ok) {
                       throw new Error('Failed to fetch payment URL');
                     }
@@ -425,7 +425,7 @@ const Bill = () => {
                 TimeHall : selectedValue,
             };
 
-            const response = await fetch('https://localhost:7296/api/invoice/checked', {
+            const response = await fetch('https://webapi-netcore.azurewebsites.net/api/invoice/checked', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -463,7 +463,7 @@ const Bill = () => {
                 return;
             }
             for (const promoCodeId of selectedCodes) {
-                const usePromoCodeResponse = await fetch(`https://localhost:7296/api/invoice/use-promo-code?codeId=${promoCodeId}`, {
+                const usePromoCodeResponse = await fetch(`https://webapi-netcore.azurewebsites.net/api/invoice/use-promo-code?codeId=${promoCodeId}`, {
                     method: 'POST',
                 });
                 if (usePromoCodeResponse.ok) {
@@ -515,7 +515,7 @@ console.log('selectedValue', selectedValue);
 
 
     useEffect(() => {
-        fetch('https://localhost:7296/api/service')
+        fetch('https://webapi-netcore.azurewebsites.net/api/service')
             .then(response => response.json())
             .then(data => {
                 setServices(data);
@@ -585,7 +585,7 @@ console.log('selectedValue', selectedValue);
     const [selectedMenus, setSelectedMenus] = useState([]);
     // Tải dữ liệu từ API khi component được render
     useEffect(() => {
-        fetch('https://localhost:7296/api/menu')
+        fetch('https://webapi-netcore.azurewebsites.net/api/menu')
             .then(response => response.json())
             .then(data => {
                 setMenus(data);
@@ -645,7 +645,7 @@ console.log('selectedValue', selectedValue);
     useEffect(() => {
         const fetchPromoCodes = async () => {
             try {
-                const response = await fetch('https://localhost:7296/api/invoice/promo-code');
+                const response = await fetch('https://webapi-netcore.azurewebsites.net/api/invoice/promo-code');
                 if (response.ok) {
                     const data = await response.json();
                     // Lọc danh sách mã giảm giá để chỉ hiển thị những mã còn hiệu lực
@@ -846,7 +846,7 @@ console.log('selectedValue', selectedValue);
 
     const sendOrderData = () => {
         setIsProcessingPaymentWallet(true);
-        fetch('https://localhost:7296/api/invoice', {
+        fetch('https://webapi-netcore.azurewebsites.net/api/invoice', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -903,7 +903,7 @@ console.log('selectedValue', selectedValue);
     const [bookedHalls, setBookedHalls] = useState([]);
     const fetchBookedHalls = async () => {
         try {
-            const response = await fetch(`https://localhost:7296/api/invoice/booked-hall`);
+            const response = await fetch(`https://webapi-netcore.azurewebsites.net/api/invoice/booked-hall`);
             if (response.ok) {
                 const data = await response.json();
 
@@ -956,7 +956,7 @@ console.log('selectedValue', selectedValue);
     useEffect(() => {
         if (selectedHallIdDo) {
           setLoading(true);
-          fetch(`https://localhost:7296/api/time/get-hall-id?hallId=${selectedHallIdDo}`)
+          fetch(`https://webapi-netcore.azurewebsites.net/api/time/get-hall-id?hallId=${selectedHallIdDo}`)
             .then((response) => {
               if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -990,7 +990,7 @@ console.log('selectedValue', selectedValue);
             HallId: selectedHallIdDo,
             TimeHall : value,
         };
-        const response = await fetch('https://localhost:7296/api/invoice/checked', {
+        const response = await fetch('https://webapi-netcore.azurewebsites.net/api/invoice/checked', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1036,7 +1036,7 @@ console.log('selectedValue', selectedValue);
     const [weddingHalls, setWeddingHalls] = useState([]);
     const [refresh, setRefresh] = useState(false);
     useEffect(() => {
-        fetch('https://localhost:7296/api/ApiBranch')
+        fetch('https://webapi-netcore.azurewebsites.net/api/ApiBranch')
         .then(response => response.json())
         .then(data => setBranches(data))
         .catch(error => console.error('Lỗi khi tải danh sách chi nhánh:', error));
@@ -1046,7 +1046,7 @@ console.log('selectedValue', selectedValue);
 
      useEffect(() => {
         if (selectedBranchIdSuggest) {
-            fetch(`https://localhost:7296/api/get-hall-by-branchid/${selectedBranchIdSuggest}`)
+            fetch(`https://webapi-netcore.azurewebsites.net/api/get-hall-by-branchid/${selectedBranchIdSuggest}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -1094,7 +1094,7 @@ console.log('selectedValue', selectedValue);
     const handleReset = () => {
         setCost(0);
 
-        fetch(`https://localhost:7296/api/get-hall-by-branchid/${selectedBranchIdSuggest}`)
+        fetch(`https://webapi-netcore.azurewebsites.net/api/get-hall-by-branchid/${selectedBranchIdSuggest}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -1106,7 +1106,7 @@ console.log('selectedValue', selectedValue);
     };
     const submitSuggest = () => { // lọc
         if (selectedBranchIdSuggest  && cost !== null) {
-            const apiUrl = `https://localhost:7296/api/getsuggesthall/${selectedBranchIdSuggest}/${numberOfTables}/${cost}`;
+            const apiUrl = `https://webapi-netcore.azurewebsites.net/api/getsuggesthall/${selectedBranchIdSuggest}/${numberOfTables}/${cost}`;
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => setWeddingHalls(data))
@@ -1169,7 +1169,7 @@ console.log('selectedValue', selectedValue);
    
     const fetchWallet = async () => {
         try {
-          const response = await fetch(`https://localhost:7296/api/wallet/${id}`);
+          const response = await fetch(`https://webapi-netcore.azurewebsites.net/api/wallet/${id}`);
           if (!response.ok) {
             throw new Error('Failed to fetch wallet info');
           }

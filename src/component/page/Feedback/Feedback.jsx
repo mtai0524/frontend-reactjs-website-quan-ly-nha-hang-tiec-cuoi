@@ -15,7 +15,7 @@ const Feedback = () => {
 
     const fetchInvoicesByUser = async () => {
         try {
-            const response = await fetch(`https://localhost:7296/api/invoice/get-invoice/${id}`);
+            const response = await fetch(`https://webapi-netcore.azurewebsites.net/api/invoice/get-invoice/${id}`);
             if (response.ok) {
                 const data = await response.json();
                 setInvoices(data);

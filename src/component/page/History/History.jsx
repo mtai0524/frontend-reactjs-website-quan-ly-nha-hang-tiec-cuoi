@@ -24,7 +24,7 @@ const History = () => {
     setLoading(true); 
   
     try {
-      const response = await fetch(`https://localhost:7296/api/invoice/get-invoice/${id}`);
+      const response = await fetch(`https://webapi-netcore.azurewebsites.net/api/invoice/get-invoice/${id}`);
       if (response.ok) {
         const data = await response.json();
         const sortedData = data.sort((a, b) => new Date(b.invoiceDate) - new Date(a.invoiceDate));
@@ -66,7 +66,7 @@ const History = () => {
     localStorage.setItem('invoiceId', invoiceId);
 
     try {
-      const response = await fetch(`https://localhost:7296/api/invoice/check-repayment/${invoiceId}`, {
+      const response = await fetch(`https://webapi-netcore.azurewebsites.net/api/invoice/check-repayment/${invoiceId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ const History = () => {
     localStorage.setItem('invoiceId', invoiceId);
 
     try {
-      const response = await fetch(`https://localhost:7296/api/invoice/check-repayment/${invoiceId}`, {
+      const response = await fetch(`https://webapi-netcore.azurewebsites.net/api/invoice/check-repayment/${invoiceId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -132,7 +132,7 @@ const History = () => {
       localStorage.removeItem('orderData');
         const paymentCompelete = selectedInvoice.total - selectedInvoice.depositPayment ;
         const amount = paymentCompelete +"00";
-        const response = await fetch(`https://localhost:7296/api/Payment?amount=${amount}`);
+        const response = await fetch(`https://webapi-netcore.azurewebsites.net/api/Payment?amount=${amount}`);
         if (!response.ok) {
             throw new Error('Failed to fetch payment URL');
         }
@@ -144,7 +144,7 @@ const History = () => {
 }
   const cancelInvoice = async (invoiceId) => {
     try {
-      const response = await fetch(`https://localhost:7296/api/invoice/cancel/${invoiceId}`, {
+      const response = await fetch(`https://webapi-netcore.azurewebsites.net/api/invoice/cancel/${invoiceId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -199,7 +199,7 @@ const History = () => {
  
   const fetchWallet = async () => {
       try {
-        const response = await fetch(`https://localhost:7296/api/wallet/${id}`);
+        const response = await fetch(`https://webapi-netcore.azurewebsites.net/api/wallet/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch wallet info');
         }
@@ -222,7 +222,7 @@ const History = () => {
         if (storedInvoiceId) {
           const invoiceId = JSON.parse(storedInvoiceId);
     
-          fetch(`https://localhost:7296/api/invoice/repayment-compelete-wallet/${invoiceId}`, {
+          fetch(`https://webapi-netcore.azurewebsites.net/api/invoice/repayment-compelete-wallet/${invoiceId}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

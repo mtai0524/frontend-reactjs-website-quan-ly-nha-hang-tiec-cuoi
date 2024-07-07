@@ -56,7 +56,7 @@ const ListMenu = () => {
     const fetchBookedHalls = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`https://localhost:7296/api/invoice/booked-hall`);
+            const response = await fetch(`https://webapi-netcore.azurewebsites.net/api/invoice/booked-hall`);
             if (response.ok) {
                 const data = await response.json();
 
