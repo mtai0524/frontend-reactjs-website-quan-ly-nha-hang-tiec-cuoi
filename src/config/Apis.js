@@ -9,5 +9,5 @@ export const endpoint = {
 };
 
 export default axios.create({
-  baseURL: 'https://localhost:7296',
+  baseURL: 'https://webapi-netcore.azurewebsites.net/',
 });
