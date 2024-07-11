@@ -258,7 +258,7 @@ const Register = () => {
                             <div className='error'>{formError.avatar}</div>
                         )}
                     </div>
-                    <button className="w-100 btn btn-lg btn-primary mt-3 custom-button" type="submit">
+                    <button style={{backgroundColor:'black'}} className="w-100 btn btn-lg btn-primary mt-3 custom-button" type="submit">
                         Đăng kí
                     </button>
 

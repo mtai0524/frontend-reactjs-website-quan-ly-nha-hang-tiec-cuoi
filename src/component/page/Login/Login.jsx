@@ -130,7 +130,7 @@ const Login = () => {
                             )}
                         </button>
                         <Link to="register">
-                            <button className="w-100 btn btn-lg btn-primary mt-3 custom-button" type="button">
+                            <button style={{backgroundColor:'black'}} className="w-100 btn btn-lg btn-dark mt-3 custom-button" type="button">
                                 Đăng kí
                             </button>
                         </Link>
