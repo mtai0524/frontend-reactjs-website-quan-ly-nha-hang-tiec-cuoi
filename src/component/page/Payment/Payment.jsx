@@ -111,6 +111,15 @@ const Payment = () => {
           setOrderSent(true);
           setLoading(false);
           localStorage.removeItem('orderData');
+          localStorage.removeItem('selectedBranchId');
+          localStorage.removeItem('fullName');
+          localStorage.removeItem('selectedValue');
+          localStorage.removeItem('selectedHalls');
+          localStorage.removeItem('selectedServices');
+          localStorage.removeItem('selectedMenus');
+          localStorage.removeItem('note');
+          localStorage.removeItem('selectedDate');
+          localStorage.removeItem('phoneNumber');
         })
         .catch(error => {
           console.error('Lỗi khi gửi đơn hàng:', error);
