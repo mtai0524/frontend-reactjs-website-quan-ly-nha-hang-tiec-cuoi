@@ -1497,7 +1497,7 @@ console.log('selectedValue', selectedValue);
                         </Button>
                     </Modal.Footer>
                 </Modal>
-                <Button id="slide-trigger" style={{ position: 'fixed', bottom: '80px', right: '0' }} >
+                <Button id="slide-trigger" className="btn btn-success" style={{ position: 'fixed', bottom: '90px', right: '0' }} >
       Xem đơn hàng
     </Button>
 
@@ -1685,8 +1685,8 @@ console.log('selectedValue', selectedValue);
 
 
                    
-    <Button onClick={openModalSuggest} style={{ padding: '10px', position: 'fixed', bottom: '200px', right: '0' }}>
-        Gợi ý nhà hàng
+    <Button onClick={openModalSuggest} className='btn btn-dark' style={{ padding: '10px', position: 'fixed', bottom: '150px', right: '0' }}>
+         Gợi ý nhà hàng
       </Button>
 
       <Modal scrollable size="xl" centered show={showModalSuggest} onHide={closeModalSuggest}>
