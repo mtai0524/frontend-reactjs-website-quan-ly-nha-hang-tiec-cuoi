@@ -78,7 +78,7 @@ const ListService = () => {
     return (
         <>
             <div className='tilte'>
-                <h1 className='text-gradient'>DANH SÁCH DỊCH VỤ</h1>
+                <h1 className='text-gradient' style={{ fontWeight: 'bold', marginLeft:'55px'}}>DANH SÁCH DỊCH VỤ</h1>
                 {loading ? (
                     <div className="overlay">
                         <Spinner animation="border" />

@@ -77,7 +77,8 @@ const ListMenu = () => {
     return (
         <>
                <div className='tilte '>
-                <h1 className='text-gradient'>DANH SÁCH THỰC ĐƠN</h1>
+                <h1 className='text-gradient' style={{ fontWeight: 'bold', marginLeft:'55px'}}>DANH SÁCH THỰC ĐƠN</h1>
+
                 {loading? (
       <div className="overlay">
         <Spinner animation="border" />

@@ -156,7 +156,8 @@ const ListBranch = () => {
         <>
 
             <div className='tilte' style={{maxWidth:'100%'}}>
-                <h1 className='text-gradient' style={{ fontWeight: 'bold' }}>DANH SÁCH CHI NHÁNH</h1>
+                <h1 className='text-gradient' style={{ fontWeight: 'bold', marginLeft:'55px'}}>DANH SÁCH CHI NHÁNH</h1>
+
                 {loading ? (
                     <div className="overlay">
                         <Spinner animation="border" />

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
 const Payment = () => {
-  const [orderSent, setOrderSent] = useState(false); // State để kiểm tra xem đơn hàng đã được gửi chưa
-  const [loading, setLoading] = useState(true); // State để quản lý trạng thái loading
-  const [error, setError] = useState(false); // State để quản lý trạng thái lỗi
+  const [orderSent, setOrderSent] = useState(false); // kiểm tra xem đơn hàng đã được gửi chưa
+  const [loading, setLoading] = useState(true); // quản lý trạng thái loading
+  const [error, setError] = useState(false); // quản lý trạng thái lỗi
 
-  // Định nghĩa các đối tượng style trực tiếp
   const cardStyle = {
     background: 'white',
     padding: '60px',
@@ -76,20 +75,20 @@ const Payment = () => {
         .then(response => response.json())
         .then(data => {
           console.log('Đã gửi đơn hàng thành công:', data);
-          setOrderSent(true); // Cập nhật state khi gửi đơn hàng thành công
-          setLoading(false); // Cập nhật state để ẩn loading
-          localStorage.removeItem('invoiceId'); // Xóa dữ liệu đơn hàng trong localStorage
+          setOrderSent(true); 
+          setLoading(false);
+          localStorage.removeItem('invoiceId'); 
         })
         .catch(error => {
           console.error('Lỗi khi gửi đơn hàng:', error);
-          setLoading(false); //  ẩn loading khi gặp lỗi
-          setError(true); // Cập nhật state để hiển thị lỗi
-          localStorage.removeItem('invoiceId'); // Xóa dữ liệu đơn hàng trong localStorage khi gặp lỗi
+          setLoading(false); 
+          setError(true); 
+          localStorage.removeItem('invoiceId'); 
         });
     } else {
       console.error('Không có dữ liệu đơn hàng trong localStorage');
-      setLoading(false); // Cập nhật state để ẩn loading ngay cả khi không có dữ liệu
-      setError(true); // Cập nhật state để hiển thị lỗi
+      setLoading(false); 
+      setError(true); 
     }
   };
 
@@ -109,20 +108,20 @@ const Payment = () => {
         .then(response => response.json())
         .then(data => {
           console.log('Đã gửi đơn hàng thành công:', data);
-          setOrderSent(true); // Cập nhật state khi gửi đơn hàng thành công
-          setLoading(false); // Cập nhật state để ẩn loading
-          localStorage.removeItem('orderData'); // Xóa dữ liệu đơn hàng trong localStorage
+          setOrderSent(true);
+          setLoading(false);
+          localStorage.removeItem('orderData');
         })
         .catch(error => {
           console.error('Lỗi khi gửi đơn hàng:', error);
-          setLoading(false); //  ẩn loading khi gặp lỗi
-          setError(true); // Cập nhật state để hiển thị lỗi
-          localStorage.removeItem('orderData'); // Xóa dữ liệu đơn hàng trong localStorage khi gặp lỗi
+          setLoading(false); 
+          setError(true); 
+          localStorage.removeItem('orderData'); 
         });
     } else {
       console.error('Không có dữ liệu đơn hàng trong localStorage');
-      setLoading(false); // Cập nhật state để ẩn loading ngay cả khi không có dữ liệu
-      setError(true); // Cập nhật state để hiển thị lỗi
+      setLoading(false);
+      setError(true); 
     }
   };
 

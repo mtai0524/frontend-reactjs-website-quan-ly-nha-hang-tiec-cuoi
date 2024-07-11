@@ -113,7 +113,8 @@ const ListMenu = () => {
         <>
 
             <div className='tilte'>
-                <h1>Danh Sách Sảnh Cưới</h1>
+                <h1 className='text-gradient' style={{ fontWeight: 'bold', marginLeft:'55px'}}>DANH SÁCH SẢNH CƯỚI</h1>
+
                 {loading ? (
                     <div className="overlay">
                         <Spinner animation="border" />
@@ -252,6 +253,7 @@ const ListMenu = () => {
                                 <div className="card-body">
                                     <h6 className="card-subtitle mb-2 text-muted">Chi nhánh: {hall.branchName}</h6>
                                     <p className="card-text">Ngày đặt: {format(new Date(hall.bookingDate), 'dd/MM/yyyy')}</p>
+                                    <span className="card-subtitle mb-2" style={{padding:'5px',borderRadius:'4px', backgroundColor: '#7ebc9a', color:'white'}}>{hall.timeHall}</span>
                                 </div>
                               
                             </div>

@@ -1483,6 +1483,7 @@ console.log('selectedValue', selectedValue);
                                 <div className="card-body">
                                     <h6 className="card-subtitle mb-2 text-muted">Chi nhánh: {hall.branchName}</h6>
                                     <p className="card-text">Ngày đặt: {format(new Date(hall.bookingDate), 'dd/MM/yyyy')}</p>
+                                    <span className="card-subtitle mb-2" style={{padding:'5px',borderRadius:'4px', backgroundColor: '#7ebc9a', color:'white'}}>{hall.timeHall}</span>
                                 </div>
                               
                             </div>
