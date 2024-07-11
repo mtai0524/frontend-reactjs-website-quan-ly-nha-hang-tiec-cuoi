@@ -115,6 +115,7 @@ const Payment = () => {
           localStorage.removeItem('fullName');
           localStorage.removeItem('selectedValue');
           localStorage.removeItem('selectedHalls');
+          localStorage.removeItem('selectedHallId');
           localStorage.removeItem('selectedServices');
           localStorage.removeItem('selectedMenus');
           localStorage.removeItem('note');
