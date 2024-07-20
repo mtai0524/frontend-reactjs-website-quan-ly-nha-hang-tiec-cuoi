@@ -8,7 +8,7 @@
 
 //   useEffect(() => {
 //     // Fetch data from the API
-//     fetch('http://api-wedding-palace.somee.com/api/hall')
+//     fetch('https://api-wedding-palace.somee.com/api/hall')
 //       .then((response) => response.json())
 //       .then((data) => setHallData(data));
 //   }, []);

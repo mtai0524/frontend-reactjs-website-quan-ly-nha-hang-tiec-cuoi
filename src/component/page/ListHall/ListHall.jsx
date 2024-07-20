@@ -54,7 +54,7 @@ const ListMenu = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://api-wedding-palace.somee.com/api/invoice/booked-hall`
+        `https://api-wedding-palace.somee.com/api/invoice/booked-hall`
       );
       if (response.ok) {
         const data = await response.json();

@@ -99,7 +99,7 @@ const Register = () => {
 
     try {
       const response = await fetch(
-        "http://api-wedding-palace.somee.com/api/account/SignUp",
+        "https://api-wedding-palace.somee.com/api/account/SignUp",
         {
           method: "POST",
           headers: {
