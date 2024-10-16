@@ -43,18 +43,15 @@ const Payment = () => {
 
   useEffect(() => {
     if (!orderSent) {
-      const timer = setTimeout(() => {
-        const storedInvoiceId = localStorage.getItem("invoiceId");
-        if (storedInvoiceId != null) {
-          paymentCompelete();
-        } else {
-          sendOrderData();
-        }
-      }, 5000);
-
-      return () => clearTimeout(timer);
+      const storedInvoiceId = localStorage.getItem("invoiceId");
+      if (storedInvoiceId != null) {
+        paymentCompelete();
+      } else {
+        sendOrderData();
+      }
     }
   }, [orderSent]);
+
 
   const paymentCompelete = () => {
     const storedInvoiceId = localStorage.getItem("invoiceId");

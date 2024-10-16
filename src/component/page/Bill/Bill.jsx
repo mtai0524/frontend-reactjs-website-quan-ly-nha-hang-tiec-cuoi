@@ -197,8 +197,7 @@ const Bill = () => {
 
     localStorage.setItem("selectedBranchId", JSON.stringify(branchId));
     toast.success(
-      `Đã chọn chi nhánh: ${
-        branchs.find((branch) => branch.branchId === branchId).name
+      `Đã chọn chi nhánh: ${branchs.find((branch) => branch.branchId === branchId).name
       }`,
       {
         position: "top-right",
@@ -311,7 +310,7 @@ const Bill = () => {
       const decodedToken = jwt_decode(tokenFromCookie);
       id =
         decodedToken[
-          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
         ];
     }
 
@@ -780,7 +779,7 @@ const Bill = () => {
     const decodedToken = jwt_decode(tokenFromCookie);
     id =
       decodedToken[
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+      "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
       ];
   }
 
@@ -998,7 +997,7 @@ const Bill = () => {
         .then((data) => {
           setTimeOfDayList(data);
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }
   }, [selectedHallIdDo]);
 
