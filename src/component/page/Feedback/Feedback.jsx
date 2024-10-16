@@ -19,7 +19,7 @@ const Feedback = () => {
   const fetchInvoicesByUser = async () => {
     try {
       const response = await fetch(
-        `https://api-wedding-palace.somee.com/api/invoice/get-invoice/${id}`
+        `https://api-wedding.runasp.net/api/invoice/get-invoice/${id}`
       );
       if (response.ok) {
         const data = await response.json();

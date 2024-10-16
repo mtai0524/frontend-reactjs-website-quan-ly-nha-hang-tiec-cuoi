@@ -9,5 +9,5 @@ export const endpoint = {
 };
 
 export default axios.create({
-  baseURL: "https://api-wedding-palace.somee.com/",
+  baseURL: "https://api-wedding.runasp.net/",
 });

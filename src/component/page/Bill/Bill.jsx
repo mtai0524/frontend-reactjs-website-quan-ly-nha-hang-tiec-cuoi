@@ -161,14 +161,14 @@ const Bill = () => {
   };
   // Tải dữ liệu từ API khi component được render
   useEffect(() => {
-    fetch("https://api-wedding-palace.somee.com/api/ApiBranch")
+    fetch("https://api-wedding.runasp.net/api/ApiBranch")
       .then((response) => response.json())
       .then((data) => setBranchs(data))
       .catch((error) => console.error("Error fetching branch data:", error));
   }, []);
 
   useEffect(() => {
-    fetch("https://api-wedding-palace.somee.com/api/hall")
+    fetch("https://api-wedding.runasp.net/api/hall")
       .then((response) => response.json())
       .then((data) => setHalls(data))
       .catch((error) => console.error("Error fetching hall data:", error));
@@ -274,7 +274,7 @@ const Bill = () => {
             var payDeposit = total / 2; // thanh toan dat coc
             const amount = (payDeposit + "00").toString();
             const response = await fetch(
-              `https://api-wedding-palace.somee.com/api/Payment?amount=${amount}`
+              `https://api-wedding.runasp.net/api/Payment?amount=${amount}`
             );
             if (!response.ok) {
               throw new Error("Failed to fetch payment URL");
@@ -432,7 +432,7 @@ const Bill = () => {
       };
 
       const response = await fetch(
-        "https://api-wedding-palace.somee.com/api/invoice/checked",
+        "https://api-wedding.runasp.net/api/invoice/checked",
         {
           method: "POST",
           headers: {
@@ -471,7 +471,7 @@ const Bill = () => {
       }
       for (const promoCodeId of selectedCodes) {
         const usePromoCodeResponse = await fetch(
-          `https://api-wedding-palace.somee.com/api/invoice/use-promo-code?codeId=${promoCodeId}`,
+          `https://api-wedding.runasp.net/api/invoice/use-promo-code?codeId=${promoCodeId}`,
           {
             method: "POST",
           }
@@ -536,7 +536,7 @@ const Bill = () => {
   };
 
   useEffect(() => {
-    fetch("https://api-wedding-palace.somee.com/api/service")
+    fetch("https://api-wedding.runasp.net/api/service")
       .then((response) => response.json())
       .then((data) => {
         setServices(data);
@@ -608,7 +608,7 @@ const Bill = () => {
   const [selectedMenus, setSelectedMenus] = useState([]);
   // Tải dữ liệu từ API khi component được render
   useEffect(() => {
-    fetch("https://api-wedding-palace.somee.com/api/menu")
+    fetch("https://api-wedding.runasp.net/api/menu")
       .then((response) => response.json())
       .then((data) => {
         setMenus(data);
@@ -671,7 +671,7 @@ const Bill = () => {
     const fetchPromoCodes = async () => {
       try {
         const response = await fetch(
-          "https://api-wedding-palace.somee.com/api/invoice/promo-code"
+          "https://api-wedding.runasp.net/api/invoice/promo-code"
         );
         if (response.ok) {
           const data = await response.json();
@@ -876,7 +876,7 @@ const Bill = () => {
 
   const sendOrderData = () => {
     setIsProcessingPaymentWallet(true);
-    fetch("https://api-wedding-palace.somee.com/api/invoice", {
+    fetch("https://api-wedding.runasp.net/api/invoice", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -933,7 +933,7 @@ const Bill = () => {
   const fetchBookedHalls = async () => {
     try {
       const response = await fetch(
-        `https://api-wedding-palace.somee.com/api/invoice/booked-hall`
+        `https://api-wedding.runasp.net/api/invoice/booked-hall`
       );
       if (response.ok) {
         const data = await response.json();
@@ -987,7 +987,7 @@ const Bill = () => {
     if (selectedHallIdDo) {
       setLoading(true);
       fetch(
-        `https://api-wedding-palace.somee.com/api/time/get-hall-id?hallId=${selectedHallIdDo}`
+        `https://api-wedding.runasp.net/api/time/get-hall-id?hallId=${selectedHallIdDo}`
       )
         .then((response) => {
           if (!response.ok) {
@@ -1021,7 +1021,7 @@ const Bill = () => {
       TimeHall: value,
     };
     const response = await fetch(
-      "https://api-wedding-palace.somee.com/api/invoice/checked",
+      "https://api-wedding.runasp.net/api/invoice/checked",
       {
         method: "POST",
         headers: {
@@ -1064,7 +1064,7 @@ const Bill = () => {
   const [weddingHalls, setWeddingHalls] = useState([]);
   const [refresh, setRefresh] = useState(false);
   useEffect(() => {
-    fetch("https://api-wedding-palace.somee.com/api/ApiBranch")
+    fetch("https://api-wedding.runasp.net/api/ApiBranch")
       .then((response) => response.json())
       .then((data) => setBranches(data))
       .catch((error) =>
@@ -1076,7 +1076,7 @@ const Bill = () => {
   useEffect(() => {
     if (selectedBranchIdSuggest) {
       fetch(
-        `https://api-wedding-palace.somee.com/api/get-hall-by-branchid/${selectedBranchIdSuggest}`
+        `https://api-wedding.runasp.net/api/get-hall-by-branchid/${selectedBranchIdSuggest}`
       )
         .then((response) => {
           if (!response.ok) {
@@ -1128,7 +1128,7 @@ const Bill = () => {
     setCost(0);
 
     fetch(
-      `https://api-wedding-palace.somee.com/api/get-hall-by-branchid/${selectedBranchIdSuggest}`
+      `https://api-wedding.runasp.net/api/get-hall-by-branchid/${selectedBranchIdSuggest}`
     )
       .then((response) => {
         if (!response.ok) {
@@ -1144,7 +1144,7 @@ const Bill = () => {
   const submitSuggest = () => {
     // lọc
     if (selectedBranchIdSuggest && cost !== null) {
-      const apiUrl = `https://api-wedding-palace.somee.com/api/getsuggesthall/${selectedBranchIdSuggest}/${numberOfTables}/${cost}`;
+      const apiUrl = `https://api-wedding.runasp.net/api/getsuggesthall/${selectedBranchIdSuggest}/${numberOfTables}/${cost}`;
       fetch(apiUrl)
         .then((response) => response.json())
         .then((data) => setWeddingHalls(data))
@@ -1209,7 +1209,7 @@ const Bill = () => {
   const fetchWallet = async () => {
     try {
       const response = await fetch(
-        `https://api-wedding-palace.somee.com/api/wallet/${id}`
+        `https://api-wedding.runasp.net/api/wallet/${id}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch wallet info");

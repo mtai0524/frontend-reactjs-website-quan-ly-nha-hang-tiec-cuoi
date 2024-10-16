@@ -63,7 +63,7 @@ const Payment = () => {
       const invoiceId = JSON.parse(storedInvoiceId);
 
       fetch(
-        `https://api-wedding-palace.somee.com/api/invoice/repayment-compelete/${invoiceId}`,
+        `https://api-wedding.runasp.net/api/invoice/repayment-compelete/${invoiceId}`,
         {
           method: "POST",
           headers: {
@@ -97,7 +97,7 @@ const Payment = () => {
     if (storedOrderData) {
       const orderData = JSON.parse(storedOrderData);
 
-      fetch("https://api-wedding-palace.somee.com/api/invoice", {
+      fetch("https://api-wedding.runasp.net/api/invoice", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

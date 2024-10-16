@@ -64,7 +64,7 @@ const Profile = () => {
       const fetchAvatar = async () => {
         try {
           const response = await fetch(
-            `https://api-wedding-palace.somee.com/api/account/GetAvatar?id=${userId}`
+            `https://api-wedding.runasp.net/api/account/GetAvatar?id=${userId}`
           );
           if (!response.ok) {
             throw new Error("Failed to fetch avatar");
@@ -80,7 +80,7 @@ const Profile = () => {
       const fetchInfo = async () => {
         try {
           const response = await fetch(
-            `https://api-wedding-palace.somee.com/api/account/GetInFoUserById?id=${userId}`
+            `https://api-wedding.runasp.net/api/account/GetInFoUserById?id=${userId}`
           );
           if (!response.ok) {
             throw new Error("Failed to fetch user info");
@@ -98,7 +98,7 @@ const Profile = () => {
       const fetchWallet = async () => {
         try {
           const response = await fetch(
-            `https://api-wedding-palace.somee.com/api/wallet/${userId}`
+            `https://api-wedding.runasp.net/api/wallet/${userId}`
           );
           if (!response.ok) {
             throw new Error("Failed to fetch wallet info");
@@ -133,7 +133,7 @@ const Profile = () => {
     try {
       // Send the updated profile information to the server using fetch
       const response = await fetch(
-        "https://api-wedding-palace.somee.com/api/account/Update",
+        "https://api-wedding.runasp.net/api/account/Update",
         {
           method: "POST", // Specify the method
           headers: {

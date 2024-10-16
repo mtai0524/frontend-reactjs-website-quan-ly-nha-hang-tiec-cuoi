@@ -46,7 +46,7 @@ const ListBranch = () => {
   }
   useEffect(() => {
     setLoading(true);
-    fetch("https://api-wedding-palace.somee.com/api/ApiBranch")
+    fetch("https://api-wedding.runasp.net/api/ApiBranch")
       .then((response) => response.json())
       .then((data) => {
         setBranches(data);
@@ -58,7 +58,7 @@ const ListBranch = () => {
       });
   }, []);
   const fetchFeedbacksByBranch = (branchId) => {
-    fetch(`https://api-wedding-palace.somee.com/api/feedback/${branchId}`)
+    fetch(`https://api-wedding.runasp.net/api/feedback/${branchId}`)
       .then((response) => response.json())
       .then((data) => {
         setFeedbackData(data);
@@ -124,7 +124,7 @@ const ListBranch = () => {
       branchId: currentModalBranchId, // Lấy branchId từ state
     };
 
-    fetch("https://api-wedding-palace.somee.com/api/feedback", {
+    fetch("https://api-wedding.runasp.net/api/feedback", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

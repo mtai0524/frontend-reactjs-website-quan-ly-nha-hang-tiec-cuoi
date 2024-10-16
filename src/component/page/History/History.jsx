@@ -29,7 +29,7 @@ const History = () => {
 
     try {
       const response = await fetch(
-        `https://api-wedding-palace.somee.com/api/invoice/get-invoice/${id}`
+        `https://api-wedding.runasp.net/api/invoice/get-invoice/${id}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -73,7 +73,7 @@ const History = () => {
 
     try {
       const response = await fetch(
-        `https://api-wedding-palace.somee.com/api/invoice/check-repayment/${invoiceId}`,
+        `https://api-wedding.runasp.net/api/invoice/check-repayment/${invoiceId}`,
         {
           method: "POST",
           headers: {
@@ -107,7 +107,7 @@ const History = () => {
 
     try {
       const response = await fetch(
-        `https://api-wedding-palace.somee.com/api/invoice/check-repayment/${invoiceId}`,
+        `https://api-wedding.runasp.net/api/invoice/check-repayment/${invoiceId}`,
         {
           method: "POST",
           headers: {
@@ -141,7 +141,7 @@ const History = () => {
         selectedInvoice.total - selectedInvoice.depositPayment;
       const amount = paymentCompelete + "00";
       const response = await fetch(
-        `https://api-wedding-palace.somee.com/api/Payment?amount=${amount}`
+        `https://api-wedding.runasp.net/api/Payment?amount=${amount}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch payment URL");
@@ -155,7 +155,7 @@ const History = () => {
   const cancelInvoice = async (invoiceId) => {
     try {
       const response = await fetch(
-        `https://api-wedding-palace.somee.com/api/invoice/cancel/${invoiceId}`,
+        `https://api-wedding.runasp.net/api/invoice/cancel/${invoiceId}`,
         {
           method: "POST",
           headers: {
@@ -214,7 +214,7 @@ const History = () => {
   const fetchWallet = async () => {
     try {
       const response = await fetch(
-        `https://api-wedding-palace.somee.com/api/wallet/${id}`
+        `https://api-wedding.runasp.net/api/wallet/${id}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch wallet info");
@@ -239,7 +239,7 @@ const History = () => {
         const invoiceId = JSON.parse(storedInvoiceId);
 
         fetch(
-          `https://api-wedding-palace.somee.com/api/invoice/repayment-compelete-wallet/${invoiceId}`,
+          `https://api-wedding.runasp.net/api/invoice/repayment-compelete-wallet/${invoiceId}`,
           {
             method: "POST",
             headers: {

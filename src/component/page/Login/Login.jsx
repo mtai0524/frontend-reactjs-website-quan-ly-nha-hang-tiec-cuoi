@@ -52,7 +52,7 @@ const Login = () => {
 
     try {
       const response = await fetch(
-        "https://api-wedding-palace.somee.com/api/account/SignIn",
+        "https://api-wedding.runasp.net/api/account/SignIn",
         {
           method: "POST",
           headers: {
